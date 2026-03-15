@@ -1,0 +1,1 @@
+import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'; import { config } from 'dotenv'; config(); async function run() { try { const e = new GoogleGenerativeAIEmbeddings({ apiKey: process.env.GOOGLE_API_KEY, model: 'gemini-embedding-001' }); console.log((await e.embedQuery('sneakers')).length); } catch(e) { console.error('ERROR MESSAGE:', e.message) } } run();

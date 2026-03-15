@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chatbot Launcher Animation</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#0e0e18;color:#fff}
+
+/* ── Container for shake ── */
+#page{width:100%;height:100%;position:relative}
+
+/* ── Canvas overlay ── */
+#fx{position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none}
+
+/* ── Flash overlay ── */
+#flash{position:fixed;inset:0;background:#fff;opacity:0;z-index:6;pointer-events:none;transition:none}
+
+/* ── Launcher ── */
+#launcher{
+  position:fixed;bottom:22px;right:22px;width:58px;height:58px;
+  border-radius:50%;background:linear-gradient(135deg,#7b6fff 0%,#5548e0 100%);
+  border:none;cursor:pointer;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 24px rgba(123,111,255,.45);
+  transition:opacity .25s;
+}
+#launcher svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Orbital dots ── */
+.orb-wrap{
+  position:fixed;bottom:51px;right:51px;width:0;height:0;z-index:9;pointer-events:none;
+}
+.orb{
+  position:absolute;width:6px;height:6px;border-radius:50%;top:-3px;left:-3px;
+  animation:orb var(--os) linear infinite;
+}
+@keyframes orb{
+  from{transform:rotate(0deg) translateX(var(--or)) rotate(0deg)}
+  to  {transform:rotate(360deg) translateX(var(--or)) rotate(-360deg)}
+}
+
+/* ── Pulse rings ── */
+.pulse-ring{
+  position:fixed;bottom:22px;right:22px;width:58px;height:58px;
+  border-radius:50%;pointer-events:none;z-index:9;
+  border:1.5px solid rgba(108,92,231,.5);
+  animation:pulseRing 2s ease-in-out infinite;
+}
+.pulse-ring:nth-child(1){inset-inline:auto; margin:-7px -7px;width:72px;height:72px;animation-delay:0s}
+.pulse-ring:nth-child(2){margin:-14px -14px;width:86px;height:86px;animation-delay:.35s}
+.pulse-ring:nth-child(3){margin:-22px -22px;width:102px;height:102px;animation-delay:.7s}
+.pr1{bottom:15px;right:15px;width:72px;height:72px;animation-delay:0s}
+.pr2{bottom:8px;right:8px;width:86px;height:86px;animation-delay:.35s}
+.pr3{bottom:0px;right:0px;width:102px;height:102px;animation-delay:.7s}
+@keyframes pulseRing{
+  0%,100%{transform:scale(1);opacity:.5}
+  50%{transform:scale(1.08);opacity:.7}
+}
+
+/* ── Radial glow ── */
+#glow{
+  position:fixed;bottom:1px;right:1px;width:100px;height:100px;
+  border-radius:50%;z-index:8;pointer-events:none;
+  background:radial-gradient(circle,rgba(123,111,255,.35) 0%,transparent 70%);
+  animation:glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:.7}
+  50%{opacity:1}
+}
+
+/* ── Hero element ── */
+#hero{
+  position:absolute;width:64px;height:64px;z-index:11;opacity:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+#hero svg{width:48px;height:48px}
+
+@keyframes heroKick{
+  0%{transform:scale(0) rotate(-20deg);opacity:0}
+  40%{transform:scale(1.35) rotate(-8deg);opacity:1}
+  70%{transform:scale(.92) rotate(4deg)}
+  100%{transform:scale(1) rotate(0)}
+}
+
+/* ── Chat window ── */
+#chat{
+  position:fixed;bottom:90px;right:22px;width:370px;height:540px;
+  border-radius:18px;overflow:hidden;z-index:10;
+  opacity:0;transform:scale(.04) rotate(8deg);transform-origin:bottom right;
+  box-shadow:0 12px 50px rgba(0,0,0,.45);
+  display:flex;flex-direction:column;
+  font-family:'Segoe UI',system-ui,sans-serif;
+}
+
+@keyframes chatSpring{
+  0%{transform:scale(.04) rotate(8deg);opacity:0}
+  50%{transform:scale(1.07) rotate(-1.5deg);opacity:1}
+  72%{transform:scale(.96) rotate(.8deg)}
+  88%{transform:scale(1.02) rotate(0)}
+  100%{transform:scale(1) rotate(0);opacity:1}
+}
+
+/* ── Chat header ── */
+.ch-header{
+  background:linear-gradient(135deg,#7b6fff 0%,#5548e0 100%);
+  padding:18px 18px 14px;display:flex;align-items:center;gap:12px;
+  position:relative;
+}
+.ch-avatar{
+  width:50px;height:50px;border-radius:50%;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;flex-shrink:0;
+}
+.ch-avatar svg{width:30px;height:30px}
+.ch-badge{
+  position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;
+  background:#ffd700;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:2px solid #5548e0;
+}
+.ch-badge svg{width:10px;height:10px}
+.ch-info{flex:1}
+.ch-name{font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.ch-sub{font-size:12px;color:rgba(255,255,255,.72);margin-top:2px}
+.ch-learn{
+  padding:6px 14px;border-radius:20px;
+  background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35);
+  font-size:12px;cursor:pointer;white-space:nowrap;
+  transition:background .2s;
+}
+.ch-learn:hover{background:rgba(255,255,255,.32)}
+
+/* ── Chat body ── */
+.ch-body{
+  flex:1;background:#f6f6f6;padding:14px 16px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:10px;
+}
+.ch-date{text-align:center;font-size:11px;color:#999;margin:4px 0}
+.ch-msg{display:flex;gap:8px;align-items:flex-start}
+.ch-msg-avatar{
+  width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,#7b6fff,#5548e0);
+  color:#fff;font-size:12px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.ch-bubble{
+  background:#fff;border-radius:10px 10px 10px 2px;
+  padding:10px 14px;font-size:13.5px;color:#222;line-height:1.45;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);max-width:85%;
+}
+.ch-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.ch-chip{
+  padding:7px 14px;border-radius:20px;
+  background:#fff;border:1px solid #e0dff5;
+  font-size:12.5px;color:#5548e0;cursor:pointer;
+  transition:background .2s,border-color .2s;
+}
+.ch-chip:hover{background:#edeaff;border-color:#7b6fff}
+
+/* ── Chat footer ── */
+.ch-footer{
+  background:#fff;padding:10px 14px;display:flex;align-items:center;gap:8px;
+  border-top:1px solid #eee;
+}
+.ch-input{
+  flex:1;border:1px solid #e0e0e0;border-radius:22px;padding:9px 14px;
+  font-size:13px;outline:none;background:#fafafa;color:#333;
+}
+.ch-input::placeholder{color:#aaa}
+.ch-send{
+  width:36px;height:36px;border-radius:50%;border:none;
+  background:linear-gradient(135deg,#7b6fff,#5548e0);
+  color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:transform .15s;
+}
+.ch-send:hover{transform:scale(1.08)}
+.ch-send svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Content cascade animations ── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes popIn{
+  0%{opacity:0;transform:scale(.5)}
+  70%{opacity:1;transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+.anim-fade{opacity:0;animation:fadeUp .42s ease forwards}
+.anim-pop{opacity:0;animation:popIn .38s cubic-bezier(.34,1.56,.64,1) forwards}
+
+/* ── Shake ── */
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  10%{transform:translate(-5px,-4px)}
+  20%{transform:translate(5px,4px)}
+  30%{transform:translate(-4px,5px)}
+  40%{transform:translate(4px,-5px)}
+  50%{transform:translate(-3px,3px)}
+  60%{transform:translate(3px,-3px)}
+  70%{transform:translate(-2px,4px)}
+  80%{transform:translate(2px,-2px)}
+  90%{transform:translate(-1px,1px)}
+  100%{transform:translate(0,0)}
+}
+
+/* ── SVG Light rays ── */
+@keyframes raysAnim{
+  0%{transform:scaleY(.3);opacity:.9}
+  100%{transform:scaleY(2.8);opacity:0}
+}
+#rays{position:fixed;bottom:90px;right:207px;z-index:9;pointer-events:none;opacity:0}
+#rays line{stroke-width:2;opacity:0}
+
+/* ── Spark DOM elements ── */
+@keyframes sparkFly{
+  0%{opacity:1;transform:translate(0,0) scale(1) rotate(0deg)}
+  100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0) rotate(var(--sr))}
+}
+.spark{
+  position:fixed;z-index:12;pointer-events:none;
+  animation:sparkFly .8s cubic-bezier(.23,1,.32,1) forwards;
+}
+
+/* ── Skeleton shimmer for placeholders ── */
+@keyframes sk{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(100%)}
+}
+</style>
+</head>
+<body>
+<div id="page">
+
+  <!-- Background content (simple demo page) -->
+  <div style="padding:60px 40px;max-width:720px;margin:auto">
+    <h1 style="font-size:28px;margin-bottom:12px;background:linear-gradient(90deg,#7b6fff,#00ffcc);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Vintageshop</h1>
+    <p style="color:#888;font-size:15px;line-height:1.7;margin-bottom:30px">Welcome to our store. Browse our curated collections of vintage fashion and accessories. Click the chatbot launcher to get started.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:#16162a;border-radius:12px;height:160px;display:flex;align-items:center;justify-content:center;color:#444;font-size:13px">Product 1</div>
+      <div style="background:#16162a;border-radius:12px;height:160px;display:flex;align-items:center;justify-content:center;color:#444;font-size:13px">Product 2</div>
+      <div style="background:#16162a;border-radius:12px;height:160px;display:flex;align-items:center;justify-content:center;color:#444;font-size:13px">Product 3</div>
+    </div>
+  </div>
+
+  <!-- Canvas -->
+  <canvas id="fx"></canvas>
+
+  <!-- Flash overlay -->
+  <div id="flash"></div>
+
+  <!-- Radial glow -->
+  <div id="glow"></div>
+
+  <!-- Pulse rings -->
+  <div class="pulse-ring pr1"></div>
+  <div class="pulse-ring pr2"></div>
+  <div class="pulse-ring pr3"></div>
+
+  <!-- Orbital dots -->
+  <div class="orb-wrap">
+    <div class="orb" style="--or:28px;--os:1.9s;background:#00ffcc"></div>
+    <div class="orb" style="--or:34px;--os:2.3s;background:#7b6fff"></div>
+    <div class="orb" style="--or:40px;--os:3.2s;background:#ffd700"></div>
+    <div class="orb" style="--or:44px;--os:4.1s;background:#ff6b9d"></div>
+  </div>
+
+  <!-- Launcher button -->
+  <button id="launcher" aria-label="Open chat">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  </button>
+
+  <!-- Hero element -->
+  <div id="hero">
+    <svg viewBox="0 0 64 64">
+      <defs>
+        <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#7b6fff"/>
+          <stop offset="100%" stop-color="#00ffcc"/>
+        </linearGradient>
+      </defs>
+      <circle cx="32" cy="32" r="28" fill="url(#hg)" opacity=".9"/>
+      <path d="M22 36c0-6 4-10 10-10s10 4 10 10" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="26" cy="28" r="2.5" fill="#fff"/>
+      <circle cx="38" cy="28" r="2.5" fill="#fff"/>
+      <path d="M20 20l6 2M44 20l-6 2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- SVG Light rays container -->
+  <svg id="rays" width="60" height="200" viewBox="0 0 60 200">
+    <line x1="30" y1="200" x2="10" y2="0" stroke="#7b6fff"/>
+    <line x1="30" y1="200" x2="20" y2="0" stroke="#9b8fff"/>
+    <line x1="30" y1="200" x2="28" y2="0" stroke="#00ffcc"/>
+    <line x1="30" y1="200" x2="32" y2="0" stroke="#fff"/>
+    <line x1="30" y1="200" x2="38" y2="0" stroke="#00ffcc"/>
+    <line x1="30" y1="200" x2="45" y2="0" stroke="#9b8fff"/>
+    <line x1="30" y1="200" x2="52" y2="0" stroke="#7b6fff"/>
+  </svg>
+
+  <!-- Chat window -->
+  <div id="chat">
+    <div class="ch-header">
+      <div class="ch-avatar anim-target" data-anim="popIn" data-delay="0.3">
+        <svg viewBox="0 0 40 40" fill="none">
+          <rect x="8" y="6" width="24" height="20" rx="4" stroke="#fff" stroke-width="2"/>
+          <circle cx="16" cy="16" r="2" fill="#fff"/>
+          <circle cx="24" cy="16" r="2" fill="#fff"/>
+          <path d="M15 21c0 0 2 3 5 3s5-3 5-3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="12" y1="4" x2="12" y2="7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="28" y1="4" x2="28" y2="7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="ch-badge">
+          <svg viewBox="0 0 12 12"><polygon points="6,1 7.5,4 11,4.5 8.5,7 9,10.5 6,9 3,10.5 3.5,7 1,4.5 4.5,4" fill="#fff"/></svg>
+        </span>
+      </div>
+      <div class="ch-info">
+        <div class="ch-name anim-target" data-anim="fadeUp" data-delay="0.45">Vintageshop</div>
+        <div class="ch-sub anim-target" data-anim="fadeUp" data-delay="0.57">You can ask me anything you want</div>
+      </div>
+      <button class="ch-learn anim-target" data-anim="fadeUp" data-delay="0.68">Learn More</button>
+    </div>
+    <div class="ch-body">
+      <div class="ch-date anim-target" data-anim="fadeUp" data-delay="0.75">Today, 04:20</div>
+      <div class="ch-msg anim-target" data-anim="fadeUp" data-delay="0.8">
+        <div class="ch-msg-avatar">VS</div>
+        <div class="ch-bubble">Hey there! 👋 Welcome to <strong>Vintageshop</strong>. I'm your personal shopping assistant. How can I help you today?</div>
+      </div>
+      <div class="ch-chips">
+        <span class="ch-chip anim-target" data-anim="popIn" data-delay="0.95">✨ Special Offers</span>
+        <span class="ch-chip anim-target" data-anim="popIn" data-delay="1.1">☀️ Summer Outfits</span>
+        <span class="ch-chip anim-target" data-anim="popIn" data-delay="1.25">🎁 Buy a Giftcard</span>
+        <span class="ch-chip anim-target" data-anim="popIn" data-delay="1.4">🆕 New Collection</span>
+      </div>
+    </div>
+    <div class="ch-footer anim-target" data-anim="fadeUp" data-delay="1.15">
+      <input class="ch-input" placeholder="Type and press [enter]" />
+      <button class="ch-send">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9"/></svg>
+      </button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+(() => {
+  /* ── DOM refs ── */
+  const cvs = document.getElementById('fx');
+  const ctx = cvs.getContext('2d');
+  const flash = document.getElementById('flash');
+  const launcher = document.getElementById('launcher');
+  const hero = document.getElementById('hero');
+  const chat = document.getElementById('chat');
+  const page = document.getElementById('page');
+  const glow = document.getElementById('glow');
+  const rays = document.getElementById('rays');
+  const orbWrap = document.querySelector('.orb-wrap');
+  const pulseRings = document.querySelectorAll('.pulse-ring');
+
+  let W, H;
+  const resize = () => { W = cvs.width = innerWidth; H = cvs.height = innerHeight; };
+  resize();
+  addEventListener('resize', resize);
+
+  /* ── Canvas helpers ── */
+  const TAU = Math.PI * 2;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const randInt = (a, b) => Math.floor(rand(a, b));
+  const pick = arr => arr[randInt(0, arr.length)];
+
+  function drawStar(x, y, r, col, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a1 = (i * TAU) / 5 - Math.PI / 2;
+      const a2 = a1 + TAU / 10;
+      ctx.lineTo(x + Math.cos(a1) * r, y + Math.sin(a1) * r);
+      ctx.lineTo(x + Math.cos(a2) * r * 0.42, y + Math.sin(a2) * r * 0.42);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ── State ── */
+  let particles = [];
+  let waves = [];
+  let ambients = [];
+  let trail = [];
+  let rafId = null;
+  let animating = false;
+  let heroFlying = false;
+  let heroT = 0;
+  const TRAIL_LEN = 40;
+  const SPARK_COLORS = ['#7b6fff','#5548e0','#00ffcc','#ffd700','#ff6b9d','white','#9b8fff'];
+
+  /* ── Ambient particles (idle) ── */
+  function initAmbients() {
+    ambients = [];
+    for (let i = 0; i < 55; i++) {
+      ambients.push({
+        x: rand(0, W), y: rand(0, H),
+        vx: rand(-0.15, 0.15), vy: rand(-0.35, -0.08),
+        r: rand(1.2, 3),
+        phase: rand(0, TAU),
+        speed: rand(0.008, 0.025),
+        col: Math.random() > 0.5 ? 'rgba(108,92,231,' : 'rgba(0,255,204,',
+      });
+    }
+  }
+
+  function drawAmbients() {
+    for (const p of ambients) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.phase += p.speed;
+      const alpha = 0.15 + 0.35 * ((Math.sin(p.phase) + 1) / 2);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, TAU);
+      ctx.fillStyle = p.col + alpha + ')';
+      ctx.fill();
+      // Wrap
+      if (p.y < -5) { p.y = H + 5; p.x = rand(0, W); }
+      if (p.x < -5) p.x = W + 5;
+      if (p.x > W + 5) p.x = -5;
+    }
+  }
+
+  /* ── Particles (explosion / trail sparks) ── */
+  function spawnParticles(cx, cy, count, opts = {}) {
+    const speed = opts.speed || 6;
+    const grav = opts.grav || [0.06, 0.16];
+    const cols = opts.colors || SPARK_COLORS;
+    for (let i = 0; i < count; i++) {
+      const angle = rand(0, TAU);
+      const spd = rand(speed * 0.3, speed);
+      particles.push({
+        x: cx, y: cy,
+        vx: Math.cos(angle) * spd,
+        vy: Math.sin(angle) * spd,
+        life: opts.life || 60,
+        maxLife: opts.life || 60,
+        r: rand(1.5, 4),
+        col: pick(cols),
+        grav: rand(grav[0], grav[1]),
+        star: opts.star || false,
+        rot: rand(0, TAU),
+        rv: rand(-0.1, 0.1),
+      });
+    }
+  }
+
+  function spawnStars(cx, cy, count) {
+    spawnParticles(cx, cy, count, {
+      speed: 8, life: 50, colors: ['#ffd700','#ffeb3b','#fff9c4','#ffe082'],
+      star: true, grav: [0.04, 0.12],
+    });
+  }
+
+  function drawParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.grav;
+      p.vx *= 0.985;
+      p.life--;
+      p.rot += p.rv;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      const frac = p.life / p.maxLife;
+      ctx.save();
+      ctx.globalAlpha = frac;
+      ctx.shadowColor = p.col;
+      ctx.shadowBlur = 8 * frac;
+      if (p.star) {
+        drawStar(p.x, p.y, p.r * 2.5 * frac, p.col, frac);
+      } else {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * frac, 0, TAU);
+        ctx.fillStyle = p.col;
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  /* ── Shockwaves ── */
+  function spawnWaves(cx, cy, configs) {
+    for (const c of configs) {
+      waves.push({ x: cx, y: cy, r: 0, maxR: c.maxR, col: c.col, spd: c.spd || 4 });
+    }
+  }
+
+  function drawWaves() {
+    for (let i = waves.length - 1; i >= 0; i--) {
+      const w = waves[i];
+      w.r += w.spd;
+      if (w.r >= w.maxR) { waves.splice(i, 1); continue; }
+      const frac = 1 - w.r / w.maxR;
+      ctx.save();
+      ctx.globalAlpha = frac * 0.7;
+      ctx.strokeStyle = w.col;
+      ctx.lineWidth = 2.5 * frac;
+      ctx.shadowColor = w.col;
+      ctx.shadowBlur = 12 * frac;
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.r, 0, TAU);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  /* ── Comet trail ── */
+  function drawTrail() {
+    if (trail.length < 2) return;
+    const len = trail.length;
+    // Outer colored trail
+    for (let i = 1; i < len; i++) {
+      const frac = i / len;
+      ctx.save();
+      ctx.strokeStyle = `hsl(${245 + frac * 70}, 90%, ${55 + frac * 25}%)`;
+      ctx.lineWidth = frac * 14;
+      ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(140,120,255,0.8)';
+      ctx.shadowBlur = frac * 18;
+      ctx.globalAlpha = frac;
+      ctx.beginPath();
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.stroke();
+      ctx.restore();
+    }
+    // Inner white trail
+    for (let i = 1; i < len; i++) {
+      const frac = i / len;
+      ctx.save();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = frac * 5;
+      ctx.lineCap = 'round';
+      ctx.globalAlpha = frac * 0.25;
+      ctx.beginPath();
+      ctx.moveTo(trail[i - 1].x, trail[i - 1].y);
+      ctx.lineTo(trail[i].x, trail[i].y);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  /* ── Afterburner ── */
+  function drawAfterburner(x, y, angle) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle + Math.PI); // behind hero
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, 28);
+    grad.addColorStop(0, '#00ffcc');
+    grad.addColorStop(0.5, '#7b6fff');
+    grad.addColorStop(1, 'transparent');
+    ctx.globalAlpha = 0.8;
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 28, 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  /* ── Speed lines ── */
+  function drawSpeedLines(x, y, angle) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle + Math.PI / 2); // perpendicular
+    ctx.strokeStyle = '#fff';
+    ctx.globalAlpha = 0.12;
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 17; i++) {
+      const off = (i - 8) * 16;
+      const len = rand(25, 80);
+      ctx.beginPath();
+      ctx.moveTo(-len / 2, off);
+      ctx.lineTo(len / 2, off);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* ── Cubic bezier helper ── */
+  function cubicBezier(t, p0, p1, p2, p3) {
+    const u = 1 - t;
+    return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t * t * t * p3;
+  }
+
+  /* ── Flight path ── */
+  function getFlightPos(t) {
+    const chatX = W - 22 - 117;
+    const chatY = H - 90 - 170;
+    const sx = W - 51, sy = H - 51;
+    const cp1x = W - 51, cp1y = 40;
+    const cp2x = chatX - 80, cp2y = chatY;
+    return {
+      x: cubicBezier(t, sx, cp1x, cp2x, chatX),
+      y: cubicBezier(t, sy, cp1y, cp2y, chatY),
+    };
+  }
+
+  /* ── Launcher center coordinates ── */
+  function launcherCenter() {
+    return { x: W - 22 - 29, y: H - 22 - 29 };
+  }
+
+  /* ── Phase orchestration ── */
+  function triggerAnimation() {
+    if (animating) return;
+    animating = true;
+    const lc = launcherCenter();
+
+    // ── Phase 1: Explosion (0ms) ── 
+    // Flash
+    flash.style.transition = 'none';
+    flash.style.opacity = '1';
+    requestAnimationFrame(() => {
+      flash.style.transition = 'opacity 500ms ease-out';
+      flash.style.opacity = '0';
+    });
+    // Hide launcher + idle elements
+    launcher.style.opacity = '0';
+    orbWrap.style.display = 'none';
+    pulseRings.forEach(r => r.style.display = 'none');
+    glow.style.display = 'none';
+    // Spawn explosion particles
+    spawnParticles(lc.x, lc.y, 80, { speed: 10, life: 60, grav: [0.06, 0.16] });
+    spawnStars(lc.x, lc.y, 20);
+    // Shockwaves
+    spawnWaves(lc.x, lc.y, [
+      { maxR: 260, col: '#7b6fff', spd: 4 },
+      { maxR: 180, col: '#00ffcc', spd: 5.5 },
+      { maxR: 100, col: '#ffffff', spd: 7 },
+    ]);
+
+    // ── Phase 2: Hero kickoff (200ms) ──
+    setTimeout(() => {
+      hero.style.left = (lc.x - 32) + 'px';
+      hero.style.top = (lc.y - 32) + 'px';
+      hero.style.opacity = '1';
+      hero.style.animation = 'heroKick 500ms cubic-bezier(0.34,1.56,0.64,1) forwards';
+    }, 200);
+
+    // ── Phase 3: Flight (680ms) ──
+    setTimeout(() => {
+      hero.style.animation = 'none';
+      heroFlying = true;
+      heroT = 0;
+      trail = [];
+    }, 680);
+  }
+
+  /* ── Phase 4: Impact ── */
+  function triggerImpact() {
+    heroFlying = false;
+    hero.style.opacity = '0';
+    hero.style.animation = 'none';
+
+    const chatX = W - 22 - 117;
+    const chatY = H - 90 - 170;
+
+    // Flash
+    flash.style.transition = 'none';
+    flash.style.opacity = '0.85';
+    requestAnimationFrame(() => {
+      flash.style.transition = 'opacity 700ms ease-out';
+      flash.style.opacity = '0';
+    });
+
+    // Shake
+    page.style.animation = 'shake 450ms ease-out';
+    page.addEventListener('animationend', () => { page.style.animation = 'none'; }, { once: true });
+
+    // Explosion at landing
+    spawnParticles(chatX, chatY, 70, { speed: 8, life: 50, grav: [0.05, 0.14] });
+    spawnStars(chatX, chatY, 25);
+    spawnWaves(chatX, chatY, [
+      { maxR: 220, col: '#7b6fff', spd: 4 },
+      { maxR: 160, col: '#00ffcc', spd: 5 },
+      { maxR: 120, col: '#ffd700', spd: 6 },
+      { maxR: 80, col: '#fff', spd: 7 },
+    ]);
+
+    // Secondary waves at chat center
+    setTimeout(() => {
+      const ccx = W - 22 - 185;
+      const ccy = H - 90 - 270;
+      spawnWaves(ccx, ccy, [
+        { maxR: 140, col: '#7b6fff', spd: 3 },
+        { maxR: 100, col: '#00ffcc', spd: 4.5 },
+      ]);
+    }, 100);
+
+    // Light rays
+    rays.style.opacity = '1';
+    const rayLines = rays.querySelectorAll('line');
+    rayLines.forEach((l, i) => {
+      l.style.transformOrigin = '30px 200px';
+      l.style.animation = `raysAnim 900ms ${i * 60}ms ease-out forwards`;
+      l.style.opacity = '1';
+    });
+    setTimeout(() => { rays.style.opacity = '0'; }, 1000);
+
+    // Chat window spring animation
+    chat.style.animation = 'chatSpring 720ms cubic-bezier(0.34,1.38,0.64,1) forwards';
+
+    // DOM spark elements
+    spawnDOMSparks(chatX, chatY);
+
+    // Content cascade
+    setTimeout(() => {
+      const targets = chat.querySelectorAll('.anim-target');
+      targets.forEach(el => {
+        const delay = el.dataset.delay || '0';
+        const anim = el.dataset.anim || 'fadeUp';
+        el.classList.add(anim === 'popIn' ? 'anim-pop' : 'anim-fade');
+        el.style.animationDelay = delay + 's';
+      });
+    }, 50);
+  }
+
+  /* ── DOM sparks ── */
+  function spawnDOMSparks(cx, cy) {
+    for (let i = 0; i < 24; i++) {
+      const el = document.createElement('div');
+      el.className = 'spark';
+      const isStar = i % 2 === 0;
+      const size = rand(6, 14);
+      el.style.cssText = `
+        left:${cx + rand(-80, 80)}px;
+        top:${cy + rand(-40, 40)}px;
+        width:${size}px;height:${size}px;
+        --sx:${rand(-120, 120)}px;
+        --sy:${rand(-200, -40)}px;
+        --sr:${rand(-360, 360)}deg;
+        animation-delay:${i * 55}ms;
+        animation-duration:${rand(600, 1000)}ms;
+      `;
+      if (isStar) {
+        el.innerHTML = `<svg viewBox="0 0 12 12" width="${size}" height="${size}"><polygon points="6,0 7.5,4 12,4.5 8.5,7 9.5,11 6,9 2.5,11 3.5,7 0,4.5 4.5,4" fill="${pick(SPARK_COLORS)}"/></svg>`;
+      } else {
+        el.style.borderRadius = '50%';
+        el.style.background = pick(SPARK_COLORS);
+      }
+      page.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+  }
+
+  /* ── Main loop ── */
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Idle ambient particles
+    drawAmbients();
+
+    // Hero flight
+    if (heroFlying) {
+      heroT += 0.016;
+      if (heroT >= 1) {
+        heroT = 1;
+        heroFlying = false;
+        triggerImpact();
+      }
+
+      const pos = getFlightPos(heroT);
+      const posNext = getFlightPos(Math.min(heroT + 0.01, 1));
+      const posPrev = getFlightPos(Math.max(heroT - 0.01, 0));
+      const angle = Math.atan2(posNext.y - posPrev.y, posNext.x - posPrev.x);
+
+      // Update hero position
+      hero.style.left = (pos.x - 32) + 'px';
+      hero.style.top = (pos.y - 32) + 'px';
+      hero.style.transform = `rotate(${angle - Math.PI / 4}rad)`;
+
+      // Trail
+      trail.push({ x: pos.x, y: pos.y });
+      if (trail.length > TRAIL_LEN) trail.shift();
+
+      drawTrail();
+      drawAfterburner(pos.x, pos.y, angle);
+      drawSpeedLines(pos.x, pos.y, angle);
+
+      // Trail sparks
+      if (Math.random() < 0.65) {
+        spawnParticles(pos.x + rand(-8, 8), pos.y + rand(-8, 8), 1, {
+          speed: 2, life: 25, grav: [0.01, 0.04],
+          colors: ['#7b6fff', '#00ffcc'],
+        });
+      }
+    } else {
+      // Fade trail
+      if (trail.length > 0) {
+        trail.shift();
+        drawTrail();
+      }
+    }
+
+    // Explosion particles & waves
+    drawParticles();
+    drawWaves();
+
+    rafId = requestAnimationFrame(loop);
+  }
+
+  /* ── Reset ── */
+  function resetAll() {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = null;
+    animating = false;
+    heroFlying = false;
+    heroT = 0;
+    particles = [];
+    waves = [];
+    trail = [];
+
+    // Reset elements
+    launcher.style.opacity = '1';
+    hero.style.opacity = '0';
+    hero.style.animation = 'none';
+    hero.style.transform = 'none';
+    chat.style.animation = 'none';
+    chat.style.opacity = '0';
+    chat.style.transform = 'scale(.04) rotate(8deg)';
+    page.style.animation = 'none';
+    flash.style.opacity = '0';
+    rays.style.opacity = '0';
+
+    // Restore idle elements
+    orbWrap.style.display = '';
+    pulseRings.forEach(r => r.style.display = '');
+    glow.style.display = '';
+
+    // Reset chat content animations
+    chat.querySelectorAll('.anim-target').forEach(el => {
+      el.classList.remove('anim-fade', 'anim-pop');
+      el.style.animationDelay = '';
+    });
+
+    // Remove any leftover sparks
+    page.querySelectorAll('.spark').forEach(s => s.remove());
+
+    // Clear ray animations
+    rays.querySelectorAll('line').forEach(l => {
+      l.style.animation = 'none';
+      l.style.opacity = '0';
+    });
+
+    // Restart
+    initAmbients();
+    loop();
+  }
+
+  /* ── Init ── */
+  launcher.addEventListener('click', triggerAnimation);
+
+  // Double-click anywhere to reset (for demo purposes)
+  document.addEventListener('dblclick', (e) => {
+    if (e.target === launcher) return;
+    resetAll();
+  });
+
+  initAmbients();
+  loop();
+
+  // Expose reset globally
+  window.resetChatbotAnimation = resetAll;
+})();
+</script>
+</body>
+</html>

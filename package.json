@@ -1,0 +1,15 @@
+{
+  "name": "ecom-chatbot-cdn",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:panel": "vite build --mode panel",
+    "build:widget": "vite build --mode widget",
+    "build": "npm run build:panel && npm run build:widget",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

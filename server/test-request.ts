@@ -1,0 +1,1 @@
+const res = await fetch('http://localhost:3000/api/chat', { method: 'POST', body: JSON.stringify({ message: 'what type of sneakers you guys have?' }), headers: { 'Content-Type': 'application/json' } }); const reader = res.body!.getReader(); while (true) { const { done, value } = await reader.read(); if (done) break; console.log(new TextDecoder().decode(value)); }
