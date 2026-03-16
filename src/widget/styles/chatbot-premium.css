@@ -310,7 +310,7 @@
 .message {
     display: flex;
     flex-direction: column;
-    max-width: 85%;
+    max-width: 92%;
     animation: messageIn 0.2s cubic-bezier(0.16, 0.84, 0.44, 1) forwards;
     transition: transform 0.2s cubic-bezier(0.16, 0.84, 0.44, 1);
 }
@@ -343,7 +343,7 @@
 /* ========== 8. MESSAGE BUBBLES ========== */
 .message-bubble {
     padding: 14px 16px;
-    max-width: 75%;
+    max-width: 90%;
     font-size: 14px;
     line-height: 1.5;
     word-break: break-word;
@@ -574,7 +574,8 @@
 }
 
 .suggestion-chip {
-    padding: 8px 14px;
+    min-width: 140px;
+    padding: 10px 20px;
     background: #fff;
     border: 1.5px solid #e5e7eb;
     border-radius: 20px;

@@ -450,7 +450,7 @@ export function getStyles(config) {
         /* Individual Messages */
         .chatbot-message {
             display: flex;
-            max-width: 85%;
+            max-width: 92%;
             will-change: transform;
         }
 
@@ -506,7 +506,7 @@ export function getStyles(config) {
             padding: 14px 16px;
             font-size: 14px;
             line-height: 1.5;
-            max-width: 75%;
+            max-width: 90%;
             word-break: break-word;
             transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
             position: relative;
@@ -1187,9 +1187,10 @@ export function getStyles(config) {
         }
         .suggestion-chip {
             flex-shrink: 0;
-            padding: 8px 14px;
+            min-width: 140px;
+            padding: 10px 20px;
             border-radius: 9999px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 500;
             white-space: nowrap;
             background: #fff;

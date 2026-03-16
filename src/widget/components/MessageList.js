@@ -111,7 +111,7 @@ function createMessageBubble(message) {
     const isUser = message.type === 'user';
     bubble.style.cssText = `
         padding: 14px 16px;
-        max-width: 75%;
+        max-width: 90%;
         font-size: 14px;
         line-height: 1.5;
         border-radius: ${isUser ? '20px 20px 6px 20px' : '20px 20px 20px 6px'};
@@ -344,7 +344,8 @@ function createSuggestions(suggestions, onSuggestionClick) {
         chip.className = 'suggestion-chip';
         chip.textContent = suggestion;
         chip.style.cssText = `
-            padding: 8px 14px;
+            min-width: 140px;
+            padding: 10px 20px;
             background: white;
             border: 1.5px solid #e5e7eb;
             border-radius: 20px;
