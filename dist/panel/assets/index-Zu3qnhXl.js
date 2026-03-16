@@ -1,35 +1,17 @@
-export function getStyles(config) {
-    const isLeft = config.position.includes('left');
-    /* Design-Chatbot-Widget (Aura Concierge) design tokens */
-    const primary = config.primaryColor || '#2563eb';
-    const primaryIndigo = '#4f46e5';
-    const gradientHeader = `linear-gradient(135deg, ${primary}, ${primaryIndigo})`;
-    const gradientUser = `linear-gradient(135deg, ${primary}, ${primaryIndigo})`;
-    const panelBg = 'linear-gradient(180deg, #f8fafc, #eef2ff)';
-    const panelShadow = '0 20px 50px rgba(0,0,0,0.15)';
-    const botBubbleShadow = '0 6px 14px rgba(0,0,0,0.08)';
-    const colorTextMain = '#111827';
-    const colorTextMuted = '#6b7280';
-    const borderGray = '1px solid #e5e7eb';
-    const cardBorderRadius = '16px';
-    const primaryLight = '#60a5fa'; // light variant used in gradients/checkout btn
-    const cardDarkGradient = `background: #fff; border: ${borderGray};`; // inline product card base style
-    const cardStyle = `
+(function(){const t=document.createElement("link").relList;if(t&&t.supports&&t.supports("modulepreload"))return;for(const o of document.querySelectorAll('link[rel="modulepreload"]'))s(o);new MutationObserver(o=>{for(const n of o)if(n.type==="childList")for(const a of n.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&s(a)}).observe(document,{childList:!0,subtree:!0});function i(o){const n={};return o.integrity&&(n.integrity=o.integrity),o.referrerPolicy&&(n.referrerPolicy=o.referrerPolicy),o.crossOrigin==="use-credentials"?n.credentials="include":o.crossOrigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function s(o){if(o.ep)return;o.ep=!0;const n=i(o);fetch(o.href,n)}})();const ct=["Ask about products...","Find sneakers under $100...","Compare two products...","Show trending items...","What's on sale?","Recommend something for me..."],dt=["Show sneakers under $100","Trending items","Best running shoes","Summer jackets","What's on sale?","Add to cart"],pt=["Thinking...","Searching products...","Analyzing your request...","Looking for the best options..."],ht={botName:"Aura Concierge",botSubtitle:"Always Available",botAvatarUrl:"",position:"bottom-right",marginBottom:24,marginSide:24,primaryColor:"#2563eb",textColor:"#ffffff",backgroundColor:"#ffffff",headerStatus:"Always Available",quickActions:[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],autoDetectProduct:!0,greetingMessage:"Hi! I'm Aura, your shopping assistant. What can I help you with today?",inputPlaceholder:"Ask anything about orders, products...",placeholders:ct,suggestionChips:dt,welcomeMessage:"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",welcomeIconUrl:"",addToCartLabel:"Add to Cart",theme:"default",thinkingStatuses:pt,apiBaseUrl:""};function bt(r={}){return{...ht,...r}}function ut(r){const t=r.position.includes("left"),i=r.primaryColor||"#2563eb",s="#4f46e5",o=`linear-gradient(135deg, ${i}, ${s})`,n=`linear-gradient(135deg, ${i}, ${s})`,a="linear-gradient(180deg, #f8fafc, #eef2ff)",e="0 20px 50px rgba(0,0,0,0.15)",l="0 6px 14px rgba(0,0,0,0.08)",p="#111827",d="#6b7280",c="1px solid #e5e7eb",m="16px",u="#60a5fa",h=`background: #fff; border: ${c};`,y=`
         background: #fff;
-        border: ${borderGray};
-        border-radius: ${cardBorderRadius};
-        box-shadow: ${botBubbleShadow};
-    `;
-
-    return `
+        border: ${c};
+        border-radius: ${m};
+        box-shadow: ${l};
+    `;return`
         /* Design-Chatbot-Widget (Aura Concierge) carbon copy */
         :host {
-            --primary-color: ${primary};
-            --primary-indigo: ${primaryIndigo};
+            --primary-color: ${i};
+            --primary-indigo: ${s};
             --text-color: #ffffff;
             --bg-color: #ffffff;
             --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --shadow-panel: ${panelShadow};
+            --shadow-panel: ${e};
             --border-radius: 18px;
             --transition-speed: 0.3s;
         }
@@ -45,14 +27,14 @@ export function getStyles(config) {
         /* Main Container layout */
         .ecom-chatbot-wrapper {
             position: fixed;
-            ${config.position.includes('bottom') ? `bottom: ${config.marginBottom}px;` : `top: ${config.marginBottom}px;`}
-            ${isLeft ? `left: ${config.marginSide}px;` : `right: ${config.marginSide}px;`}
+            ${r.position.includes("bottom")?`bottom: ${r.marginBottom}px;`:`top: ${r.marginBottom}px;`}
+            ${t?`left: ${r.marginSide}px;`:`right: ${r.marginSide}px;`}
             z-index: 999999;
             display: flex;
             flex-direction: column;
-            align-items: ${isLeft ? 'flex-start' : 'flex-end'};
+            align-items: ${t?"flex-start":"flex-end"};
             pointer-events: none; /* Let clicks pass through wrapper */
-            max-width: calc(100% - ${config.marginSide * 2}px);
+            max-width: calc(100% - ${r.marginSide*2}px);
         }
 
         /* Launcher — Design-Chatbot-Widget: 56px, gradient, shadow */
@@ -67,7 +49,7 @@ export function getStyles(config) {
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: ${gradientHeader};
+            background: ${o};
             color: #fff;
             border: none;
             padding: 0;
@@ -148,15 +130,15 @@ export function getStyles(config) {
         /* Chat Window — Design-Chatbot-Widget: 360×600, 18px radius, gradient glass */
         .chatbot-window {
             width: 360px;
-            max-width: min(360px, calc(100vw - ${config.marginSide * 2 + 8}px));
+            max-width: min(360px, calc(100vw - ${r.marginSide*2+8}px));
             height: 600px;
-            max-height: min(600px, calc(100vh - ${config.marginBottom + 80}px));
+            max-height: min(600px, calc(100vh - ${r.marginBottom+80}px));
             min-height: 400px;
-            background: ${panelBg};
+            background: ${a};
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 18px;
-            box-shadow: ${panelShadow};
+            box-shadow: ${e};
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -200,7 +182,7 @@ export function getStyles(config) {
             .chatbot-toggle-btn {
                 position: fixed;
                 bottom: 30px;
-                ${isLeft ? 'left: 20px;' : 'right: 20px;'}
+                ${t?"left: 20px;":"right: 20px;"}
                 z-index: 1000000;
             }
             .chatbot-input-area {
@@ -222,7 +204,7 @@ export function getStyles(config) {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: ${gradientHeader};
+            background: ${o};
             color: #fff;
             flex-shrink: 0;
         }
@@ -237,7 +219,7 @@ export function getStyles(config) {
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            background: ${gradientHeader};
+            background: ${o};
             box-shadow: 0 0 10px rgba(59,130,246,0.5);
             display: flex;
             align-items: center;
@@ -320,7 +302,7 @@ export function getStyles(config) {
             padding: 0 4px;
             border-radius: 50%;
             background: #fff;
-            color: ${primary};
+            color: ${i};
             font-size: 10px;
             font-weight: 700;
             display: flex;
@@ -468,15 +450,15 @@ export function getStyles(config) {
         .chatbot-message.bot .chatbot-bubble {
             border-radius: 20px 20px 20px 6px;
             background: #fff;
-            color: ${colorTextMain};
-            box-shadow: ${botBubbleShadow};
+            color: ${p};
+            box-shadow: ${l};
         }
         .chatbot-message.bot .chatbot-bubble:hover {
             box-shadow: 0 8px 20px rgba(0,0,0,0.12);
         }
         .chatbot-message.user .chatbot-bubble {
             border-radius: 20px 20px 6px 20px;
-            background: ${gradientUser};
+            background: ${n};
             color: #fff;
             box-shadow: 0 8px 20px rgba(37,99,235,0.3);
         }
@@ -513,7 +495,7 @@ export function getStyles(config) {
             background: rgba(0,0,0,0.04);
             border-radius: 0 6px 6px 0;
             font-size: 13px;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .chatbot-bubble .md-hr {
@@ -576,7 +558,7 @@ export function getStyles(config) {
         }
 
         .chatbot-message.bot .chatbot-bubble {
-            color: ${colorTextMain};
+            color: ${p};
         }
         .chatbot-message.user .chatbot-bubble {
             color: #fff;
@@ -611,7 +593,7 @@ export function getStyles(config) {
 
         /* Product Card — Design-Chatbot-Widget: white, rounded-2xl, shadow */
         .chatbot-product-card {
-            ${cardStyle}
+            ${y}
             overflow: hidden;
             width: 240px;
             margin-top: 5px;
@@ -631,13 +613,13 @@ export function getStyles(config) {
         .chatbot-product-title {
             font-size: 14px;
             font-weight: 600;
-            color: ${colorTextMain};
+            color: ${p};
             margin-bottom: 5px;
         }
 
         .chatbot-product-desc {
             font-size: 11px;
-            color: ${colorTextMuted};
+            color: ${d};
             margin-bottom: 12px;
             line-height: 1.4;
         }
@@ -645,7 +627,7 @@ export function getStyles(config) {
         .chatbot-product-header h4 {
             margin: 0;
             font-size: 14px;
-            color: ${colorTextMain};
+            color: ${p};
             line-height: 1.3;
         }
 
@@ -667,7 +649,7 @@ export function getStyles(config) {
         .carousel-heading {
             font-size: 12px;
             font-weight: 500;
-            color: ${colorTextMuted};
+            color: ${d};
             margin: 0;
             padding: 0 4px;
         }
@@ -707,14 +689,14 @@ export function getStyles(config) {
             height: 32px;
             border-radius: 50%;
             background: rgba(255,255,255,0.95);
-            border: ${borderGray};
+            border: ${c};
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
-            color: ${colorTextMain};
+            color: ${p};
             transition: all 0.2s;
         }
         .carousel-nav-btn:hover {
@@ -740,7 +722,7 @@ export function getStyles(config) {
             background: #fff;
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: ${botBubbleShadow};
+            box-shadow: ${l};
             flex-shrink: 0;
         }
         .carousel-card .chatbot-product-img {
@@ -765,10 +747,10 @@ export function getStyles(config) {
         .size-pill {
             padding: 4px 8px;
             font-size: 11px;
-            border: ${borderGray};
+            border: ${c};
             border-radius: 4px;
             background: #fff;
-            color: ${colorTextMain};
+            color: ${p};
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -826,13 +808,13 @@ export function getStyles(config) {
             display: flex;
             align-items: center;
             background: #fff;
-            border: ${borderGray};
+            border: ${c};
             border-radius: 28px;
             padding: 10px 14px 10px 12px;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
         .chatbot-input-wrap:focus-within {
-            border-color: ${primary};
+            border-color: ${i};
             box-shadow: 0 0 0 3px rgba(37,99,235,0.25);
         }
         .chatbot-input {
@@ -840,7 +822,7 @@ export function getStyles(config) {
             border: none;
             outline: none;
             font-size: 14px;
-            color: ${colorTextMain};
+            color: ${p};
             background: transparent;
             padding: 0 8px;
             min-width: 0;
@@ -863,7 +845,7 @@ export function getStyles(config) {
             transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
         }
         .chatbot-send-btn.active {
-            background: ${gradientHeader};
+            background: ${o};
             box-shadow: 0 4px 10px rgba(37,99,235,0.3);
         }
         .chatbot-send-btn.active:hover {
@@ -892,7 +874,7 @@ export function getStyles(config) {
             margin-right: 4px;
         }
         .chatbot-input-area .chatbot-attach-btn:hover {
-            color: ${colorTextMain};
+            color: ${p};
         }
         .chatbot-input-area .chatbot-attach-btn svg {
             width: 16px;
@@ -971,9 +953,9 @@ export function getStyles(config) {
         .welcome-bubble {
             position: absolute;
             bottom: 72px;
-            ${isLeft ? 'left: 0;' : 'right: 0;'}
+            ${t?"left: 0;":"right: 0;"}
             background: #fff;
-            color: ${primary};
+            color: ${i};
             padding: 12px 20px;
             border-radius: 16px;
             box-shadow: 0 0 40px rgba(37,99,235,0.25);
@@ -983,7 +965,7 @@ export function getStyles(config) {
             opacity: 1;
             transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: auto;
-            transform-origin: bottom ${isLeft ? 'left' : 'right'};
+            transform-origin: bottom ${t?"left":"right"};
             animation: welcome-float 3s ease-in-out infinite;
         }
         .welcome-bubble.hidden {
@@ -1014,7 +996,7 @@ export function getStyles(config) {
             padding: 14px 16px;
             border-radius: 20px 20px 20px 6px;
             background: #fff;
-            box-shadow: ${botBubbleShadow};
+            box-shadow: ${l};
         }
         .typing-indicator .dot {
             width: 6px;
@@ -1086,7 +1068,7 @@ export function getStyles(config) {
             white-space: nowrap;
             background: #fff;
             color: #374151;
-            border: ${borderGray};
+            border: ${c};
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             transition: box-shadow 0.2s, transform 0.2s;
@@ -1182,7 +1164,7 @@ export function getStyles(config) {
             align-items: center;
             justify-content: center;
             background: rgba(37, 99, 235, 0.06);
-            color: ${primary};
+            color: ${i};
         }
 
         .quick-action-icon-box svg {
@@ -1199,13 +1181,13 @@ export function getStyles(config) {
         .quick-action-title {
             font-size: 13px;
             font-weight: 700;
-            color: ${colorTextMain};
+            color: ${p};
             line-height: 1.2;
         }
 
         .quick-action-desc {
             font-size: 11px;
-            color: ${colorTextMuted};
+            color: ${d};
             line-height: 1.2;
         }
 
@@ -1228,7 +1210,7 @@ export function getStyles(config) {
             gap: 6px;
             background: #fff;
             border: 1px solid rgba(209,213,219,0.9);
-            color: ${colorTextMain};
+            color: ${p};
             padding: 10px 12px;
             border-radius: 16px;
             font-size: 12px;
@@ -1239,7 +1221,7 @@ export function getStyles(config) {
         }
 
         .preset-pill:hover {
-            background: ${gradientHeader};
+            background: ${o};
             color: #fff;
             border-color: transparent;
             transform: translateY(-2px);
@@ -1256,7 +1238,7 @@ export function getStyles(config) {
             border: 1px solid rgba(37,99,235,0.2);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: ${botBubbleShadow};
+            box-shadow: ${l};
         }
         .chatbot-cart-card .chatbot-section-card-title {
             padding: 16px 20px;
@@ -1274,7 +1256,7 @@ export function getStyles(config) {
             padding: 14px 18px;
             font-size: 14px;
             font-weight: 600;
-            color: ${colorTextMain};
+            color: ${p};
             border-bottom: 1px solid rgba(0,0,0,0.06);
         }
         .chatbot-section-card-body {
@@ -1282,7 +1264,7 @@ export function getStyles(config) {
         }
         .chatbot-cart-empty {
             padding: 16px 0;
-            color: ${colorTextMuted};
+            color: ${d};
             font-size: 13px;
             text-align: center;
         }
@@ -1315,7 +1297,7 @@ export function getStyles(config) {
         .chatbot-cart-item-title {
             font-size: 13px;
             font-weight: 500;
-            color: ${colorTextMain};
+            color: ${p};
             margin-bottom: 4px;
         }
         .chatbot-cart-item-pricing {
@@ -1334,7 +1316,7 @@ export function getStyles(config) {
             margin-top: 6px;
             border-top: 1px solid rgba(0,0,0,0.08);
         }
-        .chatbot-cart-total-label { color: ${colorTextMain}; font-size: 14px; }
+        .chatbot-cart-total-label { color: ${p}; font-size: 14px; }
         .chatbot-cart-total-value { color: var(--primary-color); font-size: 16px; font-weight: 700; }
         .chatbot-cart-checkout-footer {
             padding: 18px 20px;
@@ -1344,7 +1326,7 @@ export function getStyles(config) {
         .chatbot-cart-checkout-prompt {
             margin: 0 0 12px 0;
             font-size: 13px;
-            color: ${colorTextMuted};
+            color: ${d};
             font-weight: 500;
         }
         .chatbot-cart-checkout-btn {
@@ -1354,7 +1336,7 @@ export function getStyles(config) {
             font-size: 14px;
             font-weight: 600;
             color: #fff;
-            background: linear-gradient(135deg, var(--primary-color) 0%, ${primaryLight} 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, ${u} 100%);
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -1375,7 +1357,7 @@ export function getStyles(config) {
         .chatbot-cart-suggestions-text {
             margin: 0 0 10px 0;
             font-size: 12px;
-            color: ${colorTextMuted};
+            color: ${d};
             font-weight: 500;
         }
         .chatbot-cart-suggestion-pills {
@@ -1390,7 +1372,7 @@ export function getStyles(config) {
             border-radius: 20px;
             border: 1px solid rgba(1, 100, 255, 0.35);
             background: rgba(0,0,0,0.04);
-            color: ${colorTextMain};
+            color: ${p};
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -1442,7 +1424,7 @@ export function getStyles(config) {
         }
         .chatbot-order-date {
             font-size: 12px;
-            color: ${colorTextMuted};
+            color: ${d};
         }
         .chatbot-order-status {
             font-size: 11px;
@@ -1471,7 +1453,7 @@ export function getStyles(config) {
         }
         .order-status-default {
             background: rgba(0,0,0,0.08);
-            color: ${colorTextMuted};
+            color: ${d};
         }
         .chatbot-order-items {
             display: flex;
@@ -1481,7 +1463,7 @@ export function getStyles(config) {
         }
         .chatbot-order-item-line {
             font-size: 12px;
-            color: ${colorTextMain};
+            color: ${p};
             opacity: 0.95;
         }
         .chatbot-order-total {
@@ -1494,7 +1476,7 @@ export function getStyles(config) {
         .chatbot-order-history-empty {
             padding: 24px 16px;
             text-align: center;
-            color: ${colorTextMuted};
+            color: ${d};
             font-size: 14px;
         }
 
@@ -1526,11 +1508,11 @@ export function getStyles(config) {
             cursor: pointer;
             transition: all 0.2s;
             background: transparent;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .checkout-auth-tab.active {
-            background: ${primary};
+            background: ${i};
             color: #fff;
         }
 
@@ -1538,7 +1520,7 @@ export function getStyles(config) {
             background: #fff;
             border-radius: 16px;
             padding: 16px;
-            box-shadow: ${botBubbleShadow};
+            box-shadow: ${l};
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -1555,7 +1537,7 @@ export function getStyles(config) {
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .checkout-input-wrap {
@@ -1584,14 +1566,14 @@ export function getStyles(config) {
         }
 
         .checkout-input:focus {
-            border-color: ${primary};
+            border-color: ${i};
             box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
         }
 
         .checkout-primary-btn {
             width: 100%;
             padding: 12px;
-            background: ${gradientHeader};
+            background: ${o};
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -1639,7 +1621,7 @@ export function getStyles(config) {
         .address-icon-box {
             padding: 10px;
             border-radius: 12px;
-            background: ${primary};
+            background: ${i};
             color: #fff;
         }
 
@@ -1676,7 +1658,7 @@ export function getStyles(config) {
         .address-name {
             font-size: 13px;
             font-weight: 600;
-            color: ${colorTextMain};
+            color: ${p};
         }
 
         .address-type {
@@ -1691,7 +1673,7 @@ export function getStyles(config) {
 
         .address-text {
             font-size: 11px;
-            color: ${colorTextMuted};
+            color: ${d};
             line-height: 1.4;
         }
 
@@ -1710,7 +1692,7 @@ export function getStyles(config) {
             border: 2px dashed #d1d5db;
             border-radius: 16px;
             background: transparent;
-            color: ${colorTextMuted};
+            color: ${d};
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
@@ -1722,8 +1704,8 @@ export function getStyles(config) {
         }
 
         .checkout-add-address:hover {
-            border-color: ${primary};
-            color: ${primary};
+            border-color: ${i};
+            color: ${i};
             background: rgba(37,99,235,0.02);
         }
 
@@ -1750,24 +1732,24 @@ export function getStyles(config) {
         .method-icon-box {
             padding: 10px;
             border-radius: 12px;
-            background: ${primary};
+            background: ${i};
             color: #fff;
         }
 
         .checkout-method-card:not(.selected) .method-icon-box {
             background: rgba(37, 99, 235, 0.05);
-            color: ${primary};
+            color: ${i};
         }
 
         .method-info h4 {
             font-size: 13px;
             font-weight: 600;
-            color: ${colorTextMain};
+            color: ${p};
         }
 
         .method-info p {
             font-size: 11px;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .checkout-summary-card {
@@ -1786,7 +1768,7 @@ export function getStyles(config) {
             font-size: 13px;
             font-weight: 800;
             text-transform: uppercase;
-            color: ${colorTextMain};
+            color: ${p};
             letter-spacing: 0.08em;
             margin-bottom: 4px;
         }
@@ -1795,7 +1777,7 @@ export function getStyles(config) {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .summary-row.total {
@@ -1804,11 +1786,11 @@ export function getStyles(config) {
             border-top: 2px solid #f3f4f6;
             font-weight: 800;
             font-size: 16px;
-            color: ${colorTextMain};
+            color: ${p};
         }
 
         .total-value {
-            color: ${primary};
+            color: ${i};
             font-size: 22px;
         }
 
@@ -1852,22 +1834,22 @@ export function getStyles(config) {
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            color: ${colorTextMuted};
+            color: ${d};
         }
 
         .order-number-badge b {
-            color: ${colorTextMain};
+            color: ${p};
             font-size: 12px;
         }
 
         .stock-in { color: #22c55e; font-size: 12px; }
         .stock-out { color: #ef4444; font-size: 12px; }
-        .price-original { text-decoration: line-through; color: ${colorTextMuted}; font-size: 12px; margin-left: 6px; }
+        .price-original { text-decoration: line-through; color: ${d}; font-size: 12px; margin-left: 6px; }
 
         /* Inline product card (inside stream) */
         .chatbot-inline-product {
             margin-top: 10px;
-            ${cardDarkGradient}
+            ${h}
             border-radius: 12px;
             overflow: hidden;
             box-shadow: var(--shadow-sm);
@@ -2010,9 +1992,240 @@ export function getStyles(config) {
         /* When inside a sized container (e.g. Botify panel Live Preview), fit full chatbox in view */
         @container chatbot-preview (min-height: 200px) {
             .chatbot-window {
-                max-height: min(520px, calc(100cqb - ${config.marginBottom + 98}px));
-                min-height: min(320px, calc(100cqb - ${config.marginBottom + 98}px));
+                max-height: min(520px, calc(100cqb - ${r.marginBottom+98}px));
+                min-height: min(320px, calc(100cqb - ${r.marginBottom+98}px));
             }
         }
-    `;
-}
+    `}const gt='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>';function mt(r,t={}){const{onClose:i,onCartClick:s,cartCount:o=0}=t,n=document.createElement("header");n.className="chatbot-header";const a=r.botName??"Aura Concierge",e=r.headerStatus??"Always Available",l=document.createElement("div");l.className="chatbot-header-left";const p=document.createElement("div");if(p.className="chatbot-header-avatar",r.botAvatarUrl){const k=document.createElement("img");k.src=r.botAvatarUrl,k.alt=`${a} avatar`,p.appendChild(k)}else p.innerHTML=gt;const d=document.createElement("div");d.className="chatbot-header-info";const c=document.createElement("h3");c.className="chatbot-header-title",c.textContent=a;const m=document.createElement("div");m.className="chatbot-header-row";const u=document.createElement("span");u.className="chatbot-header-status-dot";const h=document.createElement("span");h.className="chatbot-header-status",h.textContent=e,m.appendChild(u),m.appendChild(h),d.appendChild(c),d.appendChild(m),l.appendChild(p),l.appendChild(d),n.appendChild(l);const y=document.createElement("div");if(y.className="chatbot-header-actions",typeof s=="function"){const k=document.createElement("button");if(k.type="button",k.className="chatbot-header-btn",k.setAttribute("aria-label","View cart"),k.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',o>0){const M=document.createElement("span");M.className="chatbot-cart-badge",M.textContent=o>99?"99+":String(o),k.style.position="relative",k.appendChild(M)}k.addEventListener("click",s),y.appendChild(k)}const w=document.createElement("button");return w.type="button",w.className="chatbot-header-btn",w.setAttribute("aria-label","Close"),w.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',w.addEventListener("click",()=>i&&i()),y.appendChild(w),n.appendChild(y),n}function tt(r,t={}){const i=t.strength??.15,s=t.radius??80;if(!r||typeof r.addEventListener!="function")return;let o=null,n=0,a=0,e=0,l=0;const p=(c,m,u)=>c+(m-c)*u,d=()=>{n=p(n,e,.2),a=p(a,l,.2),Math.abs(n-e)<.01&&(n=e),Math.abs(a-l)<.01&&(a=l),r.style.transform=`translate(${n}px, ${a}px)`,Math.abs(n)>.01||Math.abs(a)>.01||e!==0||l!==0?o=requestAnimationFrame(d):(o=null,r.style.willChange="")};return r.addEventListener("mouseenter",()=>{r.style.willChange="transform"}),r.addEventListener("mouseleave",()=>{e=0,l=0,o||(o=requestAnimationFrame(d))}),r.addEventListener("mousemove",c=>{const m=r.getBoundingClientRect(),u=m.left+m.width/2,h=m.top+m.height/2,y=c.clientX-u,w=c.clientY-h,k=Math.sqrt(y*y+w*w);if(k<s){const M=(1-k/s)*i;e=y*M,l=w*M}else e=0,l=0;o||(o=requestAnimationFrame(d))}),()=>{o&&cancelAnimationFrame(o)}}function ft(){const r=document.createElement("div");return r.className="chatbot-messages",r.id="chatbot-messages-container",r}function K(r){if(!r)return"";let t=r;return t=t.replace(/\|(.+)\|[ \t]*\n\|[ \t]*[-:| \t]+[ \t]*\n((?:\|.+\|[ \t]*\n?)+)/g,(i,s,o)=>{const n=s.split("|").filter(e=>e.trim()).map(e=>`<th>${e.trim()}</th>`).join(""),a=o.trim().split(`
+`).filter(e=>e.trim()).map(e=>`<tr>${e.split("|").filter(p=>p.trim()).map(p=>`<td>${p.trim()}</td>`).join("")}</tr>`).join("");return`<div class="md-table-wrap"><table><thead><tr>${n}</tr></thead><tbody>${a}</tbody></table></div>
+`}),t=t.replace(/^>\s?(.*)$/gm,"<blockquote>$1</blockquote>"),t=t.replace(/^###\s+(.+)$/gm,'<h3 class="md-h3">$1</h3>'),t=t.replace(/^##\s+(.+)$/gm,'<h2 class="md-h2">$1</h2>'),t=t.replace(/^#\s+(.+)$/gm,'<h1 class="md-h1">$1</h1>'),t=t.replace(/^---+$/gm,'<hr class="md-hr"/>'),t=t.replace(/((?:^[ \t]*[-*]\s+.+\n?)+)/gm,i=>`<ul class="md-list">${i.trim().split(`
+`).map(o=>`<li>${o.replace(/^[ \t]*[-*]\s+/,"")}</li>`).join("")}</ul>
+`),t=t.replace(/\*\*\*(.+?)\*\*\*/g,"<strong><em>$1</em></strong>"),t=t.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"),t=t.replace(/\*([^*\n]+?)\*/g,"<em>$1</em>"),t=t.replace(/`([^`]+)`/g,'<code class="md-code">$1</code>'),t=t.replace(/\n{2,}/g,'</p><p class="md-p">'),t=t.replace(/\n/g,"<br/>"),t=`<p class="md-p">${t}</p>`,t}function xt(){const r=document.createElement("span");r.className="chatbot-timestamp";const t=new Date,i=String(t.getHours()).padStart(2,"0"),s=String(t.getMinutes()).padStart(2,"0");return r.textContent=`${i}:${s}`,r}function q(r,t=!0,i=null,s=null){const o=document.createElement("div");o.className=`chatbot-message ${t?"bot":"user"} ${t?"msg-enter-bot":"msg-enter-user"}`;const n=document.createElement("div");if(n.className="chatbot-bubble",t){const l=i!=null&&i.launcherIconUrl?`<img src="${i.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';o.innerHTML=`
+            <div class="chatbot-message-avatar">
+                ${l}
+            </div>
+        `;const p=/\[Action:\s*(.*?)\]/g;let d=[],c=r.replace(p,(m,u)=>(d.push(u),""));if(n.innerHTML=K(c),o.appendChild(n),d.length>0&&s){const m=document.createElement("div");m.className="chatbot-actions",d.forEach(u=>{const h=document.createElement("button");h.type="button",h.className="action-btn",h.textContent=u,h.onclick=()=>s(u),tt(h,{strength:.1,radius:50}),m.appendChild(h)}),o.appendChild(m)}}else n.innerHTML=K(r),o.appendChild(n);const a=document.createElement("div");a.className=`chatbot-message-ts-row ${t?"ts-bot":"ts-user"}`;const e=xt();return a.appendChild(e),o.appendChild(a),o}function rt(r,t,i=null){const s=document.createElement("div");s.className="chatbot-message bot-message msg-enter-product";const n=`
+        <div class="chatbot-message-avatar">
+            ${i!=null&&i.launcherIconUrl?`<img src="${i.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>'}
+        </div>
+    `,a=document.createElement("div");a.style.display="flex",a.style.width="100%",a.innerHTML=n;const e=document.createElement("div");e.className="carousel-container",e.style.flex="1",e.style.minWidth="0",e.style.display="flex",e.style.flexDirection="column",e.style.gap="6px";const l=["Have a look","Choose from these","Here are some picks"],p=l[Math.floor(Math.random()*l.length)],d=document.createElement("div");d.className="carousel-heading",d.textContent=p,e.appendChild(d);const c=document.createElement("div");c.className="carousel-row",c.style.display="flex",c.style.alignItems="center",c.style.position="relative";const m=document.createElement("button");m.className="carousel-nav-btn carousel-nav-left",m.innerHTML='<svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>';const u=document.createElement("button");u.className="carousel-nav-btn carousel-nav-right",u.innerHTML='<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';const h=document.createElement("div");h.className="chatbot-product-carousel";const y=232;return m.addEventListener("click",()=>{h.scrollBy({left:-y,behavior:"smooth"})}),u.addEventListener("click",()=>{h.scrollBy({left:y,behavior:"smooth"})}),r.forEach(w=>{const k=document.createElement("div");k.className="carousel-card",k.innerHTML=`
+            <img src="${w.image||"https://placehold.co/300x200?text=Product"}" class="chatbot-product-img" alt="${w.title||"Product Image"}" />
+            <div class="chatbot-product-content">
+                <div class="chatbot-product-header">
+                    <h4>${w.title||"Unknown Product"}</h4>
+                    <span class="chatbot-product-price">${w.price||""}</span>
+                </div>
+            </div>
+        `;const M=k.querySelector(".chatbot-product-content");let T=null;if(w.sizes&&Array.isArray(w.sizes)){const z=document.createElement("div");z.className="chatbot-product-sizes";const L=document.createElement("div");L.className="sizes-list",w.sizes.forEach(G=>{const W=document.createElement("button");W.className="size-pill",W.innerText=G,W.addEventListener("click",()=>{L.querySelectorAll(".size-pill").forEach(V=>V.classList.remove("selected")),W.classList.add("selected"),T=G}),L.appendChild(W)}),z.appendChild(L),M.appendChild(z)}const N=document.createElement("div");N.className="chatbot-product-action",N.innerText=(i==null?void 0:i.addToCartLabel)||"Add to Cart",N.addEventListener("click",()=>{if(w.sizes&&!T){alert("Please select a size first!");return}t&&t(w,T)}),M.appendChild(N),yt(k,"carousel-card-3d"),h.appendChild(k)}),c.appendChild(m),c.appendChild(h),c.appendChild(u),e.appendChild(c),a.appendChild(e),s.appendChild(a),s}function yt(r,t="chatbot-product-card-3d"){r&&(r.classList.add(t),r.addEventListener("mousemove",i=>{const s=r.getBoundingClientRect(),o=(i.clientX-s.left)/s.width,a=((i.clientY-s.top)/s.height-.5)*8,e=(o-.5)*-8,l=4;r.style.transform=`perspective(800px) rotateX(${a}deg) rotateY(${e}deg) translateY(-${l}px)`}),r.addEventListener("mouseleave",()=>{r.style.transform=""}))}function vt(){const r=document.createElement("div");return r.className="chatbot-message bot msg-enter-bot",r.setAttribute("data-skeleton","true"),r.innerHTML=`
+        <div class="chatbot-message-avatar" style="opacity:0.6;"></div>
+        <div class="skeleton-product-row">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+    `,r}function wt(r,t,i){if(!r||r.length===0)return null;const s=document.createElement("div");return s.className="chatbot-suggestion-chips",r.forEach(o=>{const n=document.createElement("button");n.type="button",n.className="suggestion-chip",n.textContent=o,n.addEventListener("click",()=>t(o)),tt(n,{strength:.1,radius:50}),s.appendChild(n)}),s}function nt(r,t={}){if(!r||!r.items||!Array.isArray(r.items))return null;const{items:i,total:s}=r,{onCheckout:o,onAddMore:n}=t,a=document.createElement("div");a.className="chatbot-section-card chatbot-cart-card msg-enter-product";const e=typeof s=="number"?`$${s.toFixed(2)}`:s||"$0.00",l='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';let p=i.length===0?'<div class="chatbot-cart-empty">Your cart is empty. Add items to see them here.</div>':i.map(u=>{const h=u.originalPrice?`<span class="price-original">${u.originalPrice}</span>`:"",w=(u.stockStatus||"").toLowerCase().includes("out of stock")?"stock-out":"stock-in";return`
+            <div class="chatbot-section-card-row chatbot-cart-item">
+                <img class="chatbot-cart-item-img" src="${u.image||"https://placehold.co/80x80?text=Product"}" alt="${(u.title||"").slice(0,30)}" />
+                <div class="chatbot-cart-item-info">
+                    <div class="chatbot-cart-item-title">${u.title||"Product"}</div>
+                    <div class="chatbot-cart-item-pricing">
+                        <span class="chatbot-product-price">${u.price||""}</span>${h}
+                    </div>
+                    <div class="${w}">${u.stockStatus||"In Stock"}</div>
+                </div>
+            </div>
+        `}).join("");p+=`
+        <div class="chatbot-section-card-row chatbot-cart-total-row">
+            <span class="chatbot-cart-total-label">Grand Total</span>
+            <span class="chatbot-cart-total-value">${e}</span>
+        </div>
+    `;const d=i.length>0&&o?`<div class="chatbot-cart-checkout-footer">
+            <p class="chatbot-cart-checkout-prompt">Would you like to proceed to checkout?</p>
+            <button type="button" class="chatbot-cart-checkout-btn">Proceed to checkout</button>
+        </div>`:"",c=i.length>0&&(o||n),m=c?`<div class="chatbot-cart-suggestions">
+            <p class="chatbot-cart-suggestions-text">Add something else? Or proceed to checkout.</p>
+            <div class="chatbot-cart-suggestion-pills"></div>
+        </div>`:"";if(a.innerHTML=`
+        <div class="chatbot-section-card-title chatbot-cart-card-title">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                ${l}
+                <span>Your Cart</span>
+            </div>
+            <button type="button" class="chatbot-cart-edit-link" style="background: none; border: none; color: ${primary}; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">Edit Bag</button>
+        </div>
+        <div class="chatbot-section-card-body">${p}</div>
+        ${d}
+        ${m}
+    `,i.length>0&&o){const u=a.querySelector(".chatbot-cart-checkout-btn");u&&u.addEventListener("click",()=>o());const h=a.querySelector(".chatbot-cart-edit-link");h&&h.addEventListener("click",()=>n&&n())}if(c){const u=a.querySelector(".chatbot-cart-suggestion-pills");if(u){if(n){const h=document.createElement("button");h.type="button",h.className="chatbot-cart-pill",h.textContent="Add another product",h.addEventListener("click",()=>n()),u.appendChild(h)}if(o){const h=document.createElement("button");h.type="button",h.className="chatbot-cart-pill chatbot-cart-pill-checkout",h.textContent="Proceed to checkout",h.addEventListener("click",()=>o()),u.appendChild(h)}}}return a}function st(r){if(!r||!Array.isArray(r))return null;const t=document.createElement("div");t.className="chatbot-section-card chatbot-order-history-card msg-enter-product";const i='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',s=n=>{const a=(n||"").toLowerCase();return a==="delivered"?"order-status-delivered":a==="shipped"?"order-status-shipped":a==="processing"?"order-status-processing":a==="cancelled"?"order-status-cancelled":"order-status-default"};let o=r.length===0?'<div class="chatbot-order-history-empty">You don’t have any past orders yet.</div>':r.map(n=>{const a=typeof n.total=="number"?`$${n.total.toFixed(2)}`:n.total!=null?`$${Number(n.total).toFixed(2)}`:"—",e=(n.items||[]).map(l=>`<span class="chatbot-order-item-line">${l.title||"Item"} ${l.price?` · ${l.price}`:""}</span>`).join("");return`
+                <div class="chatbot-order-block">
+                    <div class="chatbot-order-block-header">
+                        <span class="chatbot-order-id">${n.id||"—"}</span>
+                        <span class="chatbot-order-date">${n.date||"—"}</span>
+                        <span class="chatbot-order-status ${s(n.status)}">${n.status||"—"}</span>
+                    </div>
+                    <div class="chatbot-order-items">${e||'<span class="chatbot-order-item-line">No items</span>'}</div>
+                    <div class="chatbot-order-total">Total ${a}</div>
+                </div>
+            `}).join("");return t.innerHTML=`
+        <div class="chatbot-section-card-title chatbot-order-history-title">
+            ${i}
+            <span>Order History</span>
+        </div>
+        <div class="chatbot-section-card-body chatbot-order-history-body">${o}</div>
+    `,t}const it=['<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h6"/></svg>'];function kt(r,t={}){const{onAction:i}=t,s=document.createElement("div");return s.className="chatbot-quick-actions-grid",r.forEach((o,n)=>{const a=o.icon!=null?o.icon:it[n]??it[0],e=document.createElement("div");e.className="quick-action-card msg-enter-product",e.innerHTML=`
+            <div class="quick-action-icon-box">${a}</div>
+            <div class="quick-action-info">
+                <span class="quick-action-title">${(o.title||"").replace(/</g,"&lt;")}</span>
+                <span class="quick-action-desc">${(o.desc||"").replace(/</g,"&lt;")}</span>
+            </div>
+        `;const l=o.message!=null?o.message:o.title||"";e.onclick=()=>i("quickAction",{...o,message:l}),s.appendChild(e)}),s}function Ct(r,t={}){const{step:i,data:s,state:o}=r,{onAction:n}=t,a=document.createElement("div");if(a.className="chatbot-checkout-wrapper msg-enter-product",i==="mobile"){a.innerHTML=`
+            <div class="checkout-auth-tabs">
+                <button class="checkout-auth-tab active">Login</button>
+                <button class="checkout-auth-tab">Sign Up</button>
+            </div>
+            <div class="checkout-form-card">
+                <div class="checkout-field">
+                    <label>Mobile Number</label>
+                    <div class="checkout-input-wrap">
+                        <span style="position: absolute; left: 12px; font-size: 13px; font-weight: 600; color: ${colorTextMain}">+91</span>
+                        <input type="tel" class="checkout-input" style="padding-left: 45px" placeholder="9876543210" id="checkout-mobile" value="${o.mobile||""}" />
+                    </div>
+                </div>
+                <button class="checkout-primary-btn" id="mobile-submit-btn">
+                    Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    <span style="font-size: 11px; color: #9ca3af; font-weight: 500;">Encrypted and secure</span>
+                </div>
+            </div>
+        `;const e=a.querySelector("#mobile-submit-btn");e.onclick=()=>n("submitMobile",{mobile:a.querySelector("#checkout-mobile").value})}else if(i==="otp"){a.innerHTML=`
+            <div class="checkout-form-card">
+                <h3 style="font-size: 15px; font-weight: 700; color: ${colorTextMain}; text-align: center; margin-bottom: 4px;">Enter OTP</h3>
+                <p style="font-size: 12px; color: ${colorTextMuted}; text-align: center; margin-bottom: 12px;">We've sent a 4-digit code to +91 ${o.mobile}</p>
+                <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 16px;">
+                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-1" />
+                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-2" />
+                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-3" />
+                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-4" />
+                </div>
+                <button class="checkout-primary-btn" id="otp-verify-btn">
+                    Verify & Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <button style="background: none; border: none; color: ${primary}; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px;">Resend code in 0:45</button>
+            </div>
+        `;const e=a.querySelectorAll("input");e.forEach((p,d)=>{p.oninput=c=>{c.target.value&&d<3&&e[d+1].focus()}});const l=a.querySelector("#otp-verify-btn");l.onclick=()=>n("verifyOtp")}else if(i==="address"){const e=s.addresses||[],l=o.selectedAddressId;let p=e.map(c=>`
+            <div class="checkout-address-card ${c.id===l?"selected":""}" data-id="${c.id}">
+                <div class="address-icon-box">
+                    ${c.type==="home"?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22V12h6v10"/></svg>'}
+                </div>
+                <div class="address-info">
+                    <div class="address-header">
+                        <span class="address-name" style="font-size: 15px;">${c.name}</span>
+                        <span class="address-type" style="margin-left: 6px;">${c.type}</span>
+                    </div>
+                    <div class="address-text" style="font-size: 13px;">${c.street}</div>
+                    <div class="address-text" style="font-size: 13px;">${c.city}, ${c.zip}</div>
+                    <div class="address-phone" style="font-size: 12px; margin-top: 6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        ${c.phone}
+                    </div>
+                </div>
+                ${c.id===l?`
+                    <div class="selection-check-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                `:""}
+            </div>
+        `).join("");a.innerHTML=`
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                ${p}
+                <button class="checkout-add-address" style="border-radius: 20px; padding: 14px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add New Address
+                </button>
+                ${l?`
+                    <button class="checkout-primary-btn" id="addr-continue-btn" style="padding: 14px;">
+                        Continue to Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                `:""}
+            </div>
+        `,a.querySelectorAll(".checkout-address-card").forEach(c=>{c.onclick=()=>n("selectAddress",{id:c.dataset.id})});const d=a.querySelector("#addr-continue-btn");d&&(d.onclick=()=>n("continueToPayment"))}else if(i==="payment"){const e=o.paymentMethod;a.innerHTML=`
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="checkout-method-card ${e==="cod"?"selected":""}" data-method="cod">
+                    <div class="method-icon-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/><path d="M2 10h20"/><path d="M2 14h20"/></svg>
+                    </div>
+                    <div class="method-info">
+                        <h4 style="font-size: 15px;">Cash on Delivery</h4>
+                        <p style="font-size: 13px;">Pay when you receive</p>
+                    </div>
+                    ${e==="cod"?`
+                        <div class="selection-check-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    `:""}
+                </div>
+                <div class="checkout-method-card ${e==="prepaid"?"selected":""}" data-method="prepaid">
+                    <div class="method-icon-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                    </div>
+                    <div class="method-info">
+                        <h4 style="font-size: 15px;">Credit / Debit Card</h4>
+                        <p style="font-size: 13px;">Secure payment</p>
+                    </div>
+                    ${e==="prepaid"?`
+                        <div class="selection-check-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    `:""}
+                </div>
+                
+                ${e?`
+                    <div class="checkout-summary-card">
+                        <h4 class="summary-title">Order Summary</h4>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>$${s.subtotal.toFixed(2)}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span style="color: #10b981; font-weight: 700;">FREE</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (10%)</span>
+                            <span>$${(s.subtotal*.1).toFixed(2)}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span class="total-value">$${(s.subtotal*1.1).toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <button class="checkout-primary-btn" id="place-order-btn" style="background: ${primary}; padding: 14px; margin-top: 4px;">
+                        Place Order <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                `:""}
+            </div>
+        `,a.querySelectorAll(".checkout-method-card").forEach(p=>{p.onclick=()=>n("selectPayment",{method:p.dataset.method})});const l=a.querySelector("#place-order-btn");l&&(l.onclick=()=>n("placeOrder"))}else if(i==="confirmation"){const e=s.orderId||`ORD-${Math.floor(Math.random()*1e4)}`;a.innerHTML=`
+            <div class="checkout-confirmation">
+                <div class="success-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <h3 style="font-size: 18px; font-weight: 800; color: #111827;">Order Confirmed!</h3>
+                <p style="font-size: 14px; color: #4b5563; line-height: 1.6;">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
+                <div class="order-number-badge" style="padding: 10px 20px; border-radius: 25px;">
+                    <span style="font-size: 13px;">Order #</span>
+                    <b style="font-size: 15px;">${e}</b>
+                </div>
+            </div>
+        `}return a}const $t='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',Et='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>';function St(r,t){const i=document.createElement("div");i.className="chatbot-input-area",i.setAttribute("data-region","input-bar");const s=t.placeholders&&t.placeholders.length>0?t.placeholders:ct,o=t.inputPlaceholder||s[0],n=document.createElement("div");n.className="chatbot-input-wrap";const a=document.createElement("button");a.type="button",a.className="chatbot-attach-btn",a.setAttribute("aria-label","Attach"),a.innerHTML=$t;const e=document.createElement("input");e.type="text",e.placeholder=o,e.className="chatbot-input",e.setAttribute("aria-label","Message input");const l=document.createElement("button");l.type="button",l.className="chatbot-send-btn",l.setAttribute("aria-label","Send message"),l.innerHTML=Et;const p=()=>{e.value.trim()?l.classList.add("active"):l.classList.remove("active")};e.addEventListener("input",p),e.addEventListener("focus",p),e.addEventListener("blur",p),p();let d=0;const m=setInterval(()=>{!e.matches(":focus")&&s.length>1&&(d=(d+1)%s.length,e.placeholder=s[d])},3500);e.addEventListener("focus",()=>{e.placeholder=t.inputPlaceholder||"Ask anything about orders, products..."}),e.addEventListener("blur",()=>{e.placeholder=s[d%s.length]});const u=()=>{const h=e.value.trim();h&&(r(h),e.value="",d=0,e.placeholder=s[0],p())};return e.addEventListener("keypress",h=>{h.key==="Enter"&&u()}),l.addEventListener("click",u),n.appendChild(a),n.appendChild(e),n.appendChild(l),i.appendChild(n),tt(l,{strength:.12,radius:60}),i.destroy=()=>clearInterval(m),i}function zt(r="Thinking..."){const t=document.createElement("div");t.className="chatbot-message bot typing-indicator-wrapper msg-enter-bot";const i=document.createElement("div");i.className="chatbot-message-avatar",i.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';const s=document.createElement("div");return s.className="message-bubble typing-indicator",s.setAttribute("aria-live","polite"),s.setAttribute("role","status"),s.innerHTML='<span class="dot"></span><span class="dot"></span><span class="dot"></span>',t.appendChild(i),t.appendChild(s),t.setStatus=()=>{},t}const Mt="http://localhost:3000";async function Lt(r,t=[],i,s,o,n="default",a=null,e=null,l=null,p=null){const c=`${(p||Mt).replace(/\/$/,"")}/api/chat`;try{const m=await fetch(c,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:r,history:t,sessionId:n})});if(!m.ok)throw new Error;const u=m.body.getReader(),h=new TextDecoder;let y="";for(;;){const{value:w,done:k}=await u.read();if(k)break;y+=h.decode(w,{stream:!0});const M=y.split(`
+`);y=M.pop();for(const T of M)if(T.startsWith("data: ")){const N=T.replace("data: ","").trim();try{if(N){const z=JSON.parse(N);z.type==="text"&&i&&i(z.content),z.type==="carousel"&&s&&s(z.content),z.type==="cart"&&e&&e(z.content),z.type==="orderHistory"&&l&&l(z.content),z.type==="status"&&a&&a(z.content),z.type==="done"&&o&&o()}}catch{}}}}catch(m){console.error("AI Service Error:",m),i&&i("My neural network is temporarily offline."),o&&o()}}function At(r,t=[],i=4){if(!t||t.length===0)return[];const s=(r||"").toLowerCase(),o=t.map(a=>{const e=a.toLowerCase();let l=0;const p=e.split(/\s+/).filter(d=>d.length>2);for(const d of p)s.includes(d)&&(l+=2),s.includes(d.replace(/[^a-z0-9]/g,""))&&(l+=1);return a.toLowerCase().includes("sneaker")&&(s.includes("sneaker")||s.includes("shoe"))&&(l+=3),a.toLowerCase().includes("trending")&&(s.includes("trending")||s.includes("bestseller")||s.includes("popular"))&&(l+=3),a.toLowerCase().includes("sale")&&(s.includes("sale")||s.includes("price")||s.includes("$"))&&(l+=2),a.toLowerCase().includes("running")&&s.includes("running")&&(l+=3),a.toLowerCase().includes("jacket")&&(s.includes("jacket")||s.includes("apparel"))&&(l+=2),{label:a,score:l}});o.sort((a,e)=>e.score-a.score);const n=o.filter(a=>a.score>0).slice(0,i).map(a=>a.label);return n.length===0&&s.length<500?t.slice(0,Math.min(3,i)):n}function Tt(r){if(!r)return null;const t=document.createElement("div");return t.className="chatbot-toast-host",r.appendChild(t),{showToast:({title:s,message:o,image:n,duration:a=3e3}={})=>{const e=document.createElement("div");e.className="chatbot-toast",e.innerHTML=`
+            ${n?`<div class="chatbot-toast-image-wrap"><img src="${n}" alt="" /></div>`:""}
+            <div class="chatbot-toast-content">
+                ${s?`<div class="chatbot-toast-title">${s}</div>`:""}
+                ${o?`<div class="chatbot-toast-message">${o}</div>`:""}
+            </div>
+        `,t.appendChild(e),requestAnimationFrame(()=>{e.classList.add("chatbot-toast-visible")}),setTimeout(()=>{e.classList.remove("chatbot-toast-visible"),e.addEventListener("transitionend",()=>{e.remove()},{once:!0})},a)}}}function Nt(r){const t=bt(r);console.log("Chatbot initialized in Shadow DOM with config:",t);let i=sessionStorage.getItem("ecom-session-id");i||(i="sess_"+Math.random().toString(36).substring(2,9),sessionStorage.setItem("ecom-session-id",i));const s=t.parentElement||document.body,o=s.querySelector("#ecom-chatbot-host");o&&o.remove();const n=document.createElement("div");n.id="ecom-chatbot-host",s.appendChild(n);const a=n.attachShadow({mode:"open"}),e=Tt(a),l=document.createElement("style");l.textContent=ut(t),a.appendChild(l);const p=document.createElement("div");p.className="ecom-chatbot-wrapper";const d=document.createElement("div");d.className="chatbot-window";const c=ft();function m(){c.scrollTo({top:c.scrollHeight,behavior:"smooth"})}function u(){let b=null;Array.from(c.children).filter(g=>g.classList&&!g.hasAttribute("data-skeleton")&&(g.classList.contains("chatbot-message")||g.classList.contains("typing-indicator-wrapper"))).forEach(g=>{const x=g.classList.contains("user"),C=g.classList.contains("bot")||g.classList.contains("typing-indicator-wrapper"),B=x?"user":C?"bot":null;B&&(g.classList.remove("group-same","group-first"),b===B?g.classList.add("group-same"):g.classList.add("group-first"),b=B)})}let h=[];try{const b=sessionStorage.getItem("ecom-chat-history");b&&(h=JSON.parse(b),console.log("Restored chat history from session:",h))}catch(b){console.error("Failed to parse session chat history",b)}let y={step:null,authMode:"login",name:"",email:"",selectedAddressId:null,paymentMethod:"",subtotal:0};const w=[{id:"1",type:"home",name:"John Doe",street:"123 Main St, Apt 4B",city:"New York",state:"NY",zip:"10001",phone:"+1 (555) 012-3456"}],k=async(b,f)=>{b==="changeAuthMode"?(y.authMode=f.mode,T()):b==="submitMobile"?(y.mobile=f.mobile,y.step="otp",T()):b==="verifyOtp"?(e.showToast({title:"Success",message:"Mobile verified"}),y.step="address",T()):b==="submitAuth"?(y.email=f.email,y.name=f.name,e.showToast({title:"Success",message:f.mode==="login"?"Logged in successfully":"Account created"}),y.step="address",T()):b==="selectAddress"?(y.selectedAddressId=f.id,T()):b==="continueToPayment"?(y.step="payment",T()):b==="selectPayment"?(y.paymentMethod=f.method,T()):b==="placeOrder"&&(y.step="confirmation",T(),e.showToast({title:"Order Placed",message:"Thank you for your order!"}))};let M=null;const T=()=>{const b={step:y.step,data:{addresses:w,subtotal:y.subtotal},state:y},f=Ct(b,{onAction:k});if(M){const v=(M.querySelector(".chatbot-message-content")||M).querySelector(".chatbot-checkout-wrapper");if(v){v.replaceWith(f),m();return}}const g=q("",!0,t),x=document.createElement("div");x.className="chatbot-message-content";const C=g.querySelector(".chatbot-bubble");C.parentNode.insertBefore(x,C),x.appendChild(C),x.appendChild(f),c.appendChild(g),M=g,m(),u()};let N=0,z=null;const L=async b=>{const f=d.querySelector(".chatbot-presets");f&&f.remove();const g=d.querySelector(".chatbot-quick-actions-grid");g&&g.remove();const x=q(b,!1,t);c.appendChild(x),m();const C=zt();c.appendChild(C),m();const B=[...h];h.push({role:"user",content:b}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(h));let v=null,I="",j=!1,F=null,O=null,D=null;const Y=()=>{C.parentNode&&c.removeChild(C),D&&D.parentNode&&c.removeChild(D)},R=()=>{if(X)return;const S=p.querySelector(".chatbot-toggle-btn");if(S&&!S.querySelector(".chatbot-ripple-ring")){const E=document.createElement("span");E.className="chatbot-ripple-ring",S.appendChild(E),setTimeout(()=>E.remove(),1400)}};await Lt(b,B,S=>{Y(),j||(j=!0,R()),v||(v=q("",!0,t,L),c.appendChild(v),F=v),I+=S;const E=v.querySelector(".chatbot-bubble");E&&(E.innerHTML=K(I)),m()},S=>{Y(),j||(j=!0,R());const E=["Here's what we have:","Have a look at these.","Here are some picks."],$=E[Math.floor(Math.random()*E.length)];(!v||!I.trim())&&(v=q($,!0,t,L),c.appendChild(v),I=$);const A=rt(S,W,t);O=S,F=A,c.appendChild(A),h.push({role:"bot",content:"Displayed a product carousel to the user.",carousel:S}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(h)),u(),m()},()=>{Y(),I&&(h.push({role:"bot",content:I}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(h)));const S=I||(O?(O||[]).map($=>$.title||"").join(" "):""),E=At(S,t.suggestionChips||[],4);if(E.length>0&&F){const $=wt(E,H=>L(H));$.classList.add("chatbot-chips-below");const A=F.querySelector(".chatbot-bubble");if(A){let H=F.querySelector(".chatbot-message-content");H||(H=document.createElement("div"),H.className="chatbot-message-content",A.parentNode.insertBefore(H,A),H.appendChild(A)),H.appendChild($)}else F.appendChild($)}u(),m()},i,S=>{C.setStatus&&C.setStatus(S),S&&/searching|product|looking for|options|recommend/i.test(S)&&!D&&(D=vt(),c.appendChild(D),m())},S=>{Y(),j||(j=!0,R()),v||(v=q("",!0,t,L),c.appendChild(v));const E=v.querySelector(".chatbot-bubble");let $=v.querySelector(".chatbot-message-content");!$&&E&&($=document.createElement("div"),$.className="chatbot-message-content",E.parentNode.insertBefore($,E),$.appendChild(E));const A=nt(S,{onCheckout:()=>{y.step="mobile",y.subtotal=S.total||0,T()},onAddMore:()=>L("I'd like to add something else")});A&&$?$.appendChild(A):A&&botMsg.appendChild(A);const H=I||"Here’s what’s in your cart:";h.push({role:"bot",content:H,cart:S}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(h)),u(),m()},S=>{Y(),j||(j=!0,R()),v||(v=q("",!0,t,L),c.appendChild(v));const E=v.querySelector(".chatbot-bubble");let $=v.querySelector(".chatbot-message-content");!$&&E&&($=document.createElement("div"),$.className="chatbot-message-content",E.parentNode.insertBefore($,E),$.appendChild(E));const A=st(S);A&&$?$.appendChild(A):A&&v.appendChild(A);const H=I||"Here’s your order history.";h.push({role:"bot",content:H,orderHistory:S}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(h)),u(),m()},t.apiBaseUrl||void 0)},G=St(L,t),W=(b,f)=>{const g=f?` (Size: ${f})`:"",x=q(`✅ Added 1x **${b.title}** ${g} to your cart for ${b.price}!`,!0,t);c.appendChild(x),u(),m(),window.dispatchEvent(new CustomEvent("ecom-add-to-cart",{detail:{product:b,selectedSize:f}})),z&&z(N+1),e&&b&&e.showToast({title:"Added to cart",message:`${b.title||""} · ${b.price||""}`,image:b.image})};if(h.length>0)h.forEach(b=>{if(b.role==="user")c.appendChild(q(b.content,!1,t));else if(b.role==="bot")if(b.carousel)c.appendChild(rt(b.carousel,W,t));else if(b.cart){const f=q(b.content||"Here’s what’s in your cart:",!0,t),g=f.querySelector(".chatbot-bubble");if(g){const x=document.createElement("div");x.className="chatbot-message-content",g.parentNode.insertBefore(x,g),x.appendChild(g);const C=nt(b.cart,{onCheckout:()=>L("I'd like to proceed to checkout"),onAddMore:()=>L("I'd like to add something else")});C&&x.appendChild(C)}c.appendChild(f)}else if(b.orderHistory){const f=q(b.content||"Here’s your order history.",!0,t),g=f.querySelector(".chatbot-bubble");if(g){const x=document.createElement("div");x.className="chatbot-message-content",g.parentNode.insertBefore(x,g),x.appendChild(g);const C=st(b.orderHistory);C&&x.appendChild(C)}c.appendChild(f)}else b.content&&b.content!=="Displayed a product carousel to the user."&&c.appendChild(q(b.content,!0,t))}),u(),m();else{const b=t.welcomeMessage??"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",f=q(b,!0,t);c.appendChild(f);const g=[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],x=t.quickActions&&t.quickActions.length>=4?t.quickActions.slice(0,4):g,C=kt(x,{onAction:(B,v)=>{const I=v.message!=null&&String(v.message).trim()?v.message:v.title;I&&L(I)}});c.appendChild(C),h.push({role:"bot",content:b})}const V=document.createElement("div");V.className="chatbot-orb-wrapper";const P=document.createElement("button");P.type="button",P.className="chatbot-toggle-btn",P.setAttribute("aria-label","Open chat");const J='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';P.innerHTML=t.launcherIconUrl?`<img src="${t.launcherIconUrl}" alt="Chat" />`:J,V.appendChild(P);let X=!1,et=!1;const lt=sessionStorage.getItem("ecom-chatbot-open")==="true",U=document.createElement("div");U.className="welcome-bubble",U.innerHTML=`
+        <span id="typewriter-bubble" style="vertical-align: middle; font-size: 14px; font-weight: 600;"></span>
+    `,setTimeout(()=>{et||U.classList.add("hidden")},5e3);const _=()=>{X=!0,et=!0,sessionStorage.setItem("ecom-chatbot-open","true"),U.classList.add("hidden"),d.classList.add("is-open"),P.innerHTML=t.launcherIconUrl?`<img src="${t.launcherIconUrl}" alt="Chat" />`:J,setTimeout(m,50)},Q=()=>{X=!1,sessionStorage.setItem("ecom-chatbot-open","false"),d.classList.remove("is-open"),P.innerHTML=t.launcherIconUrl?`<img src="${t.launcherIconUrl}" alt="Chat" />`:J},ot=()=>{U.classList.add("hidden"),X?Q():_()};P.addEventListener("click",ot);const at=mt(t,{onClose:Q,onCartClick:()=>{_(),L("View Cart")},cartCount:0});z=b=>{N=Math.max(0,b||0);const f=at.querySelector('button[aria-label="View cart"]');if(f){let x=f.querySelector(".chatbot-cart-badge");N>0?(x||(x=document.createElement("span"),x.className="chatbot-cart-badge",f.appendChild(x)),x.textContent=N>99?"99+":String(N)):x&&x.remove()}let g=P.querySelector(".chatbot-launcher-badge");N>0?(g||(g=document.createElement("span"),g.className="chatbot-launcher-badge",P.appendChild(g)),g.textContent=N>99?"99+":String(N),g.classList.remove("cart-badge-pop"),g.offsetWidth,g.classList.add("cart-badge-pop")):g&&g.remove()},d.appendChild(at),d.appendChild(c),d.appendChild(G);const Z=document.createElement("div");Z.className="chatbot-footer",Z.innerHTML="<p>Powered by Aura AI</p>",d.appendChild(Z),window.EcomChatbot&&(window.EcomChatbot.open=_,window.EcomChatbot.close=Q,window.EcomChatbot.toggle=ot,window.EcomChatbot.sendMessage=b=>{_(),L(b)},window.EcomChatbot.resetAnimation=()=>{}),p.appendChild(d),p.appendChild(U),p.appendChild(V),a.appendChild(p),lt&&_(),function(){const b=["Hi! I'm Aura, your shopping assistant.","I can help you discover products.","I can track your orders for you.","Looking for the best deals? 🔥","What brings you here today?"],f=a.getElementById("typewriter-bubble");if(!f)return;let g=0,x=0,C=!1,B=!1;const v=68,I=38,j=1800,F=320;f.style.display="inline-block",f.style.minWidth="10px";const O=document.createElement("span");O.textContent="|",O.style.cssText="display:inline-block;margin-left:2px;animation:twCursor 0.8s steps(1) infinite;color:inherit;font-weight:300;opacity:0.7";const D=document.createElement("style");D.textContent="@keyframes twCursor{0%,100%{opacity:1}50%{opacity:0}}",a.appendChild(D),f.appendChild(O);function Y(){if(B)return;const R=b[g];if(C){if(x--,f.firstChild&&f.firstChild!==O&&(f.firstChild.textContent=R.slice(0,x)),x===0){C=!1,g=(g+1)%b.length,B=!0,setTimeout(()=>{B=!1,Y()},F);return}}else if(x++,f.firstChild&&f.firstChild!==O?f.firstChild.textContent=R.slice(0,x):f.insertBefore(document.createTextNode(R.slice(0,x)),O),x===R.length){B=!0,setTimeout(()=>{B=!1,C=!0,Y()},j);return}setTimeout(Y,C?I:v)}f.innerHTML="",f.appendChild(document.createTextNode("")),f.appendChild(O),Y()}()}window.EcomChatbot={init:r=>{Nt(r)}};

@@ -4,140 +4,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ecom Chatbot Demo</title>
-    <link rel="stylesheet" href="./style.css">
+    <title>Aura Store — Fashion & Lifestyle | Demo Store with Chatbot</title>
+    <link rel="stylesheet" href="/src/demo/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <header>
-        <h1>Aura Store</h1>
-        <nav style="gap: 20px; display: flex;">
-            <span>Home</span>
-            <span>Shop</span>
-            <span id="cart-count">Cart (0)</span>
+    <!-- Top bar -->
+    <div class="top-bar">
+        <span>Free shipping on orders over $50</span>
+        <span>New arrivals just dropped</span>
+    </div>
+
+    <header class="site-header">
+        <a href="#" class="logo">Aura Store</a>
+        <nav class="main-nav">
+            <a href="#sneakers">Sneakers</a>
+            <a href="#apparel">Apparel</a>
+            <a href="#accessories">Accessories</a>
         </nav>
+        <div class="header-actions">
+            <button type="button" class="icon-btn" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+            <a href="#" class="cart-link" id="cart-count">Cart (0)</a>
+        </div>
     </header>
 
     <section class="hero">
-        <h2>Summer Collection Event</h2>
-        <p>Explore our latest arrivals in premium footwear, stylish apparel, and must-have accessories.</p>
+        <div class="hero-content">
+            <span class="hero-badge">Summer 2025</span>
+            <h1>Discover Your Style</h1>
+            <p>Premium sneakers, streetwear, and accessories. Curated for the bold.</p>
+            <a href="#sneakers" class="btn btn-primary">Shop Now</a>
+        </div>
     </section>
 
-    <main>
-        <!-- Category: Sneakers -->
-        <div class="category-section" id="sneakers">
-            <h3>Trending Sneakers</h3>
-            <div class="product-grid">
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/2b6cb0/fff?text=Air+Silver+1.0" alt="Nike Air Silver">
-                    <h4 class="product-title">Nike Air Silver 1.0</h4>
-                    <span class="product-price">$120.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/e53e3e/fff?text=Jordan+Retro" alt="Jordan Retro">
-                    <h4 class="product-title">Jordan Retro High</h4>
-                    <span class="product-price">$160.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/38a169/fff?text=Yeezy+Boost+350" alt="Yeezy">
-                    <h4 class="product-title">Yeezy Boost 350</h4>
-                    <span class="product-price">$220.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/000/fff?text=Vans+Old+Skool" alt="Vans">
-                    <h4 class="product-title">Vans Old Skool Classic</h4>
-                    <span class="product-price">$65.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/805ad5/fff?text=New+Balance+574" alt="New Balance">
-                    <h4 class="product-title">New Balance 574 Core</h4>
-                    <span class="product-price">$85.00</span>
-                </div>
+    <main class="main-content">
+        <section class="category-section" id="sneakers">
+            <div class="section-header">
+                <h2>Trending Sneakers</h2>
+                <p>Best sellers and new drops</p>
             </div>
-        </div>
+            <div class="product-grid">
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" alt="Nike Air Silver 1.0">
+                        <span class="badge">Bestseller</span>
+                    </div>
+                    <h3 class="product-title">Nike Air Silver 1.0</h3>
+                    <p class="product-desc">Sleek runner for everyday wear</p>
+                    <div class="product-meta">
+                        <span class="product-price">$120.00</span>
+                        <span class="product-old-price">$140.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&q=80" alt="Jordan Retro High">
+                        <span class="badge sale">Sale</span>
+                    </div>
+                    <h3 class="product-title">Jordan Retro High</h3>
+                    <p class="product-desc">Iconic hoops style</p>
+                    <div class="product-meta">
+                        <span class="product-price">$160.00</span>
+                        <span class="product-old-price">$180.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=400&q=80" alt="Yeezy Boost 350">
+                    </div>
+                    <h3 class="product-title">Yeezy Boost 350</h3>
+                    <p class="product-desc">Premium comfort knit</p>
+                    <div class="product-meta">
+                        <span class="product-price">$220.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400&q=80" alt="Vans Old Skool">
+                        <span class="badge">Popular</span>
+                    </div>
+                    <h3 class="product-title">Vans Old Skool Classic</h3>
+                    <p class="product-desc">Skater classic</p>
+                    <div class="product-meta">
+                        <span class="product-price">$65.00</span>
+                        <span class="product-old-price">$75.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80" alt="New Balance 574">
+                    </div>
+                    <h3 class="product-title">New Balance 574 Core</h3>
+                    <p class="product-desc">Retro chunky runner</p>
+                    <div class="product-meta">
+                        <span class="product-price">$85.00</span>
+                    </div>
+                </article>
+            </div>
+        </section>
 
-        <!-- Category: Apparel -->
-        <div class="category-section" id="apparel">
-            <h3>Streetwear Apparel</h3>
-            <div class="product-grid">
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/ff9800/fff?text=Graphic+Tee" alt="Tee">
-                    <h4 class="product-title">Vintage Graphic Tee</h4>
-                    <span class="product-price">$30.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/3f51b5/fff?text=Denim+Jacket" alt="Denim">
-                    <h4 class="product-title">Distressed Denim Jacket</h4>
-                    <span class="product-price">$89.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/607d8b/fff?text=Cargo+Pants" alt="Cargo">
-                    <h4 class="product-title">Relaxed Fit Cargo Pants</h4>
-                    <span class="product-price">$55.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/f44336/fff?text=Hoodie" alt="Hoodie">
-                    <h4 class="product-title">Essential Fleece Hoodie</h4>
-                    <span class="product-price">$65.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/009688/fff?text=Windbreaker" alt="Windbreaker">
-                    <h4 class="product-title">Nylon Zip Windbreaker</h4>
-                    <span class="product-price">$75.00</span>
-                </div>
+        <section class="category-section" id="apparel">
+            <div class="section-header">
+                <h2>Streetwear Apparel</h2>
+                <p>Tees, jackets, and more</p>
             </div>
-        </div>
+            <div class="product-grid">
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80" alt="Vintage Graphic Tee">
+                    </div>
+                    <h3 class="product-title">Vintage Graphic Tee</h3>
+                    <p class="product-desc">Soft cotton, retro graphics</p>
+                    <div class="product-meta">
+                        <span class="product-price">$30.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80" alt="Denim Jacket">
+                    </div>
+                    <h3 class="product-title">Distressed Denim Jacket</h3>
+                    <p class="product-desc">Timeless essential</p>
+                    <div class="product-meta">
+                        <span class="product-price">$89.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80" alt="Cargo Pants">
+                    </div>
+                    <h3 class="product-title">Relaxed Fit Cargo Pants</h3>
+                    <p class="product-desc">Utility style</p>
+                    <div class="product-meta">
+                        <span class="product-price">$55.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&q=80" alt="Hoodie">
+                        <span class="badge">Bestseller</span>
+                    </div>
+                    <h3 class="product-title">Essential Fleece Hoodie</h3>
+                    <p class="product-desc">Heavyweight for cold days</p>
+                    <div class="product-meta">
+                        <span class="product-price">$65.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80" alt="Windbreaker">
+                    </div>
+                    <h3 class="product-title">Nylon Zip Windbreaker</h3>
+                    <p class="product-desc">Lightweight, water-resistant</p>
+                    <div class="product-meta">
+                        <span class="product-price">$75.00</span>
+                    </div>
+                </article>
+            </div>
+        </section>
 
-        <!-- Category: Accessories -->
-        <div class="category-section" id="accessories">
-            <h3>Everyday Accessories</h3>
-            <div class="product-grid">
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/795548/fff?text=Leather+Wallet" alt="Wallet">
-                    <h4 class="product-title">Classic Leather Wallet</h4>
-                    <span class="product-price">$40.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/9c27b0/fff?text=Smart+Watch" alt="Watch">
-                    <h4 class="product-title">Aura Smart Watch X</h4>
-                    <span class="product-price">$195.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/e91e63/fff?text=Sunglasses" alt="Sunglasses">
-                    <h4 class="product-title">Polarized Aviator Sunglasses</h4>
-                    <span class="product-price">$50.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/cddc39/000?text=Backpack" alt="Backpack">
-                    <h4 class="product-title">Canvas Travel Backpack</h4>
-                    <span class="product-price">$60.00</span>
-                </div>
-                <div class="product-card mock-product">
-                    <img src="https://placehold.co/300x200/03a9f4/fff?text=Cap" alt="Cap">
-                    <h4 class="product-title">Embroidered Dad Cap</h4>
-                    <span class="product-price">$25.00</span>
-                </div>
+        <section class="category-section" id="accessories">
+            <div class="section-header">
+                <h2>Accessories</h2>
+                <p>Watches, bags, and more</p>
             </div>
-        </div>
+            <div class="product-grid">
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80" alt="Leather Wallet">
+                    </div>
+                    <h3 class="product-title">Classic Leather Wallet</h3>
+                    <p class="product-desc">Minimalist bi-fold</p>
+                    <div class="product-meta">
+                        <span class="product-price">$40.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" alt="Smart Watch">
+                    </div>
+                    <h3 class="product-title">Aura Smart Watch X</h3>
+                    <p class="product-desc">Fitness & connectivity</p>
+                    <div class="product-meta">
+                        <span class="product-price">$195.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&q=80" alt="Sunglasses">
+                    </div>
+                    <h3 class="product-title">Polarized Aviator Sunglasses</h3>
+                    <p class="product-desc">UV protection</p>
+                    <div class="product-meta">
+                        <span class="product-price">$50.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80" alt="Backpack">
+                    </div>
+                    <h3 class="product-title">Canvas Travel Backpack</h3>
+                    <p class="product-desc">Durable, spacious</p>
+                    <div class="product-meta">
+                        <span class="product-price">$60.00</span>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <div class="product-image-wrap">
+                        <img src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400&q=80" alt="Cap">
+                    </div>
+                    <h3 class="product-title">Embroidered Dad Cap</h3>
+                    <p class="product-desc">Unisex, adjustable</p>
+                    <div class="product-meta">
+                        <span class="product-price">$25.00</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="cta-block">
+            <h2>Need help choosing?</h2>
+            <p>Use the chat button to ask about sizes, shipping, or recommendations.</p>
+        </section>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Aura Store. All rights reserved.</p>
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div>
+                <h4>Shop</h4>
+                <a href="#sneakers">Sneakers</a>
+                <a href="#apparel">Apparel</a>
+                <a href="#accessories">Accessories</a>
+            </div>
+            <div>
+                <h4>Help</h4>
+                <a href="#">Shipping</a>
+                <a href="#">Returns</a>
+                <a href="#">Size Guide</a>
+            </div>
+            <div>
+                <h4>Company</h4>
+                <a href="#">About</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <p class="footer-copy">&copy; 2025 Aura Store. All rights reserved.</p>
     </footer>
 
-    <script type="module" src="../widget/index.js"></script>
+    <script type="module" src="/src/widget/index.js"></script>
     <script type="module">
         window.addEventListener('DOMContentLoaded', () => {
             if (window.EcomChatbot) {
-                window.EcomChatbot.init({ theme: 'light', position: 'bottom-right' });
+                window.EcomChatbot.init({
+                    theme: 'light',
+                    position: 'bottom-right',
+                    botName: 'Aura Assistant',
+                    welcomeMessage: "Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?"
+                });
             }
-
-            // Sync with Chatbot Add-To-Cart actions globally
             let cartCount = 0;
             const cartEl = document.getElementById('cart-count');
             window.addEventListener('ecom-add-to-cart', () => {
                 cartCount++;
-                if (cartEl) cartEl.innerText = `Cart (${cartCount})`;
+                if (cartEl) cartEl.textContent = `Cart (${cartCount})`;
             });
         });
     </script>

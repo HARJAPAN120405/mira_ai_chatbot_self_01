@@ -1,22 +1,18 @@
 import * as Widget from '../widget/index.js';
 
-// Initialize a default config based on the panel inputs
+// Initialize a default config (quickActions filled in applyChanges when DOM is ready)
 let currentConfig = {
-    botName: document.getElementById('input-bot-name').value,
-    inputPlaceholder: document.getElementById('input-placeholder').value,
-    botAvatarUrl: document.getElementById('input-bot-avatar').value,
-    welcomeMessage: document.getElementById('input-welcome-message').value,
-    welcomeIconUrl: document.getElementById('input-welcome-icon').value,
-    primaryColor: document.getElementById('input-primary-color').value,
-    backgroundColor: document.getElementById('input-bg-color').value,
-    position: document.getElementById('input-position').value,
-    theme: document.getElementById('input-theme').value,
-    autoDetectProduct: document.getElementById('input-auto-detect').checked,
-    presetQuestions: [
-        document.getElementById('input-preset-1').value,
-        document.getElementById('input-preset-2').value,
-        document.getElementById('input-preset-3').value
-    ].filter(q => q.trim() !== ''),
+    botName: document.getElementById('input-bot-name')?.value ?? 'eCommerce Chat Bot',
+    inputPlaceholder: document.getElementById('input-placeholder')?.value ?? 'Type your message',
+    botAvatarUrl: document.getElementById('input-bot-avatar')?.value ?? '',
+    welcomeMessage: document.getElementById('input-welcome-message')?.value ?? '',
+    welcomeIconUrl: document.getElementById('input-welcome-icon')?.value ?? '',
+    primaryColor: document.getElementById('input-primary-color')?.value ?? '#2563eb',
+    backgroundColor: document.getElementById('input-bg-color')?.value ?? '#ffffff',
+    position: document.getElementById('input-position')?.value ?? 'bottom-right',
+    theme: document.getElementById('input-theme')?.value ?? 'default',
+    autoDetectProduct: document.getElementById('input-auto-detect')?.checked ?? true,
+    quickActions: undefined,
     textColor: '#ffffff'
 };
 
@@ -40,9 +36,18 @@ const domElements = {
     marginSide: document.getElementById('input-margin-side'),
     marginBottom: document.getElementById('input-margin-bottom'),
     autoDetect: document.getElementById('input-auto-detect'),
-    preset1: document.getElementById('input-preset-1'),
-    preset2: document.getElementById('input-preset-2'),
-    preset3: document.getElementById('input-preset-3'),
+    qa1Title: document.getElementById('input-qa1-title'),
+    qa1Desc: document.getElementById('input-qa1-desc'),
+    qa1Message: document.getElementById('input-qa1-message'),
+    qa2Title: document.getElementById('input-qa2-title'),
+    qa2Desc: document.getElementById('input-qa2-desc'),
+    qa2Message: document.getElementById('input-qa2-message'),
+    qa3Title: document.getElementById('input-qa3-title'),
+    qa3Desc: document.getElementById('input-qa3-desc'),
+    qa3Message: document.getElementById('input-qa3-message'),
+    qa4Title: document.getElementById('input-qa4-title'),
+    qa4Desc: document.getElementById('input-qa4-desc'),
+    qa4Message: document.getElementById('input-qa4-message'),
     btnApply: document.getElementById('btn-apply'),
     btnCopy: document.getElementById('btn-copy'),
     snippetOutput: document.getElementById('snippet-output'),
@@ -142,11 +147,12 @@ function applyChanges() {
         marginSide: parseInt(domElements.marginSide.value) || 20,
         marginBottom: parseInt(domElements.marginBottom.value) || 20,
         autoDetectProduct: domElements.autoDetect.checked,
-        presetQuestions: [
-            domElements.preset1.value,
-            domElements.preset2.value,
-            domElements.preset3.value
-        ].filter(q => q.trim() !== ''),
+        quickActions: [
+            { title: domElements.qa1Title.value.trim(), desc: domElements.qa1Desc.value.trim(), message: domElements.qa1Message.value.trim() },
+            { title: domElements.qa2Title.value.trim(), desc: domElements.qa2Desc.value.trim(), message: domElements.qa2Message.value.trim() },
+            { title: domElements.qa3Title.value.trim(), desc: domElements.qa3Desc.value.trim(), message: domElements.qa3Message.value.trim() },
+            { title: domElements.qa4Title.value.trim(), desc: domElements.qa4Desc.value.trim(), message: domElements.qa4Message.value.trim() }
+        ],
         textColor: domElements.bgColor.value === '#ffffff' ? '#ffffff' : '#ffffff' // keep text white on dark/primary
     };
 

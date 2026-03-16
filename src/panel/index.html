@@ -94,7 +94,7 @@
 
             <div class="control-group">
                 <label for="input-welcome-message">Welcome Bubble Message</label>
-                <input type="text" id="input-welcome-message" value="Need help choosing a product?" />
+                <input type="text" id="input-welcome-message" value="Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?" />
             </div>
 
             <div class="control-group">
@@ -152,45 +152,59 @@
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
             <h3
                 style="font-size: 13px; color: #555; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
-                Conversation Starters</h3>
+                Quick Action Grid (2×2)</h3>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Customize the four cards shown under the first greeting. Each card’s label and the message sent when clicked can be edited.</p>
 
             <div class="control-group">
-                <label>Preset Question 1</label>
-                <select id="input-preset-1">
-                    <option value="Tell me about your store">Tell me about your store</option>
-                    <option value="What kind of products do you sell?">What kind of products do you sell?</option>
-                    <option value="What is your return policy?">What is your return policy?</option>
-                    <option value="Do you offer free shipping?">Do you offer free shipping?</option>
-                    <option value="How can I track my order?">How can I track my order?</option>
-                    <option value="Do you have a sizing guide?">Do you have a sizing guide?</option>
-                    <option value="">(None)</option>
-                </select>
+                <label>Card 1 — Title</label>
+                <input type="text" id="input-qa1-title" value="Browse Collections" placeholder="e.g. Browse Collections" />
+            </div>
+            <div class="control-group">
+                <label>Card 1 — Description</label>
+                <input type="text" id="input-qa1-desc" value="View all products" placeholder="Short subtitle" />
+            </div>
+            <div class="control-group">
+                <label>Card 1 — Message sent on click</label>
+                <input type="text" id="input-qa1-message" value="Show me your collections" placeholder="e.g. Show me your collections" />
             </div>
 
             <div class="control-group">
-                <label>Preset Question 2</label>
-                <select id="input-preset-2">
-                    <option value="What kind of products do you sell?">What kind of products do you sell?</option>
-                    <option value="Tell me about your store">Tell me about your store</option>
-                    <option value="What is your return policy?">What is your return policy?</option>
-                    <option value="Do you offer free shipping?" selected>Do you offer free shipping?</option>
-                    <option value="How can I track my order?">How can I track my order?</option>
-                    <option value="Do you have a sizing guide?">Do you have a sizing guide?</option>
-                    <option value="">(None)</option>
-                </select>
+                <label>Card 2 — Title</label>
+                <input type="text" id="input-qa2-title" value="View Cart" placeholder="e.g. View Cart" />
+            </div>
+            <div class="control-group">
+                <label>Card 2 — Description</label>
+                <input type="text" id="input-qa2-desc" value="See shopping bag" placeholder="Short subtitle" />
+            </div>
+            <div class="control-group">
+                <label>Card 2 — Message sent on click</label>
+                <input type="text" id="input-qa2-message" value="View my cart" placeholder="e.g. View my cart" />
             </div>
 
             <div class="control-group">
-                <label>Preset Question 3</label>
-                <select id="input-preset-3">
-                    <option value="What is your return policy?">What is your return policy?</option>
-                    <option value="Tell me about your store">Tell me about your store</option>
-                    <option value="What kind of products do you sell?">What kind of products do you sell?</option>
-                    <option value="Do you offer free shipping?">Do you offer free shipping?</option>
-                    <option value="How can I track my order?">How can I track my order?</option>
-                    <option value="Do you have a sizing guide?" selected>Do you have a sizing guide?</option>
-                    <option value="">(None)</option>
-                </select>
+                <label>Card 3 — Title</label>
+                <input type="text" id="input-qa3-title" value="Order Status" placeholder="e.g. Order Status" />
+            </div>
+            <div class="control-group">
+                <label>Card 3 — Description</label>
+                <input type="text" id="input-qa3-desc" value="Track orders" placeholder="Short subtitle" />
+            </div>
+            <div class="control-group">
+                <label>Card 3 — Message sent on click</label>
+                <input type="text" id="input-qa3-message" value="Order status" placeholder="e.g. Order status" />
+            </div>
+
+            <div class="control-group">
+                <label>Card 4 — Title</label>
+                <input type="text" id="input-qa4-title" value="Track My Order" placeholder="e.g. Track My Order" />
+            </div>
+            <div class="control-group">
+                <label>Card 4 — Description</label>
+                <input type="text" id="input-qa4-desc" value="Get updates" placeholder="Short subtitle" />
+            </div>
+            <div class="control-group">
+                <label>Card 4 — Message sent on click</label>
+                <input type="text" id="input-qa4-message" value="Track my order" placeholder="e.g. Track my order" />
             </div>
 
             <button id="btn-apply" class="btn-primary" style="margin-top: 15px;">Apply Changes</button>
@@ -215,6 +229,7 @@
         <div class="panel-preview">
             <div class="preview-header">
                 <h3>Live Preview</h3>
+                <a href="/demo.html" target="_blank" rel="noopener" style="font-size: 13px; color: var(--primary); text-decoration: none;">Open full-page demo →</a>
                 <span class="preview-badge">Demo Store Context</span>
             </div>
             <div class="preview-browser">

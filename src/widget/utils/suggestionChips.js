@@ -1,6 +1,6 @@
 /**
  * Pick suggestion chips relevant to the bot's response text (or product context).
- * Returns only chips that match the message; no pills when nothing is relevant (e.g. checkout/OTP flow).
+ * Always returns at least a few chips for general replies so the user has next actions.
  * @param {string} responseText - Bot message or concatenated product titles
  * @param {string[]} allChips - Full list from config
  * @param {number} max - Max chips to return
@@ -25,6 +25,10 @@ export function getRelevantSuggestionChips(responseText, allChips = [], max = 4)
         return { label, score };
     });
     scored.sort((a, b) => b.score - a.score);
-    // Only return chips with score > 0 — never pad with irrelevant pills (e.g. during checkout/OTP)
-    return scored.filter((s) => s.score > 0).slice(0, max).map((s) => s.label);
+    const relevant = scored.filter((s) => s.score > 0).slice(0, max).map((s) => s.label);
+    // Always show at least 2–3 chips below bot messages so user has clear next actions (e.g. "Tell me about your store" reply)
+    if (relevant.length === 0 && text.length < 500) {
+        return allChips.slice(0, Math.min(3, max));
+    }
+    return relevant;
 }

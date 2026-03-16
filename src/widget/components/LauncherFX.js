@@ -136,34 +136,13 @@ export function initLauncherFX(shadowRoot, wrapper, orbWrapper, chatWindow, onRe
         ctx.restore();
     }
 
-    /* ── Ambient particles ── */
+    /* ── Ambient particles (disabled — no background bubble animation) ── */
     function initAmbients() {
         ambients = [];
-        for (let i = 0; i < 55; i++) {
-            ambients.push({
-                x: rand(0, W), y: rand(0, H),
-                vx: rand(-0.15, 0.15), vy: rand(-0.35, -0.08),
-                r: rand(1.2, 3), phase: rand(0, TAU),
-                speed: rand(0.008, 0.025),
-                col: Math.random() > 0.5 ? 'rgba(108,92,231,' : 'rgba(0,255,204,',
-            });
-        }
     }
 
     function drawAmbients() {
-        for (const p of ambients) {
-            p.x += p.vx;
-            p.y += p.vy;
-            p.phase += p.speed;
-            const alpha = 0.15 + 0.35 * ((Math.sin(p.phase) + 1) / 2);
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, TAU);
-            ctx.fillStyle = p.col + alpha + ')';
-            ctx.fill();
-            if (p.y < -5) { p.y = H + 5; p.x = rand(0, W); }
-            if (p.x < -5) p.x = W + 5;
-            if (p.x > W + 5) p.x = -5;
-        }
+        /* no-op: background bubbles removed */
     }
 
     /* ── Explosion particles ── */
@@ -491,8 +470,6 @@ export function initLauncherFX(shadowRoot, wrapper, orbWrapper, chatWindow, onRe
     function loop() {
         resize();
         ctx.clearRect(0, 0, W, H);
-
-        drawAmbients();
 
         if (heroFlying) {
             heroT += 0.016;

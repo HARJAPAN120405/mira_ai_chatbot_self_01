@@ -69,13 +69,45 @@ app.post('/api/chat', async (c) => {
                         if (contentStr) {
                             const parsed = JSON.parse(contentStr);
                             if (Array.isArray(parsed) && parsed.length > 0) {
+                                const DEFAULT_IMG = 'https://placehold.co/300x200?text=Product';
+                                const carousel = parsed.map((p: any) => ({
+                                    ...p,
+                                    image: p.image || DEFAULT_IMG,
+                                    title: p.title,
+                                    price: p.price,
+                                    sizes: p.sizes,
+                                    url: p.url,
+                                    description: p.description,
+                                }));
                                 await stream.writeSSE({
-                                    data: JSON.stringify({ type: 'carousel', content: parsed })
+                                    data: JSON.stringify({ type: 'carousel', content: carousel })
                                 });
                             }
                         }
                     } catch (e) {
                         console.error("Failed to parse tool output for carousel", e);
+                    }
+                }
+                // Intercept getRecommendations (carousel with images)
+                if (isToolEnd(event, "getRecommendations")) {
+                    try {
+                        const toolOutput = getToolOutput(event);
+                        const contentStr = typeof toolOutput === 'string' ? toolOutput : (toolOutput as any)?.content;
+                        if (contentStr) {
+                            const parsed = JSON.parse(contentStr);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                const DEFAULT_IMG = 'https://placehold.co/300x200?text=Product';
+                                const carousel = parsed.map((p: any) => ({
+                                    ...p,
+                                    image: p.image || DEFAULT_IMG,
+                                }));
+                                await stream.writeSSE({
+                                    data: JSON.stringify({ type: 'carousel', content: carousel })
+                                });
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse getRecommendations for carousel", e);
                     }
                 }
                 // Send "Your Cart" card payload when viewCart is called
@@ -85,9 +117,10 @@ app.post('/api/chat', async (c) => {
                         const cart = sid ? sessionCarts.get(sid) : null;
                         const items = cart && cart.length > 0 ? cart : [];
                         const total = items.reduce((sum, p) => sum + (parseFloat(String(p.price).replace(/[$,]/g, '')) || 0), 0);
+                        const DEFAULT_IMG = 'https://placehold.co/80x80?text=Product';
                         const payload = items.map((p: any) => ({
                             title: p.title,
-                            image: p.image,
+                            image: p.image || DEFAULT_IMG,
                             price: p.price,
                             originalPrice: p.originalPrice ?? null,
                             stockStatus: p.stockStatus ?? 'In Stock',

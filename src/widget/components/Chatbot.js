@@ -10,6 +10,8 @@ import {
     createSuggestionChips,
     createYourCartCard,
     createOrderHistoryCard,
+    createCheckoutFlowCard,
+    createQuickActionGrid,
     parseMarkdown
 } from './MessageList.js';
 import { renderInputArea } from './InputArea.js';
@@ -17,8 +19,7 @@ import { createTypingIndicator } from './TypingIndicator.js';
 import { getAIResponse } from '../services/ai.js';
 import { applyMagnetic } from '../utils/magnetic.js';
 import { getRelevantSuggestionChips } from '../utils/suggestionChips.js';
-import { initLauncherFX } from './LauncherFX.js';
-import { DEFAULT_THINKING_STATUSES } from '../core/config.js';
+import { createToastAPI } from '../utils/toast.js';
 
 export function initChatbot(userConfig) {
     const config = mergeConfig(userConfig);
@@ -48,6 +49,9 @@ export function initChatbot(userConfig) {
     // 2. Attach Shadow DOM (open mode so we can inspect it easily for debugging)
     const shadowRoot = hostElement.attachShadow({ mode: 'open' });
 
+    // Toast helper (Sonner-style approximation)
+    const toastApi = createToastAPI(shadowRoot);
+
     // 3. Inject CSS
     const styleElement = document.createElement('style');
     styleElement.textContent = getStyles(config);
@@ -61,22 +65,7 @@ export function initChatbot(userConfig) {
     const chatWindow = document.createElement('div');
     chatWindow.className = 'chatbot-window';
 
-    const header = renderHeader(config);
     const messageList = renderMessageList();
-
-    // Particle layer (first child of message list)
-    const particlesDiv = document.createElement('div');
-    particlesDiv.className = 'chatbot-messages-particles';
-    particlesDiv.setAttribute('aria-hidden', 'true');
-    for (let i = 0; i < 12; i++) {
-        const p = document.createElement('span');
-        p.className = 'particle-dot';
-        p.style.left = `${10 + Math.random() * 80}%`;
-        p.style.top = `${5 + Math.random() * 90}%`;
-        p.style.animationDelay = `${Math.random() * 5}s`;
-        particlesDiv.appendChild(p);
-    }
-    messageList.insertBefore(particlesDiv, messageList.firstChild);
 
     function smoothScrollToBottom() {
         messageList.scrollTo({ top: messageList.scrollHeight, behavior: 'smooth' });
@@ -117,22 +106,115 @@ export function initChatbot(userConfig) {
         console.error("Failed to parse session chat history", e);
     }
 
+    // Checkout state
+    let checkoutState = {
+        step: null,
+        authMode: 'login',
+        name: '',
+        email: '',
+        selectedAddressId: null,
+        paymentMethod: '',
+        subtotal: 0
+    };
+
+    const mockAddresses = [
+        { id: '1', type: 'home', name: 'John Doe', street: '123 Main St, Apt 4B', city: 'New York', state: 'NY', zip: '10001', phone: '+1 (555) 012-3456' }
+    ];
+
+    // Handle checkout actions from the UI
+    const handleCheckoutAction = async (action, data) => {
+        if (action === 'changeAuthMode') {
+            checkoutState.authMode = data.mode;
+            renderCheckoutMsg();
+        } 
+        else if (action === 'submitMobile') {
+            checkoutState.mobile = data.mobile;
+            checkoutState.step = 'otp';
+            renderCheckoutMsg();
+        }
+        else if (action === 'verifyOtp') {
+            // Simulate OTP success
+            toastApi.showToast({ title: 'Success', message: 'Mobile verified' });
+            checkoutState.step = 'address';
+            renderCheckoutMsg();
+        }
+        else if (action === 'submitAuth') {
+            checkoutState.email = data.email;
+            checkoutState.name = data.name;
+            // Simulate auth success
+            toastApi.showToast({ title: 'Success', message: data.mode === 'login' ? 'Logged in successfully' : 'Account created' });
+            checkoutState.step = 'address';
+            renderCheckoutMsg();
+        } 
+        else if (action === 'selectAddress') {
+            checkoutState.selectedAddressId = data.id;
+            renderCheckoutMsg();
+        } 
+        else if (action === 'continueToPayment') {
+            checkoutState.step = 'payment';
+            renderCheckoutMsg();
+        } 
+        else if (action === 'selectPayment') {
+            checkoutState.paymentMethod = data.method;
+            renderCheckoutMsg();
+        } 
+        else if (action === 'placeOrder') {
+            checkoutState.step = 'confirmation';
+            renderCheckoutMsg();
+            toastApi.showToast({ title: 'Order Placed', message: 'Thank you for your order!' });
+        }
+    };
+
+    let lastCheckoutMsg = null;
+    const renderCheckoutMsg = () => {
+        const payload = {
+            step: checkoutState.step,
+            data: { addresses: mockAddresses, subtotal: checkoutState.subtotal },
+            state: checkoutState
+        };
+        const newCard = createCheckoutFlowCard(payload, { onAction: handleCheckoutAction });
+        
+        if (lastCheckoutMsg) {
+            const content = lastCheckoutMsg.querySelector('.chatbot-message-content') || lastCheckoutMsg;
+            const existingCheckout = content.querySelector('.chatbot-checkout-wrapper');
+            if (existingCheckout) {
+                existingCheckout.replaceWith(newCard);
+                smoothScrollToBottom();
+                return;
+            }
+        }
+        
+        const botMsg = createTextMessage("", true, config);
+        const content = document.createElement('div');
+        content.className = 'chatbot-message-content';
+        const bubble = botMsg.querySelector('.chatbot-bubble');
+        bubble.parentNode.insertBefore(content, bubble);
+        content.appendChild(bubble);
+        content.appendChild(newCard);
+        
+        messageList.appendChild(botMsg);
+        lastCheckoutMsg = botMsg;
+        smoothScrollToBottom();
+        applyMessageGrouping();
+    };
+
+    // Cart badge state
+    let cartCount = 0;
+    let setCartCount = null;
+
     // Handle sending a message
     const handleSend = async (text) => {
         const presets = chatWindow.querySelector('.chatbot-presets');
         if (presets) presets.remove();
+        const quickActionGrid = chatWindow.querySelector('.chatbot-quick-actions-grid');
+        if (quickActionGrid) quickActionGrid.remove();
 
         const userMsg = createTextMessage(text, false, config);
         messageList.appendChild(userMsg);
         smoothScrollToBottom();
 
-        const statuses = config.thinkingStatuses || DEFAULT_THINKING_STATUSES;
-        const initialStatus = statuses[0] || 'Thinking...';
-        const typingIndicator = createTypingIndicator(initialStatus);
+        const typingIndicator = createTypingIndicator();
         messageList.appendChild(typingIndicator);
-
-        const skeletonRow = createSkeletonProductRow();
-        messageList.appendChild(skeletonRow);
         smoothScrollToBottom();
 
         const historyContext = [...chatHistory];
@@ -144,10 +226,11 @@ export function initChatbot(userConfig) {
         let firstResponseReceived = false;
         let lastBotBlock = null;  // carousel or text message — chips added only once in onDone
         let lastCarouselData = null;
+        let skeletonRow = null; // only shown when loading products
 
         const removeIndicatorAndSkeleton = () => {
             if (typingIndicator.parentNode) messageList.removeChild(typingIndicator);
-            if (skeletonRow.parentNode) messageList.removeChild(skeletonRow);
+            if (skeletonRow && skeletonRow.parentNode) messageList.removeChild(skeletonRow);
         };
 
         const triggerOrbRipple = () => {
@@ -163,6 +246,13 @@ export function initChatbot(userConfig) {
 
         const onStatus = (statusText) => {
             if (typingIndicator.setStatus) typingIndicator.setStatus(statusText);
+            // Skeleton only when user asked to show products (product-search status)
+            const productRelated = statusText && /searching|product|looking for|options|recommend/i.test(statusText);
+            if (productRelated && !skeletonRow) {
+                skeletonRow = createSkeletonProductRow();
+                messageList.appendChild(skeletonRow);
+                smoothScrollToBottom();
+            }
         };
 
         const onToken = (token) => {
@@ -188,9 +278,17 @@ export function initChatbot(userConfig) {
                 firstResponseReceived = true;
                 triggerOrbRipple();
             }
+            // Ensure intro message appears BEFORE cards (backend may send carousel before streamed text)
+            const introLines = ["Here's what we have:", "Have a look at these.", "Here are some picks."];
+            const introText = introLines[Math.floor(Math.random() * introLines.length)];
+            if (!botTextMsg || !aiFullText.trim()) {
+                botTextMsg = createTextMessage(introText, true, config, handleSend);
+                messageList.appendChild(botTextMsg);
+                aiFullText = introText;
+            }
             const carouselMsg = createProductCarousel(carouselData, handleAddToCart, config);
             lastCarouselData = carouselData;
-            lastBotBlock = carouselMsg;  // chips will be added once in onDone
+            lastBotBlock = carouselMsg;
             messageList.appendChild(carouselMsg);
             chatHistory.push({ role: 'bot', content: "Displayed a product carousel to the user.", carousel: carouselData });
             sessionStorage.setItem('ecom-chat-history', JSON.stringify(chatHistory));
@@ -217,13 +315,17 @@ export function initChatbot(userConfig) {
                 contentCol.appendChild(bubble);
             }
             const cartCard = createYourCartCard(cartData, {
-                onCheckout: () => handleSend("I'd like to proceed to checkout"),
+                onCheckout: () => {
+                    checkoutState.step = 'mobile';
+                    checkoutState.subtotal = cartData.total || 0;
+                    renderCheckoutMsg();
+                },
                 onAddMore: () => handleSend("I'd like to add something else"),
             });
             if (cartCard && contentCol) {
                 contentCol.appendChild(cartCard);
             } else if (cartCard) {
-                botTextMsg.appendChild(cartCard);
+                botMsg.appendChild(cartCard);
             }
             const intro = aiFullText ? aiFullText : "Here’s what’s in your cart:";
             chatHistory.push({ role: 'bot', content: intro, cart: cartData });
@@ -305,6 +407,16 @@ export function initChatbot(userConfig) {
         applyMessageGrouping();
         smoothScrollToBottom();
         window.dispatchEvent(new CustomEvent('ecom-add-to-cart', { detail: { product, selectedSize } }));
+        if (setCartCount) {
+            setCartCount(cartCount + 1);
+        }
+        if (toastApi && product) {
+            toastApi.showToast({
+                title: 'Added to cart',
+                message: `${product.title || ''} · ${product.price || ''}`,
+                image: product.image
+            });
+        }
     };
 
     if (chatHistory.length > 0) {
@@ -349,79 +461,58 @@ export function initChatbot(userConfig) {
         applyMessageGrouping();
         smoothScrollToBottom();
     } else {
-        const defaultGreeting = `Hi! I can help you find products or answer questions about this store.`;
-        messageList.appendChild(createTextMessage(defaultGreeting, true, config));
-    }
-
-    chatWindow.appendChild(header);
-    chatWindow.appendChild(messageList);
-
-    // Preset pills inside message list (same layer as chat — no distortion)
-    if (config.presetQuestions && config.presetQuestions.length > 0 && chatHistory.length === 0) {
-        const presetsContainer = document.createElement('div');
-        presetsContainer.className = 'chatbot-presets';
-
-        config.presetQuestions.forEach(question => {
-            if (!question.trim()) return;
-            const pb = document.createElement('button');
-            pb.type = 'button';
-            pb.className = 'preset-pill';
-            pb.innerText = question;
-            pb.addEventListener('click', () => {
-                handleSend(question);
-                presetsContainer.remove();
-            });
-            applyMagnetic(pb, { strength: 0.12, radius: 50 });
-            presetsContainer.appendChild(pb);
+        const welcomeTxt = config.welcomeMessage ?? "Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?";
+        const botMsg = createTextMessage(welcomeTxt, true, config);
+        messageList.appendChild(botMsg);
+        
+        // 2x2 Quick Action Grid — from config.quickActions (customizable in panel)
+        const defaultQuickActions = [
+            { title: 'Browse Collections', desc: 'View all products', message: 'Show me your collections' },
+            { title: 'View Cart', desc: 'See shopping bag', message: 'View my cart' },
+            { title: 'Order Status', desc: 'Track orders', message: 'Order status' },
+            { title: 'Track My Order', desc: 'Get updates', message: 'Track my order' }
+        ];
+        const quickActions = (config.quickActions && config.quickActions.length >= 4)
+            ? config.quickActions.slice(0, 4)
+            : defaultQuickActions;
+        const grid = createQuickActionGrid(quickActions, {
+            onAction: (_type, data) => {
+                const msg = data.message != null && String(data.message).trim() ? data.message : data.title;
+                if (msg) handleSend(msg);
+            }
         });
-
-        if (presetsContainer.hasChildNodes()) {
-            messageList.appendChild(presetsContainer);
-        }
+        messageList.appendChild(grid);
+        
+        chatHistory.push({ role: 'bot', content: welcomeTxt });
     }
 
-    chatWindow.appendChild(inputArea);
-
-    // Next-gen launcher: rings + orb (Hellorep-style)
+    // Launcher and open/close state (before header so we can pass closeChat)
     const orbWrapper = document.createElement('div');
     orbWrapper.className = 'chatbot-orb-wrapper';
-    const ring1 = document.createElement('div');
-    ring1.className = 'chatbot-launcher-ring chatbot-launcher-ring-1';
-    const ring2 = document.createElement('div');
-    ring2.className = 'chatbot-launcher-ring chatbot-launcher-ring-2';
-    const ring3 = document.createElement('div');
-    ring3.className = 'chatbot-launcher-ring chatbot-launcher-ring-3';
     const toggleBtn = document.createElement('button');
     toggleBtn.type = 'button';
     toggleBtn.className = 'chatbot-toggle-btn';
     toggleBtn.setAttribute('aria-label', 'Open chat');
+    const launcherSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
     toggleBtn.innerHTML = config.launcherIconUrl
         ? `<img src="${config.launcherIconUrl}" alt="Chat" />`
-        : `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`;
-    orbWrapper.appendChild(ring3);
-    orbWrapper.appendChild(ring2);
-    orbWrapper.appendChild(ring1);
+        : launcherSvg;
     orbWrapper.appendChild(toggleBtn);
 
-    // 5. Interaction Logic
     let isOpen = false;
     let hasOpenedOnce = false;
-
-    // Restore open state from sessionStorage
     const wasOpen = sessionStorage.getItem('ecom-chatbot-open') === 'true';
 
-    // Welcome Bubble (text filled by typewriter script below; id for targeting)
     const welcomeBubble = document.createElement('div');
     welcomeBubble.className = 'welcome-bubble';
     welcomeBubble.innerHTML = `
-        <img src="${config.welcomeIconUrl || 'https://cdn-icons-png.flaticon.com/512/8943/8943377.png'}" alt="icon" style="width: 16px; height: 16px; margin-right: 6px; vertical-align: middle; border-radius: 50%; object-fit: cover;" />
-        <span id="typewriter-bubble" style="vertical-align: middle; font-size: 13px;"></span>
+        <span id="typewriter-bubble" style="vertical-align: middle; font-size: 14px; font-weight: 600;"></span>
     `;
 
-    // Auto-hide bubble if not opened in 15 seconds
+    // Auto-hide shortly after first reveal, then allow re-show later via typewriter loop
     setTimeout(() => {
         if (!hasOpenedOnce) welcomeBubble.classList.add('hidden');
-    }, 15000);
+    }, 5000);
 
     const openChat = () => {
         isOpen = true;
@@ -429,11 +520,9 @@ export function initChatbot(userConfig) {
         sessionStorage.setItem('ecom-chatbot-open', 'true');
         welcomeBubble.classList.add('hidden');
         chatWindow.classList.add('is-open');
-        toggleBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-        </svg>
-    `;
+        toggleBtn.innerHTML = config.launcherIconUrl
+            ? `<img src="${config.launcherIconUrl}" alt="Chat" />`
+            : launcherSvg;
         setTimeout(smoothScrollToBottom, 50);
     };
 
@@ -442,33 +531,76 @@ export function initChatbot(userConfig) {
         sessionStorage.setItem('ecom-chatbot-open', 'false');
         chatWindow.classList.remove('is-open');
         toggleBtn.innerHTML = config.launcherIconUrl
-            ? `<img src="${config.launcherIconUrl}" alt="Chat" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
-            : `
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z" />
-        </svg>
-    `;
+            ? `<img src="${config.launcherIconUrl}" alt="Chat" />`
+            : launcherSvg;
     };
-
-    let launcherFX = null;
 
     const toggleChat = () => {
-        // Hide welcome bubble as soon as user clicks the launcher
         welcomeBubble.classList.add('hidden');
-        // If LauncherFX hasn't played yet, let it handle the first open
-        if (!isOpen && launcherFX && !launcherFX.hasPlayed) {
-            const handled = launcherFX.trigger();
-            if (handled) return; // animation will call openChat via onReady
-        }
         isOpen ? closeChat() : openChat();
     };
-
     toggleBtn.addEventListener('click', toggleChat);
+
+    const header = renderHeader(config, {
+        onClose: closeChat,
+        onCartClick: () => {
+            openChat();
+            handleSend('View Cart');
+        },
+        cartCount: 0
+    });
+
+    // Cart badge updater (header + launcher)
+    setCartCount = (nextCount) => {
+        cartCount = Math.max(0, nextCount || 0);
+
+        // Header cart badge
+        const headerCartBtn = header.querySelector('button[aria-label="View cart"]');
+        if (headerCartBtn) {
+            let badge = headerCartBtn.querySelector('.chatbot-cart-badge');
+            if (cartCount > 0) {
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'chatbot-cart-badge';
+                    headerCartBtn.appendChild(badge);
+                }
+                badge.textContent = cartCount > 99 ? '99+' : String(cartCount);
+            } else if (badge) {
+                badge.remove();
+            }
+        }
+
+        // Launcher badge
+        let launcherBadge = toggleBtn.querySelector('.chatbot-launcher-badge');
+        if (cartCount > 0) {
+            if (!launcherBadge) {
+                launcherBadge = document.createElement('span');
+                launcherBadge.className = 'chatbot-launcher-badge';
+                toggleBtn.appendChild(launcherBadge);
+            }
+            launcherBadge.textContent = cartCount > 99 ? '99+' : String(cartCount);
+            launcherBadge.classList.remove('cart-badge-pop');
+            // retrigger animation
+            void launcherBadge.offsetWidth;
+            launcherBadge.classList.add('cart-badge-pop');
+        } else if (launcherBadge) {
+            launcherBadge.remove();
+        }
+    };
+    chatWindow.appendChild(header);
+    chatWindow.appendChild(messageList);
+
+    chatWindow.appendChild(inputArea);
+
+    const footer = document.createElement('div');
+    footer.className = 'chatbot-footer';
+    footer.innerHTML = '<p>Powered by Aura AI</p>';
+    chatWindow.appendChild(footer);
 
     // Auto-restore open state after DOM is assembled (done below)
 
 
-    // 6. Expose Public API
+    // Expose Public API
     if (window.EcomChatbot) {
         window.EcomChatbot.open = openChat;
         window.EcomChatbot.close = closeChat;
@@ -477,9 +609,7 @@ export function initChatbot(userConfig) {
             openChat();
             handleSend(msg);
         };
-        window.EcomChatbot.resetAnimation = () => {
-            if (launcherFX) launcherFX.reset();
-        };
+        window.EcomChatbot.resetAnimation = () => {};
     }
 
     // 7. Assemble
@@ -488,37 +618,19 @@ export function initChatbot(userConfig) {
     wrapper.appendChild(orbWrapper);
     shadowRoot.appendChild(wrapper);
 
-    // 8. Initialize LauncherFX animation system
-    // Skip animation if restoring a previously-open session
-    launcherFX = initLauncherFX(shadowRoot, wrapper, orbWrapper, chatWindow, () => {
-        // Called by LauncherFX when the animation finishes and chat should open
-        isOpen = true;
-        hasOpenedOnce = true;
-        sessionStorage.setItem('ecom-chatbot-open', 'true');
-        welcomeBubble.classList.add('hidden');
-        // Note: lfx-spring + is-open classes are already added by LauncherFX
-        toggleBtn.innerHTML = `
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
-        </svg>`;
-        setTimeout(() => messageList.scrollTo({ top: messageList.scrollHeight, behavior: 'smooth' }), 50);
-    });
-
-    // 9. Restore open/closed state AFTER assembly so CSS transition works
+    // 8. Restore open/closed state AFTER assembly so CSS transition works
     if (wasOpen) {
         openChat();
     }
 
-    // 10. Welcome bubble typewriter (runs inside shadow root)
+    // 9. Welcome bubble typewriter (runs inside shadow root)
     (function () {
         const messages = [
-            "May I help you? 😊",
-            "Need help choosing a product?",
+            "Hi! I'm Aura, your shopping assistant.",
+            "I can help you discover products.",
+            "I can track your orders for you.",
             "Looking for the best deals? 🔥",
-            "Free shipping on orders over $50! 🚀",
-            "Ask me anything about our store ✨",
-            "Find your perfect size in seconds 📏",
-            "New arrivals just dropped! 👀",
+            "What brings you here today?",
         ];
 
         const el = shadowRoot.getElementById("typewriter-bubble");

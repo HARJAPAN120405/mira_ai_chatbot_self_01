@@ -43,7 +43,8 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'src/panel/index.html'),
-          preview: resolve(__dirname, 'src/panel/preview.html')
+          preview: resolve(__dirname, 'src/panel/preview.html'),
+          demo: resolve(__dirname, 'src/demo/index.html')
         }
       }
     }
