@@ -21,8 +21,10 @@ export function getStyles(config) {
         box-shadow: ${botBubbleShadow};
     `;
 
+    const easePremium = 'cubic-bezier(0.16, 0.84, 0.44, 1)';
+
     return `
-        /* Design-Chatbot-Widget (Aura Concierge) carbon copy */
+        /* Premium E-Commerce Chatbot — ultra-smooth animations */
         :host {
             --primary-color: ${primary};
             --primary-indigo: ${primaryIndigo};
@@ -32,6 +34,14 @@ export function getStyles(config) {
             --shadow-panel: ${panelShadow};
             --border-radius: 18px;
             --transition-speed: 0.3s;
+            --ease-premium: ${easePremium};
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .gpu-accelerated {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
         }
 
         /* Reset for internal components */
@@ -77,9 +87,10 @@ export function getStyles(config) {
             justify-content: center;
             position: relative;
             box-shadow: 0 8px 24px rgba(37,99,235,0.5);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
             z-index: 2;
-            animation: launcher-float 2s ease-in-out infinite;
+            animation: launcher-float 2s var(--ease-premium) infinite;
+            will-change: transform;
         }
         .chatbot-toggle-btn:hover {
             transform: scale(1.1);
@@ -120,15 +131,15 @@ export function getStyles(config) {
         }
         .chatbot-toggle-btn .chatbot-launcher-badge {
             position: absolute;
-            top: -2px;
-            right: -2px;
-            min-width: 20px;
-            height: 20px;
-            padding: 0 5px;
+            top: -4px;
+            right: -4px;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 6px;
             border-radius: 50%;
-            background: #f43f5e;
+            background: #ef4444;
             color: #fff;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             display: flex;
             align-items: center;
@@ -137,15 +148,14 @@ export function getStyles(config) {
             transform-origin: center;
         }
         .chatbot-launcher-badge.cart-badge-pop {
-            animation: cart-badge-pop 220ms cubic-bezier(0.3, 1.4, 0.6, 1) forwards;
+            animation: cart-badge-pop 0.3s var(--ease-premium) forwards;
         }
         @keyframes cart-badge-pop {
-            0% { transform: scale(0); }
-            60% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Chat Window — Design-Chatbot-Widget: 360×600, 18px radius, gradient glass */
+        /* Chat Window — 360×600, 18px radius, gradient glass, premium open animation */
         .chatbot-window {
             width: 360px;
             max-width: min(360px, calc(100vw - ${config.marginSide * 2 + 8}px));
@@ -164,8 +174,9 @@ export function getStyles(config) {
             opacity: 0;
             pointer-events: none;
             transform: translateY(30px) scale(0.95);
-            transition: opacity 0.3s cubic-bezier(0.16, 0.84, 0.44, 1),
-                        transform 0.3s cubic-bezier(0.16, 0.84, 0.44, 1),
+            transform-origin: bottom ${isLeft ? 'left' : 'right'};
+            transition: opacity 0.3s var(--ease-premium),
+                        transform 0.3s var(--ease-premium),
                         visibility 0s linear 0.3s;
             visibility: hidden;
         }
@@ -215,7 +226,7 @@ export function getStyles(config) {
 
         /* --- INTERNAL COMPONENTS (Design-Chatbot-Widget) --- */
         
-        /* Header — 64px, gradient, white text, avatar + title + status, cart + close */
+        /* Header — 64px, gradient, white text, slideDown on open */
         .chatbot-header {
             height: 64px;
             padding: 0 16px;
@@ -225,6 +236,14 @@ export function getStyles(config) {
             background: ${gradientHeader};
             color: #fff;
             flex-shrink: 0;
+            opacity: 0;
+        }
+        .chatbot-window.is-open .chatbot-header {
+            animation: header-slideDown 0.3s var(--ease-premium) 0.1s forwards;
+        }
+        @keyframes header-slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chatbot-header-left {
             display: flex;
@@ -277,6 +296,11 @@ export function getStyles(config) {
             border-radius: 50%;
             background: #34d399;
             flex-shrink: 0;
+            animation: status-pulse 2s ease-in-out infinite;
+        }
+        @keyframes status-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         .chatbot-header-status {
             font-size: 12px;
@@ -291,6 +315,7 @@ export function getStyles(config) {
             position: relative;
             width: 36px;
             height: 36px;
+            padding: 8px;
             border: none;
             background: transparent;
             color: #fff;
@@ -299,10 +324,14 @@ export function getStyles(config) {
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s;
+            transition: background 0.2s var(--ease-premium), transform 0.2s var(--ease-premium);
         }
         .chatbot-header-btn:hover {
             background: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+        }
+        .chatbot-header-btn:active {
+            transform: scale(0.9);
         }
         .chatbot-header-btn svg {
             width: 20px;
@@ -328,7 +357,7 @@ export function getStyles(config) {
             justify-content: center;
         }
 
-        /* Message List — Design-Chatbot-Widget: 16px padding, 12px gap, scrollbar hidden */
+        /* Message List — 16px padding, 12px gap, scrollbar hidden, fadeIn on open */
         .chatbot-messages {
             flex: 1;
             padding: 16px;
@@ -340,6 +369,14 @@ export function getStyles(config) {
             background: transparent;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+            opacity: 0;
+        }
+        .chatbot-window.is-open .chatbot-messages {
+            animation: messages-fadeIn 0.3s var(--ease-premium) 0.25s forwards;
+        }
+        @keyframes messages-fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         .chatbot-messages::-webkit-scrollbar {
             display: none;
@@ -360,30 +397,39 @@ export function getStyles(config) {
             z-index: 1;
         }
 
-        /* Message entrance animations — GPU-friendly */
+        /* Message entrance animations — 200ms messageIn (Figma) */
         .chatbot-message.msg-enter-user {
             opacity: 0;
-            transform: translateX(16px);
-            animation: msg-enter-user 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+            transform: translateY(10px) scale(0.98);
+            animation: msg-enter-user 0.2s var(--ease-premium) forwards;
+            will-change: transform;
         }
         .chatbot-message.msg-enter-bot {
             opacity: 0;
-            transform: translateX(-16px);
-            animation: msg-enter-bot 0.35s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+            transform: translateY(10px) scale(0.98);
+            animation: msg-enter-bot 0.2s var(--ease-premium) forwards;
+            will-change: transform;
         }
         .chatbot-message.msg-enter-product {
             opacity: 0;
-            transform: scale(0.92);
-            animation: msg-enter-product 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform: translateY(10px) scale(0.98);
+            animation: msg-enter-product 0.25s var(--ease-premium) forwards;
+            will-change: transform;
         }
         @keyframes msg-enter-user {
-            to { opacity: 1; transform: translateX(0); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes msg-enter-bot {
-            to { opacity: 1; transform: translateX(0); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes msg-enter-product {
-            to { opacity: 1; transform: scale(1); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .chatbot-message {
+            transition: transform 0.2s var(--ease-premium);
+        }
+        .chatbot-message:hover {
+            transform: translateY(-2px) scale(1);
         }
 
         /* Message grouping — consecutive same sender */
@@ -455,14 +501,14 @@ export function getStyles(config) {
             margin-left: 10px;
         }
 
-        /* Message bubbles — Design-Chatbot-Widget: bot = white 20px radius, user = gradient */
+        /* Message bubbles — bot = white 20px radius, user = gradient, premium shadow transition */
         .chatbot-bubble {
             padding: 14px 16px;
             font-size: 14px;
             line-height: 1.5;
             max-width: 75%;
             word-break: break-word;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
             position: relative;
         }
         .chatbot-message.bot .chatbot-bubble {
@@ -742,6 +788,18 @@ export function getStyles(config) {
             overflow: hidden;
             box-shadow: ${botBubbleShadow};
             flex-shrink: 0;
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+        .carousel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .carousel-card:nth-child(1) { animation: card-slideIn 0.35s var(--ease-premium) 0s forwards; }
+        .carousel-card:nth-child(2) { animation: card-slideIn 0.35s var(--ease-premium) 0.1s forwards; }
+        .carousel-card:nth-child(3) { animation: card-slideIn 0.35s var(--ease-premium) 0.2s forwards; }
+        @keyframes card-slideIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .carousel-card .chatbot-product-img {
             border-radius: 0;
@@ -805,6 +863,14 @@ export function getStyles(config) {
         
         .chatbot-product-action:hover {
             opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+        .chatbot-product-action:active {
+            transform: scale(0.98);
+        }
+        .chatbot-product-action {
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), opacity 0.2s var(--ease-premium);
         }
 
         .chatbot-product-action:disabled {
@@ -812,7 +878,7 @@ export function getStyles(config) {
             cursor: not-allowed;
         }
 
-        /* Input Area — Design-Chatbot-Widget: white wrapper, rounded-[28px], focus ring */
+        /* Input Area — pill shape, focus ring, slideUp on open */
         .chatbot-input-area {
             display: flex;
             align-items: center;
@@ -820,20 +886,31 @@ export function getStyles(config) {
             padding: 16px;
             padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
             background: transparent;
+            opacity: 0;
+        }
+        .chatbot-window.is-open .chatbot-input-area {
+            animation: input-slideUp 0.3s var(--ease-premium) 0.45s forwards;
+        }
+        @keyframes input-slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chatbot-input-wrap {
             flex: 1;
             display: flex;
             align-items: center;
-            background: #fff;
-            border: ${borderGray};
-            border-radius: 28px;
-            padding: 10px 14px 10px 12px;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            gap: 8px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 12px;
+            padding: 4px 4px 4px 12px;
+            transition: background 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), outline 0.2s var(--ease-premium);
         }
         .chatbot-input-wrap:focus-within {
-            border-color: ${primary};
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.25);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            outline: 2px solid ${primary};
+            outline-offset: 0;
         }
         .chatbot-input {
             flex: 1;
@@ -849,33 +926,45 @@ export function getStyles(config) {
             color: #9ca3af;
         }
         .chatbot-send-btn {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border: none;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background: #d1d5db;
+            border-radius: 8px;
+            background: ${gradientHeader};
             color: #fff;
             flex-shrink: 0;
-            transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), opacity 0.2s var(--ease-premium);
         }
         .chatbot-send-btn.active {
-            background: ${gradientHeader};
-            box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+            opacity: 1;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
         }
         .chatbot-send-btn.active:hover {
             transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
         }
         .chatbot-send-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
+        }
+        .chatbot-send-btn:disabled,
+        .chatbot-send-btn:not(.active) {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .chatbot-send-btn:not(.active):hover {
+            transform: none;
         }
         .chatbot-send-btn svg {
-            width: 16px;
-            height: 16px;
-            fill: currentColor;
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
         }
         .chatbot-input-area .chatbot-attach-btn {
             width: 32px;
@@ -898,11 +987,19 @@ export function getStyles(config) {
             width: 16px;
             height: 16px;
         }
-        /* Footer — Design-Chatbot-Widget: "Powered by Aura AI" */
+        /* Footer — "Powered by Aura AI", slideUp on open */
         .chatbot-footer {
             padding: 12px 16px;
             text-align: center;
             flex-shrink: 0;
+            opacity: 0;
+        }
+        .chatbot-window.is-open .chatbot-footer {
+            animation: footer-slideUp 0.3s var(--ease-premium) 0.6s forwards;
+        }
+        @keyframes footer-slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chatbot-footer p {
             margin: 0;
@@ -910,10 +1007,10 @@ export function getStyles(config) {
             color: #6b7280;
         }
 
-        /* Toast notifications — top-center inside shadow root */
+        /* Toast notifications — top 24px, toastIn/toastOut (Figma) */
         .chatbot-toast-host {
             position: fixed;
-            top: 16px;
+            top: 24px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10000;
@@ -925,24 +1022,29 @@ export function getStyles(config) {
         .chatbot-toast {
             min-width: 220px;
             max-width: 320px;
-            padding: 10px 12px;
+            padding: 12px 16px;
             border-radius: 16px;
             background: #ffffff;
-            box-shadow: 0 16px 40px rgba(15,23,42,0.35);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             opacity: 0;
-            transform: translateY(-12px) scale(0.96);
-            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+            transform: translateY(-20px) scale(0.9);
+            transition: opacity 0.3s var(--ease-premium), transform 0.3s var(--ease-premium);
         }
         .chatbot-toast-visible {
             opacity: 1;
             transform: translateY(0) scale(1);
         }
+        .chatbot-toast.hiding {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.9);
+        }
         .chatbot-toast-image-wrap {
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 12px;
             overflow: hidden;
             flex-shrink: 0;
@@ -967,7 +1069,7 @@ export function getStyles(config) {
             color: #4b5563;
         }
 
-        /* Welcome Bubble — Design-Chatbot-Widget: white, blue text, rounded-2xl */
+        /* Welcome Bubble — white, blue text, bubbleFloat + fadeInSlide / fadeOutSlide */
         .welcome-bubble {
             position: absolute;
             bottom: 72px;
@@ -980,24 +1082,30 @@ export function getStyles(config) {
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
-            opacity: 1;
-            transition: opacity 0.3s ease, transform 0.3s ease;
             pointer-events: auto;
             transform-origin: bottom ${isLeft ? 'left' : 'right'};
-            animation: welcome-float 3s ease-in-out infinite;
+            animation: welcome-bubbleFloat 2s ease-in-out infinite,
+                       welcome-fadeInSlide 0.4s var(--ease-premium) forwards;
         }
         .welcome-bubble.hidden {
+            animation: welcome-fadeOutSlide 0.3s var(--ease-premium) forwards;
             opacity: 0;
-            transform: scale(0.9) translateY(8px);
             pointer-events: none;
         }
-        @keyframes welcome-float {
-            0% { transform: translateY(0); }
+        @keyframes welcome-bubbleFloat {
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-2px); }
-            100% { transform: translateY(0); }
+        }
+        @keyframes welcome-fadeInSlide {
+            from { opacity: 0; transform: translateX(10px) scale(0.9); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        @keyframes welcome-fadeOutSlide {
+            from { opacity: 1; transform: translateX(0) scale(1); }
+            to { opacity: 0; transform: translateX(10px) scale(0.9); }
         }
 
-        /* Typing indicator — Design-Chatbot-Widget: white bubble, 3 dots */
+        /* Typing indicator — 3 dots, bounce, no avatar (Figma) */
         .typing-indicator-wrapper {
             background: transparent !important;
             box-shadow: none !important;
@@ -1005,7 +1113,7 @@ export function getStyles(config) {
             align-self: flex-start;
         }
         .typing-indicator-wrapper .chatbot-message-avatar {
-            flex-shrink: 0;
+            display: none;
         }
         .message-bubble.typing-indicator {
             display: flex;
@@ -1017,18 +1125,18 @@ export function getStyles(config) {
             box-shadow: ${botBubbleShadow};
         }
         .typing-indicator .dot {
-            width: 6px;
-            height: 6px;
-            background-color: #9ca3af;
+            width: 8px;
+            height: 8px;
+            background-color: #2563eb;
             border-radius: 50%;
-            animation: typing-dot 0.6s infinite ease-in-out both;
+            animation: typing-bounce 1.4s var(--ease-premium) infinite;
         }
-        .typing-indicator .dot:nth-child(1) { animation-delay: -0.12s; }
-        .typing-indicator .dot:nth-child(2) { animation-delay: -0.06s; }
-        .typing-indicator .dot:nth-child(3) { animation-delay: 0s; }
-        @keyframes typing-dot {
-            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
-            40% { transform: translateY(-4px); opacity: 1; }
+        .typing-indicator .dot:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing-bounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
         }
 
         /* Skeleton loaders */
@@ -1086,17 +1194,26 @@ export function getStyles(config) {
             white-space: nowrap;
             background: #fff;
             color: #374151;
-            border: ${borderGray};
+            border: 1.5px solid #e5e7eb;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: box-shadow 0.2s, transform 0.2s;
+            transition: box-shadow 0.2s var(--ease-premium), transform 0.2s var(--ease-premium),
+                        background 0.2s var(--ease-premium), color 0.2s var(--ease-premium), border-color 0.2s var(--ease-premium);
+            animation: chip-in 0.3s var(--ease-premium) forwards;
         }
         .suggestion-chip:hover {
-            box-shadow: 0 6px 14px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+            transform: translateY(-2px) scale(1.03);
         }
         .suggestion-chip:active {
-            transform: translateY(0);
+            transform: translateY(0) scale(0.97);
+        }
+        @keyframes chip-in {
+            from { opacity: 0; transform: translateY(5px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* --- Quick action buttons under messages --- */
@@ -1145,33 +1262,43 @@ export function getStyles(config) {
             min-width: 280px;
         }
 
-        /* Quick Action Grid (2x2) — Image 1 Refined */
+        /* Quick Action Grid (2x2) — premium stagger + hover */
         .chatbot-quick-actions-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 12px;
             width: 100%;
         }
 
         .quick-action-card {
             background: #fff;
-            border-radius: 12px;
-            padding: 10px;
+            border-radius: 14px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
             border: 1px solid rgba(0, 0, 0, 0.06);
             text-align: left;
         }
+        .quick-action-card:nth-child(1) { animation: quickAction-in 0.35s var(--ease-premium) 0s forwards; }
+        .quick-action-card:nth-child(2) { animation: quickAction-in 0.35s var(--ease-premium) 0.1s forwards; }
+        .quick-action-card:nth-child(3) { animation: quickAction-in 0.35s var(--ease-premium) 0.2s forwards; }
+        .quick-action-card:nth-child(4) { animation: quickAction-in 0.35s var(--ease-premium) 0.3s forwards; }
+        @keyframes quickAction-in {
+            from { opacity: 0; transform: translateY(10px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
         .quick-action-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            border-color: rgba(37, 99, 235, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .quick-action-card:active {
+            transform: translateY(-2px) scale(0.98);
         }
 
         .quick-action-icon-box {
@@ -1258,6 +1385,194 @@ export function getStyles(config) {
             overflow: hidden;
             box-shadow: ${botBubbleShadow};
         }
+        .chatbot-cart-card-premium {
+            border-radius: 18px;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .chatbot-cart-card-premium .chatbot-cart-card-body {
+            padding: 16px;
+        }
+        .chatbot-cart-item-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .chatbot-cart-item-row:last-of-type {
+            border-bottom: none;
+        }
+        .chatbot-cart-item-thumb-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chatbot-cart-item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .chatbot-cart-item-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: #2563eb;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .chatbot-cart-item-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .chatbot-cart-item-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+        .chatbot-cart-item-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        .chatbot-cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .chatbot-cart-qty-pill {
+            display: inline-flex;
+            align-items: center;
+            background: #f3f4f6;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .chatbot-cart-qty-btn {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: #fff;
+            color: #111827;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s var(--ease-premium);
+        }
+        .chatbot-cart-qty-btn:hover {
+            background: #e5e7eb;
+        }
+        .chatbot-cart-qty-num {
+            min-width: 28px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #111827;
+        }
+        .chatbot-cart-remove-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background: transparent;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: color 0.2s var(--ease-premium), background 0.2s var(--ease-premium);
+        }
+        .chatbot-cart-remove-btn:hover {
+            color: #ef4444;
+            background: rgba(239,68,68,0.08);
+        }
+        .chatbot-cart-remove-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        .chatbot-cart-summary {
+            padding: 12px 0;
+            margin-top: 8px;
+        }
+        .chatbot-cart-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .chatbot-cart-summary-row:last-child {
+            margin-bottom: 0;
+        }
+        .chatbot-cart-summary-label {
+            font-weight: 500;
+        }
+        .chatbot-cart-summary-value {
+            font-weight: 600;
+            color: #111827;
+        }
+        .chatbot-cart-shipping-free {
+            font-weight: 700;
+            color: #34d399;
+        }
+        .chatbot-cart-summary-divider {
+            height: 1px;
+            background: #f3f4f6;
+            margin: 10px 0;
+        }
+        .chatbot-cart-summary-total .chatbot-cart-summary-label {
+            font-weight: 700;
+            color: #111827;
+        }
+        .chatbot-cart-summary-total-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+        .chatbot-cart-checkout-btn-premium {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 20px;
+            margin-top: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+        .chatbot-cart-checkout-btn-premium:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37,99,235,0.4);
+        }
+        .chatbot-cart-checkout-btn-premium:active {
+            transform: translateY(0);
+        }
+        .chatbot-cart-checkout-btn-premium svg {
+            flex-shrink: 0;
+        }
+
         .chatbot-cart-card .chatbot-section-card-title {
             padding: 16px 20px;
             font-size: 15px;
@@ -1558,6 +1873,202 @@ export function getStyles(config) {
             color: ${colorTextMuted};
         }
 
+        .checkout-label-uppercase {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #374151;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .checkout-mobile-card {
+            gap: 14px;
+        }
+        .checkout-mobile-input-wrap {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            background: #fff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 0 14px;
+            min-height: 48px;
+            transition: border-color 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+        .checkout-mobile-input-wrap:focus-within {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(147,197,253,0.35);
+        }
+        .checkout-mobile-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            margin-right: 8px;
+        }
+        .checkout-mobile-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+        .checkout-mobile-prefix {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-right: 6px;
+        }
+        .checkout-mobile-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            font-weight: 500;
+            color: #111827;
+            background: transparent;
+            min-width: 0;
+        }
+        .checkout-mobile-input::placeholder {
+            color: #9ca3af;
+        }
+        .checkout-send-otp-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+        .checkout-send-otp-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37,99,235,0.4);
+        }
+        .checkout-send-otp-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .checkout-send-otp-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+        .checkout-secure-note {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 6px;
+            font-size: 11px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+        .checkout-secure-note svg {
+            flex-shrink: 0;
+        }
+
+        .checkout-otp-card {
+            gap: 14px;
+        }
+        .checkout-otp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .checkout-otp-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #111827;
+            margin: 0;
+        }
+        .checkout-change-number-link {
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2563eb;
+            cursor: pointer;
+            padding: 0;
+        }
+        .checkout-change-number-link:hover {
+            text-decoration: underline;
+        }
+        .checkout-otp-sent-to {
+            font-size: 13px;
+            color: #6b7280;
+            margin: 0 0 14px 0;
+        }
+        .checkout-otp-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .checkout-otp-box {
+            width: 48px;
+            height: 52px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            background: #fff;
+            outline: none;
+            transition: border-color 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+        .checkout-otp-box:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+        .checkout-resend-link {
+            background: none;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2563eb;
+            cursor: pointer;
+            padding: 0;
+            margin-bottom: 4px;
+        }
+        .checkout-resend-link:hover {
+            text-decoration: underline;
+        }
+        .checkout-verify-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+        .checkout-verify-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37,99,235,0.4);
+        }
+        .checkout-verify-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
         .checkout-input-wrap {
             position: relative;
             display: flex;
@@ -1586,6 +2097,32 @@ export function getStyles(config) {
         .checkout-input:focus {
             border-color: ${primary};
             box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
+
+        /* OTP inputs — premium focus ring and scale */
+        .otp-inputs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .otp-box {
+            width: 40px;
+            height: 48px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: ${colorTextMain};
+            background: #fff;
+            transition: border-color 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), transform 0.2s var(--ease-premium);
+        }
+        .otp-box:focus {
+            outline: none;
+            border-color: ${primary};
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+            transform: scale(1.05);
         }
 
         .checkout-primary-btn {
@@ -1632,14 +2169,25 @@ export function getStyles(config) {
         }
 
         .checkout-address-card.selected {
-            border: 2px solid #111827;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #2563eb;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
         }
 
         .address-icon-box {
-            padding: 10px;
-            border-radius: 12px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            padding: 0;
+            border-radius: 50%;
             background: ${primary};
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .address-icon-box.address-icon-home {
+            background: #93c5fd;
             color: #fff;
         }
 
@@ -1674,50 +2222,59 @@ export function getStyles(config) {
         }
 
         .address-name {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: ${colorTextMain};
         }
 
-        .address-type {
-            font-size: 9px;
+        .address-type,
+        .address-type-badge {
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            padding: 2px 6px;
-            background: #f3f4f6;
-            color: #6b7280;
-            border-radius: 4px;
+            letter-spacing: 0.04em;
+            padding: 3px 8px;
+            background: #e5e7eb;
+            color: #374151;
+            border-radius: 6px;
         }
 
         .address-text {
-            font-size: 11px;
+            font-size: 13px;
             color: ${colorTextMuted};
             line-height: 1.4;
         }
 
         .address-phone {
-            font-size: 10px;
-            color: #9ca3af;
+            font-size: 12px;
+            color: #6b7280;
             display: flex;
             align-items: center;
-            gap: 4px;
-            margin-top: 4px;
+            gap: 6px;
+            margin-top: 6px;
         }
 
-        .checkout-add-address {
+        .checkout-address-step {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkout-add-address,
+        .checkout-add-address-dashed {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             border: 2px dashed #d1d5db;
             border-radius: 16px;
             background: transparent;
-            color: ${colorTextMuted};
-            font-size: 12px;
+            color: #6b7280;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s;
         }
 
@@ -1743,52 +2300,65 @@ export function getStyles(config) {
         }
 
         .checkout-method-card.selected {
-            border: 2px solid #111827;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #2563eb;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);
+        }
+
+        .checkout-payment-step {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .method-icon-box {
-            padding: 10px;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            padding: 0;
             border-radius: 12px;
             background: ${primary};
             color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .checkout-method-card:not(.selected) .method-icon-box {
-            background: rgba(37, 99, 235, 0.05);
-            color: ${primary};
+            background: #f3f4f6;
+            color: #6b7280;
         }
 
+        .method-title,
         .method-info h4 {
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             color: ${colorTextMain};
         }
 
+        .method-desc,
         .method-info p {
-            font-size: 11px;
-            color: ${colorTextMuted};
+            font-size: 13px;
+            color: #6b7280;
         }
 
         .checkout-summary-card {
             background: #fff;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             border: 1px solid #f3f4f6;
-            margin-top: 8px;
         }
 
         .summary-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             text-transform: uppercase;
             color: ${colorTextMain};
             letter-spacing: 0.08em;
-            margin-bottom: 4px;
+            margin: 0 0 8px 0;
         }
 
         .summary-row {
@@ -1798,18 +2368,63 @@ export function getStyles(config) {
             color: ${colorTextMuted};
         }
 
-        .summary-row.total {
-            margin-top: 8px;
+        .summary-shipping-free {
+            color: #10b981 !important;
+            font-weight: 700;
+        }
+
+        .summary-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 4px 0;
+        }
+
+        .summary-row.summary-total {
+            margin-top: 4px;
             padding-top: 12px;
-            border-top: 2px solid #f3f4f6;
+            border-top: 1px solid #e5e7eb;
             font-weight: 800;
             font-size: 16px;
             color: ${colorTextMain};
         }
 
         .total-value {
-            color: ${primary};
-            font-size: 22px;
+            color: #2563eb;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .checkout-place-order-btn {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium);
+        }
+
+        .checkout-place-order-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+        }
+
+        .checkout-place-order-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .checkout-place-order-btn svg {
+            width: 20px;
+            height: 20px;
         }
 
         .checkout-confirmation {
@@ -1846,18 +2461,93 @@ export function getStyles(config) {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            background: #f9fafb;
+            padding: 10px 20px;
+            background: #f3f4f6;
             border: 1px solid #e5e7eb;
-            border-radius: 20px;
-            font-size: 11px;
+            border-radius: 25px;
+            font-size: 13px;
             font-weight: 600;
-            color: ${colorTextMuted};
+            color: #6b7280;
         }
 
         .order-number-badge b {
-            color: ${colorTextMain};
+            color: #111827;
+            font-size: 15px;
+        }
+
+        .confirmation-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+            margin: 0;
+        }
+
+        .confirmation-message {
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .confirmation-products {
+            width: 100%;
+            text-align: left;
+            margin: 8px 0;
+            padding-top: 12px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .confirmation-products-title {
             font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .confirmation-product-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .confirmation-product-row:last-child {
+            border-bottom: none;
+        }
+
+        .confirmation-product-img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .confirmation-product-placeholder {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: #f3f4f6;
+        }
+
+        .confirmation-product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .confirmation-product-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .confirmation-product-meta {
+            font-size: 12px;
+            color: #6b7280;
         }
 
         .stock-in { color: #22c55e; font-size: 12px; }

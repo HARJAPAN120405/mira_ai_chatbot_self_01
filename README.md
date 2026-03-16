@@ -24,6 +24,7 @@ A premium, vanilla JS e-commerce chatbot widget with advanced UX, motion design,
 - **Quick Action Grid (2×2)**: Under the first greeting, four customizable cards (e.g. Browse Collections, View Cart, Order Status, Track My Order) let the user send a preset message on click. Configurable via **quickActions** or in the panel. Messages can also include `[Action: Label]` markers rendered as buttons.
 - **Comparison Tables**: Markdown tables in bot replies are styled with horizontal scroll.
 - **Your Cart card**: When the user asks to see their cart, the backend sends a `cart` SSE payload; the widget renders a **Your Cart** section card with product image, title, price, original price (strikethrough), stock status (In Stock / Out of Stock), and Grand Total. Below the card, a short line **"Add something else? Or proceed to checkout."** and **suggestion pills**: **"Add another product"** (sends a message to browse more) and **"Proceed to checkout"** (same as the main checkout button). Demo data includes `originalPrice` and `stockStatus` per product.
+- **Checkout flow (UI)**: After **Verify & Continue** (OTP), the bot shows a user message **"Continue to address selection"** and then the **address** step: "Please select a delivery address or add a new one." with selectable address cards (2px blue border, light blue home icon badge, green checkmark when selected), **+ Add New Address** (dashed), and **Continue to Payment**. On **Continue to Payment**, the user message **"Continue to payment"** is shown and the **payment** step appears: "Choose your preferred payment method." with Cash on Delivery and Credit/Debit Card cards (selected = blue border + green checkmark), an **ORDER SUMMARY** card (Subtotal, Shipping FREE, Tax, Total in blue), and a green **Place Order – $X.XX** button. After **Place order**, the **confirmation** card shows a green success icon, **Order Confirmed!**, the confirmation message, **products ordered** (name, qty × price per line), and **Order #** badge. When `apiBaseUrl` is empty, the widget uses a built-in Figma flow with client-side cart; cart is cleared on place order and a snapshot is passed to the confirmation step so ordered products are listed.
 - **Sizes only for shoes**: For **footwear (sneakers)**, the bot **always asks for size before adding to cart**. The backend `addToCart` tool requires a `size` parameter for shoes and returns a prompt to choose a size if missing; the agent is instructed to never call addToCart for shoes without the user’s size. Size pills (e.g. US 8–11) are shown in product carousels and single product cards; the widget blocks add-to-cart until a size is selected.
 - **Enhanced Glassmorphism**: Stronger blur, soft highlights, and depth for the glass theme.
 - **Auto Product Detection**: Schema.org, OpenGraph, and DOM fallback for product context on the host page.
@@ -87,6 +88,14 @@ document.getElementById('help-btn').addEventListener('click', () => {
 - **botSubtitle**: Unused in current header layout; status line uses **headerStatus** only.
 - **apiBaseUrl**: Backend base URL for chat (e.g. `"http://localhost:3000"` or `"https://your-api.com"`). Empty or omitted uses `http://localhost:3000`. The widget calls `POST ${apiBaseUrl}/api/chat` with `{ message, history, sessionId }`.
 
+### MessageList API (programmatic messages)
+
+For custom UIs or demos you can use the **MessageList** module directly. It exports **createMessageList** and **addMessage**, and reads animation/product/quick-action defaults from **config.js**.
+
+- **config.js** exports: **ANIMATIONS** (`easing`, `messageInDuration`, `hoverDuration`, `staggerDelay`), **QUICK_ACTIONS** (array of `{ icon, label, desc }` for the 2×2 grid), **PRODUCTS** (demo product list: `name`, `price`, `image`, optional `badge`, `originalPrice`).
+- **createMessageList()**: Returns a container `div` with `id="messages-container"` and class `messages-container`, with flex layout, fadeIn animation, smooth scroll, and hidden scrollbar. Append this node where you want the message list (e.g. light DOM or shadow root).
+- **addMessage(message, onAddToCart, onSuggestionClick, containerOrRoot?)**: Appends one message row. **message** can include: `type` (`'user'` | `'bot'`), `content` (bubble text), `quickActions` (true to show 2×2 grid from QUICK_ACTIONS, or array of `{ icon, label, desc }`), `products`, `cartItems`, `orders`, `suggestions`, and optional `onUpdateQty` / `onRemove` for cart. Renders message bubble, then quick actions, product carousel, cart block, order history block, and suggestion chips. Optional fourth argument is the container (or document root) to use; if omitted, uses `document.getElementById('messages-container')`. Use the fourth argument when the list lives inside a Shadow DOM so keyframes in `document.head` still apply to the host document.
+
 ---
 
 ## 🔧 Backend tools (server)
@@ -113,7 +122,24 @@ Stream event parsing supports both **StreamEvent** shape (`event.event`, `event.
 
 ## 🎬 Motion & UX (Business Logic)
 
-- **Launcher**: Single 56px gradient circle (`#2563eb` → `#4f46e5`), message icon; ripple on new message when closed.
+### Premium Figma design system (UI/UX only)
+
+The widget uses a consistent design system for visuals and motion; **backend and auth/checkout logic are unchanged** (real API, streaming, OTP/address/payment when the server sends them).
+
+- **Easing**: All animations use `cubic-bezier(0.16, 0.84, 0.44, 1)` for smoothness.
+- **Durations**: Panel open/close 300ms, hover 200ms, message-in 200ms, stagger 100ms per item, launcher float 2s.
+- **Launcher**: 56px circle, gradient, **MessageSquare** icon (24×24, stroke 2), float animation; cart badge 24px red with white border; hover scale(1.1), active scale(0.95).
+- **Welcome bubble**: Static text **"Need help? 👋"** (blue, no arrow); white bg, shadow `0 0 40px rgba(37,99,235,0.25)`; auto-hide after 5s, reappear after 15s when chat is closed.
+- **Panel**: 360×600px, 18px radius, gradient background, transform-origin bottom-right; open/close with translateY + scale.
+- **Header**: 64px, gradient; **Bot (robot) icon** in avatar, "Aura Concierge", green status dot (pulse); cart and close buttons with hover scale; cart badge 18px white bg, blue text.
+- **Messages**: User bubble gradient, bot bubble white + shadow; border-radius 20px with tail; message-in 200ms; hover translateY(-2px).
+- **Input**: Wrapper bg `#f3f4f6`, 12px radius; focus-within: white bg, blue ring + outline; send 36×36px, disabled (opacity 0.5) when empty.
+- **Typing indicator**: 3 bouncing dots (#2563eb), 0 / 0.2s / 0.4s delay; no per-message avatar.
+- **Toasts**: Top 24px, product image 48×48, 3s auto-hide.
+
+---
+
+- **Launcher**: Single 56px gradient circle (`#2563eb` → `#4f46e5`), MessageSquare icon; ripple on new message when closed.
 - **Spring open**: Chat window uses `translateY(30px) scale(0.95)` → `translateY(0) scale(1)` with cubic-bezier and visibility.
 - **Message animations**: CSS classes `msg-enter-user`, `msg-enter-bot`, `msg-enter-product` apply GPU-friendly transforms (translateX/scale/opacity) on insert.
 - **Thinking state**: Typing indicator shows animated gradient shimmer and wave bars; status text can be updated via SSE `type: 'status'` events from the backend.
@@ -189,7 +215,7 @@ npm run preview
 
 The Live Preview area is a **size container** (`container-type: size`, `container-name: chatbot-preview`). The widget uses a container query so the chat window height is limited to the preview area height, so the entire chatbox (including input and send button) remains visible on laptop and smaller viewports instead of being clipped.
 
-**Full-page demo (chatbot on whole webpage):** While the dev server is running (`npm run dev`), open **http://localhost:5173/demo.html** in your browser to see the full e-commerce demo store with the chatbot on the whole page (not inside the panel iframe). The demo store uses realistic product images and a full store layout (top bar, header, hero, categories, footer). You can also use the **"Open full-page demo →"** link in the panel’s Live Preview header.
+**Full-page demo (chatbot on whole webpage):** While the dev server is running (`npm run dev`), open **http://localhost:5173/demo.html** to choose a demo: **Full demo store** (e-commerce store with chatbot) or **Premium Aura demo** (**http://localhost:5173/aura-demo.html**), a minimal landing page with feature cards and the Aura Concierge chatbot. The full store uses realistic product images and a full store layout (top bar, header, hero, categories, footer). You can also use the **"Open full-page demo →"** link in the panel’s Live Preview header.
 
 ---
 

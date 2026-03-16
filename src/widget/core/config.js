@@ -1,3 +1,29 @@
+/** Premium UI animation tokens (Figma: cubic-bezier everywhere) */
+export const ANIMATIONS = {
+    easing: 'cubic-bezier(0.16, 0.84, 0.44, 1)',
+    panelDuration: 300,
+    hoverDuration: 200,
+    messageInDuration: 200,
+    typingDelay: 800,
+    staggerDelay: 100,
+    floatDuration: 2000,
+};
+
+/** Quick actions for the 2x2 grid (icon name, label, desc) */
+export const QUICK_ACTIONS = [
+    { icon: 'sparkles', label: 'Browse Collections', desc: 'View all products' },
+    { icon: 'shopping-bag', label: 'View Cart', desc: 'See shopping bag' },
+    { icon: 'package', label: 'Order Status', desc: 'Track orders' },
+    { icon: 'truck', label: 'Track My Order', desc: 'Get updates' },
+];
+
+/** Demo product set for product display (name, price, image, optional badge/originalPrice) */
+export const PRODUCTS = [
+    { name: 'Essential White Sneaker', price: 150, originalPrice: 180, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop', badge: 'New In' },
+    { name: 'Derby Leather Shoe', price: 295, originalPrice: 350, image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?w=400&h=300&fit=crop', badge: 'Bestseller' },
+    { name: 'Nocturne Watch', price: 190, image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop' },
+];
+
 /** Placeholders cycled in the input (smart placeholder) */
 export const DEFAULT_PLACEHOLDERS = [
     'Ask about products...',
@@ -56,7 +82,7 @@ export const defaultConfig = {
     addToCartLabel: 'Add to Cart',
     theme: 'default',
     thinkingStatuses: DEFAULT_THINKING_STATUSES,
-    apiBaseUrl: '',
+    apiBaseUrl: 'http://localhost:3000',
 };
 
 export function mergeConfig(userConfig = {}) {

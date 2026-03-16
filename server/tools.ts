@@ -7,6 +7,28 @@ import { getOrderStatus, getUserOrderHistory } from "./orders.js";
 
 // Session mock cart (exported for server to send cart view to client)
 export const sessionCarts = new Map<string, Product[]>();
+const DEFAULT_IMG = 'https://placehold.co/80x80?text=Product';
+
+export function getCartGrouped(sessionId: string): { items: any[]; total: number } {
+    const cart = sessionCarts.get(sessionId) || [];
+    const byKey = new Map<string, { product: Product; quantity: number }>();
+    for (const p of cart) {
+        const key = (p.title || '').toLowerCase() + '|' + ((p as any).lastAddedSize || '');
+        const existing = byKey.get(key);
+        if (existing) existing.quantity += 1;
+        else byKey.set(key, { product: p, quantity: 1 });
+    }
+    const items = Array.from(byKey.values()).map(({ product, quantity }) => ({
+        title: product.title,
+        image: product.image || DEFAULT_IMG,
+        price: product.price,
+        originalPrice: (product as any).originalPrice ?? null,
+        stockStatus: (product as any).stockStatus ?? 'In Stock',
+        quantity,
+    }));
+    const total = cart.reduce((sum, p) => sum + (parseFloat(String(p.price).replace(/[$,]/g, '')) || 0), 0);
+    return { items, total };
+}
 
 // Tool to semantic search the catalog
 export const searchProductCatalog = tool(
@@ -113,7 +135,8 @@ export const checkout = tool(
             return `User does NOT have a valid address at ID ${addressId}. Please use getUserAddresses to check their addresses, or ask them to add a new shipping address.`;
         }
         
-        const shippingAddress = user.addresses[addressId];
+        const addr = user.addresses[addressId];
+        const shippingAddress = typeof addr === 'string' ? addr : [addr.street, [addr.city, addr.state].filter(Boolean).join(', '), addr.zip].filter(Boolean).join(', ');
 
         // Process Payment (Mock)
         const orderId = "ORD-" + Math.floor(10000 + Math.random() * 90000);
@@ -222,5 +245,24 @@ export const removeFromCart = tool(
         }),
     }
 );
+
+/** REST: run checkout and push to mockOrders (so order shows in order history) */
+export function runCheckout(sessionId: string, addressId: number, paymentMethod: "COD" | "Prepaid"): { success: boolean; orderId?: string; total?: number; items?: any[]; message: string } {
+    const cart = sessionCarts.get(sessionId);
+    if (!cart?.length) return { success: false, message: "Cart is empty." };
+    const phone = activeSessions.get(sessionId);
+    if (!phone) return { success: false, message: "Not logged in." };
+    const user = usersDB.get(phone);
+    if (!user || !user.addresses || user.addresses.length <= addressId || addressId < 0) {
+        return { success: false, message: "Invalid address." };
+    }
+    const orderId = "ORD-" + Math.floor(10000 + Math.random() * 90000);
+    const total = cart.reduce((sum, p) => sum + parseFloat(String(p.price).replace(/[$,]/g, '')) || 0, 0);
+    const items = cart.map((p: any) => ({ title: p.title, price: p.price, size: (p.lastAddedSize as string) || "N/A" }));
+    const newOrder: Order = { id: orderId, phone, status: 'Processing', items, total, date: new Date().toISOString().split('T')[0] };
+    mockOrders.push(newOrder);
+    sessionCarts.set(sessionId, []);
+    return { success: true, orderId, total, items, message: "Order placed." };
+}
 
 export const agentTools = [searchProductCatalog, getStorePolicies, addToCart, viewCart, removeFromCart, checkout, getRecommendations, requestOTP, verifyOTP, getUserAddresses, addAddress, getOrderStatus, getUserOrderHistory, getAuthStatus];

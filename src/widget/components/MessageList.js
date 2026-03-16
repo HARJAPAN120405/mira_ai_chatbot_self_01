@@ -1,4 +1,392 @@
 import { applyMagnetic } from '../utils/magnetic.js';
+import { PRODUCTS, QUICK_ACTIONS, ANIMATIONS } from '../core/config.js';
+
+// Inject keyframe styles once (for addMessage / createMessageList API)
+const MESSAGELIST_STYLES = `
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes quickActionIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes slideInStagger {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes chipIn {
+  from { opacity: 0; transform: translateY(5px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.messages-container::-webkit-scrollbar { display: none; }
+.product-scroll::-webkit-scrollbar { display: none; }
+`;
+
+function injectMessageListStyles() {
+    if (typeof document !== 'undefined' && !document.getElementById('messagelist-styles')) {
+        const styleTag = document.createElement('style');
+        styleTag.id = 'messagelist-styles';
+        styleTag.textContent = MESSAGELIST_STYLES;
+        document.head.appendChild(styleTag);
+    }
+}
+injectMessageListStyles();
+
+/** New API: message list container with smooth animations (id="messages-container") */
+export function createMessageList() {
+    const container = document.createElement('div');
+    container.id = 'messages-container';
+    container.className = 'messages-container';
+    container.style.cssText = `
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        animation: fadeIn 0.3s ${ANIMATIONS.easing} 0.25s both;
+        scroll-behavior: smooth;
+    `;
+    container.style.setProperty('-ms-overflow-style', 'none');
+    container.style.setProperty('scrollbar-width', 'none');
+    return container;
+}
+
+/** New API: add a message (type, content, quickActions, products, cartItems, orders, suggestions) */
+export function addMessage(message, onAddToCart, onSuggestionClick, containerOrRoot) {
+    const container = containerOrRoot || (typeof document !== 'undefined' ? document.getElementById('messages-container') : null);
+    if (!container) return;
+
+    const messageEl = document.createElement('div');
+    messageEl.className = `message ${message.type}`;
+    messageEl.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        align-items: ${message.type === 'user' ? 'flex-end' : 'flex-start'};
+        animation: messageIn ${ANIMATIONS.messageInDuration}ms ${ANIMATIONS.easing};
+        transition: all ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+    `;
+
+    const bubble = createMessageBubble(message);
+    messageEl.appendChild(bubble);
+
+    if (message.quickActions) {
+        const actions = createQuickActions(message.quickActions, onSuggestionClick);
+        messageEl.appendChild(actions);
+    }
+    if (message.products) {
+        const productsEl = createProductsDisplay(message.products, onAddToCart);
+        messageEl.appendChild(productsEl);
+    }
+    if (message.cartItems) {
+        const cartEl = createCartDisplay(message.cartItems, message.onUpdateQty || (() => {}), message.onRemove || (() => {}));
+        messageEl.appendChild(cartEl);
+    }
+    if (message.orders) {
+        const ordersEl = createOrdersDisplay(message.orders);
+        messageEl.appendChild(ordersEl);
+    }
+    if (message.suggestions && message.suggestions.length > 0) {
+        const suggestionsEl = createSuggestions(message.suggestions, onSuggestionClick);
+        messageEl.appendChild(suggestionsEl);
+    }
+
+    messageEl.addEventListener('mouseenter', () => { messageEl.style.transform = 'translateY(-2px)'; });
+    messageEl.addEventListener('mouseleave', () => { messageEl.style.transform = 'translateY(0)'; });
+
+    container.appendChild(messageEl);
+    scrollToBottom(container);
+}
+
+function createMessageBubble(message) {
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    bubble.textContent = message.content;
+
+    const isUser = message.type === 'user';
+    bubble.style.cssText = `
+        padding: 14px 16px;
+        max-width: 75%;
+        font-size: 14px;
+        line-height: 1.5;
+        border-radius: ${isUser ? '20px 20px 6px 20px' : '20px 20px 20px 6px'};
+        ${isUser
+            ? 'background: linear-gradient(135deg, #2563eb, #4f46e5); color: white;'
+            : 'background: white; color: #111827; box-shadow: 0 6px 14px rgba(0,0,0,0.08);'}
+        transition: box-shadow ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+    `;
+
+    bubble.addEventListener('mouseenter', () => {
+        bubble.style.boxShadow = isUser ? '0 8px 20px rgba(37,99,235,0.3)' : '0 8px 20px rgba(0,0,0,0.12)';
+    });
+    bubble.addEventListener('mouseleave', () => {
+        bubble.style.boxShadow = isUser ? 'none' : '0 6px 14px rgba(0,0,0,0.08)';
+    });
+    return bubble;
+}
+
+function getIconSVG(iconName, color = 'currentColor') {
+    const icons = {
+        sparkles: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`,
+        'shopping-bag': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+        package: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>`,
+        truck: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h6"/></svg>`,
+    };
+    return icons[iconName] || '';
+}
+
+function createQuickActions(actions, onSuggestionClick) {
+    const list = actions || QUICK_ACTIONS;
+    const container = document.createElement('div');
+    container.className = 'quick-actions';
+    container.style.cssText = `
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-top: 12px;
+        width: 100%;
+    `;
+
+    list.forEach((action, index) => {
+        const item = typeof action === 'string' ? { icon: 'sparkles', label: action, desc: '' } : action;
+        const card = document.createElement('div');
+        card.className = 'quick-action-card';
+        card.style.cssText = `
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+            transition: all ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+            animation: quickActionIn 0.3s ${ANIMATIONS.easing} ${index * ANIMATIONS.staggerDelay}ms both;
+        `;
+        const label = item.label || item.title || item;
+        const desc = item.desc || '';
+        const iconName = item.icon || 'sparkles';
+        card.innerHTML = `
+            <div style="display:flex;justify-content:center;margin-bottom:8px;">${getIconSVG(iconName, '#2563eb')}</div>
+            <div style="font-weight: 600; margin-top: 8px; font-size: 13px; color: #111827;">${label}</div>
+            <div style="font-size: 11px; color: #6b7280; margin-top: 4px;">${desc}</div>
+        `;
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-4px)';
+            card.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 4px 10px rgba(0,0,0,0.06)';
+        });
+        card.addEventListener('click', () => onSuggestionClick && onSuggestionClick(label));
+        container.appendChild(card);
+    });
+    return container;
+}
+
+function createProductsDisplay(products, onAddToCart) {
+    const raw = products || PRODUCTS;
+    const list = productsWithImageFirst(raw);
+    const container = document.createElement('div');
+    container.className = 'product-scroll';
+    container.style.cssText = `
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 8px 0;
+        margin-top: 12px;
+        width: 100%;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    `;
+    list.forEach((product, index) => {
+        const card = createProductCardBubble(product, index, onAddToCart);
+        container.appendChild(card);
+    });
+    return container;
+}
+
+function createProductCardBubble(product, index, onAddToCart) {
+    const name = product.name || product.title || 'Product';
+    const price = typeof product.price === 'number' ? product.price : parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
+    const image = (product.image && String(product.image).trim()) ? product.image : 'https://placehold.co/200x120?text=Product';
+    const originalPrice = product.originalPrice != null ? (typeof product.originalPrice === 'number' ? product.originalPrice : parseFloat(String(product.originalPrice).replace(/[^0-9.]/g, ''))) : null;
+
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.style.cssText = `
+        flex: 0 0 200px;
+        scroll-snap-align: start;
+        background: white;
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+        transition: all ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+        animation: slideInStagger 0.3s ${ANIMATIONS.easing} ${index * ANIMATIONS.staggerDelay}ms both;
+    `;
+    card.innerHTML = `
+        ${product.badge ? `<div style="background: #2563eb; color: white; font-size: 9px; font-weight: 700; padding: 4px 8px; border-radius: 12px; width: fit-content; margin-bottom: 8px;">${product.badge}</div>` : ''}
+        <img src="${image}" alt="${name}" style="width: 100%; height: 120px; object-fit: cover; border-radius: 12px; margin-bottom: 8px;">
+        <h4 style="font-size: 14px; font-weight: 600; margin: 8px 0; color: #111827;">${name}</h4>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 12px;">
+            <span style="font-size: 16px; font-weight: 700; color: #111827;">$${price}</span>
+            ${originalPrice ? `<span style="font-size: 12px; color: #9ca3af; text-decoration: line-through;">$${originalPrice}</span>` : ''}
+        </div>
+    `;
+    const button = document.createElement('button');
+    button.className = 'add-to-cart-btn';
+    button.textContent = 'Add to Cart';
+    button.style.cssText = `
+        width: 100%;
+        padding: 10px;
+        background: linear-gradient(135deg, #2563eb, #4f46e5);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+    `;
+    button.addEventListener('mouseenter', () => {
+        button.style.transform = 'scale(1.02)';
+        button.style.boxShadow = '0 4px 12px rgba(37,99,235,0.3)';
+    });
+    button.addEventListener('mouseleave', () => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = 'none';
+    });
+    button.addEventListener('click', () => onAddToCart && onAddToCart(product));
+    card.appendChild(button);
+    card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-4px)';
+        card.style.boxShadow = '0 12px 24px rgba(0,0,0,0.15)';
+    });
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'translateY(0)';
+        card.style.boxShadow = '0 6px 14px rgba(0,0,0,0.08)';
+    });
+    return card;
+}
+
+function createCartDisplay(cartItems, onUpdateQty, onRemove) {
+    const container = document.createElement('div');
+    container.className = 'cart-display';
+    container.style.cssText = 'margin-top: 12px; width: 100%; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.08);';
+    const items = Array.isArray(cartItems) ? cartItems : [];
+    items.forEach((item) => {
+        const name = item.name || item.title || 'Item';
+        const price = item.price != null ? (typeof item.price === 'number' ? `$${item.price}` : item.price) : '';
+        const image = item.image || 'https://placehold.co/64x64?text=Item';
+        const qty = item.quantity != null ? item.quantity : 1;
+        const row = document.createElement('div');
+        row.style.cssText = 'display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f3f4f6;';
+        row.innerHTML = `
+            <img src="${image}" alt="${name}" style="width: 64px; height: 64px; object-fit: cover; border-radius: 12px;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-weight: 600; font-size: 14px; color: #111827;">${name}</div>
+                <div style="font-size: 13px; color: #2563eb; font-weight: 600;">${price}</div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                    <button type="button" data-qty="-">−</button>
+                    <span data-qty-val>${qty}</span>
+                    <button type="button" data-qty="+">+</button>
+                </div>
+            </div>
+            <button type="button" data-remove aria-label="Remove">🗑</button>
+        `;
+        const minusBtn = row.querySelector('[data-qty="-"]');
+        const plusBtn = row.querySelector('[data-qty="+"]');
+        const qtyVal = row.querySelector('[data-qty-val]');
+        const removeBtn = row.querySelector('[data-remove]');
+        if (minusBtn && qtyVal) minusBtn.addEventListener('click', () => { const v = Math.max(1, (parseInt(qtyVal.textContent, 10) || 1) - 1); qtyVal.textContent = v; onUpdateQty(item, v); });
+        if (plusBtn && qtyVal) plusBtn.addEventListener('click', () => { const v = (parseInt(qtyVal.textContent, 10) || 1) + 1; qtyVal.textContent = v; onUpdateQty(item, v); });
+        if (removeBtn) removeBtn.addEventListener('click', () => onRemove(item));
+        container.appendChild(row);
+    });
+    return container;
+}
+
+function createOrdersDisplay(orders) {
+    const container = document.createElement('div');
+    container.className = 'orders-display';
+    container.style.cssText = 'margin-top: 12px; width: 100%; background: white; border-radius: 16px; padding: 16px; box-shadow: 0 6px 14px rgba(0,0,0,0.08);';
+    const list = Array.isArray(orders) ? orders : [];
+    list.forEach((order) => {
+        const id = order.id || order.orderId || '—';
+        const date = order.date || '—';
+        const status = order.status || '—';
+        const total = order.total != null ? (typeof order.total === 'number' ? `$${order.total.toFixed(2)}` : order.total) : '—';
+        const row = document.createElement('div');
+        row.style.cssText = 'padding: 12px 0; border-bottom: 1px solid #f3f4f6;';
+        row.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <span style="font-weight: 700; font-size: 13px; color: #2563eb;">#${id}</span>
+                <span style="font-size: 12px; color: #6b7280;">${date}</span>
+                <span style="font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 12px; background: rgba(34,197,94,0.2); color: #16a34a;">${status}</span>
+            </div>
+            <div style="font-size: 14px; font-weight: 600; color: #111827; margin-top: 6px;">Total ${total}</div>
+        `;
+        container.appendChild(row);
+    });
+    return container;
+}
+
+function createSuggestions(suggestions, onSuggestionClick) {
+    const container = document.createElement('div');
+    container.className = 'suggestions';
+    container.style.cssText = 'display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;';
+    (suggestions || []).forEach((suggestion) => {
+        const chip = document.createElement('button');
+        chip.className = 'suggestion-chip';
+        chip.textContent = suggestion;
+        chip.style.cssText = `
+            padding: 8px 14px;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all ${ANIMATIONS.hoverDuration}ms ${ANIMATIONS.easing};
+            animation: chipIn 0.3s ${ANIMATIONS.easing};
+        `;
+        chip.addEventListener('mouseenter', () => {
+            chip.style.background = '#2563eb';
+            chip.style.color = 'white';
+            chip.style.borderColor = '#2563eb';
+            chip.style.transform = 'translateY(-2px) scale(1.03)';
+            chip.style.boxShadow = '0 4px 12px rgba(37,99,235,0.2)';
+        });
+        chip.addEventListener('mouseleave', () => {
+            chip.style.background = 'white';
+            chip.style.color = '#374151';
+            chip.style.borderColor = '#e5e7eb';
+            chip.style.transform = 'translateY(0) scale(1)';
+            chip.style.boxShadow = 'none';
+        });
+        chip.addEventListener('click', () => onSuggestionClick && onSuggestionClick(suggestion));
+        container.appendChild(chip);
+    });
+    return container;
+}
+
+function scrollToBottom(containerOrRoot) {
+    const container = containerOrRoot || (typeof document !== 'undefined' ? document.getElementById('messages-container') : null);
+    if (container) {
+        setTimeout(() => {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+        }, 100);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Existing API (unchanged) for Chatbot.js
+// ---------------------------------------------------------------------------
 
 export function renderMessageList() {
     const list = document.createElement('div');
@@ -215,9 +603,21 @@ export function createProductCard(productData, onAddToCart, config = null) {
     return msgDiv;
 }
 
+const PRODUCT_IMAGE_PLACEHOLDER = 'https://placehold.co/300x200?text=Product';
+
+function productsWithImageFirst(products) {
+    if (!Array.isArray(products) || products.length === 0) return [];
+    const hasImage = (p) => p && (p.image != null && String(p.image).trim() !== '');
+    const withImage = products.filter(hasImage);
+    return withImage.length > 0 ? withImage : products;
+}
+
 export function createProductCarousel(products, onAddToCart, config = null) {
     const listWrapper = document.createElement('div');
     listWrapper.className = 'chatbot-message bot-message msg-enter-product';
+
+    const toShow = productsWithImageFirst(products);
+    const placeholder = PRODUCT_IMAGE_PLACEHOLDER;
 
     const avatarImage = config?.launcherIconUrl ? `<img src="${config.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />` : `<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`;
     const avatarHtml = `
@@ -275,13 +675,14 @@ export function createProductCarousel(products, onAddToCart, config = null) {
         carouselWrapper.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' });
     });
 
-    products.forEach(product => {
+    toShow.forEach(product => {
+        const imgSrc = (product.image && String(product.image).trim()) ? product.image : placeholder;
         // Build individual card
         const card = document.createElement('div');
         card.className = 'carousel-card';
 
         card.innerHTML = `
-            <img src="${product.image || 'https://placehold.co/300x200?text=Product'}" class="chatbot-product-img" alt="${product.title || 'Product Image'}" />
+            <img src="${imgSrc}" class="chatbot-product-img" alt="${product.title || 'Product Image'}" />
             <div class="chatbot-product-content">
                 <div class="chatbot-product-header">
                     <h4>${product.title || 'Unknown Product'}</h4>
@@ -449,97 +850,118 @@ export function createInlineProductCard(product, config, handlers = {}) {
     return card;
 }
 
+const TRASH_ICON_SVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';
+
 /**
- * "Your Cart" section card: header, item rows (image, title, price, originalPrice, stock), grand total, optional checkout CTA.
- * cartPayload: { items: [{ title, image, price, originalPrice, stockStatus }], total: number }
- * options: { onCheckout?: () => void, onAddMore?: () => void }
+ * "Your Cart" card matching premium design: item rows (64px image + badge, name, price, qty controls, remove), summary (Subtotal, Shipping FREE, Total), Proceed to Checkout button.
+ * cartPayload: { items: [{ title, image, price, originalPrice?, quantity?, badge? }], total: number, subtotalLabel? }
+ * options: { onCheckout?, onAddMore?, onUpdateQty?(item, qty), onRemove?(item) }
  */
 export function createYourCartCard(cartPayload, options = {}) {
     if (!cartPayload || !cartPayload.items || !Array.isArray(cartPayload.items)) return null;
     const { items, total } = cartPayload;
-    const { onCheckout, onAddMore } = options;
+    const { onCheckout, onAddMore, onUpdateQty, onRemove } = options;
     const card = document.createElement('div');
-    card.className = 'chatbot-section-card chatbot-cart-card msg-enter-product';
-    const totalFormatted = typeof total === 'number' ? `$${total.toFixed(2)}` : (total || '$0.00');
-    const cartIcon = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
-    let rowsHtml = items.length === 0
-        ? '<div class="chatbot-cart-empty">Your cart is empty. Add items to see them here.</div>'
-        : items.map((item) => {
-        const orig = item.originalPrice ? `<span class="price-original">${item.originalPrice}</span>` : '';
-        const isOut = (item.stockStatus || '').toLowerCase().includes('out of stock');
-        const stockClass = isOut ? 'stock-out' : 'stock-in';
-        return `
-            <div class="chatbot-section-card-row chatbot-cart-item">
-                <img class="chatbot-cart-item-img" src="${item.image || 'https://placehold.co/80x80?text=Product'}" alt="${(item.title || '').slice(0, 30)}" />
-                <div class="chatbot-cart-item-info">
-                    <div class="chatbot-cart-item-title">${item.title || 'Product'}</div>
-                    <div class="chatbot-cart-item-pricing">
-                        <span class="chatbot-product-price">${item.price || ''}</span>${orig}
+    card.className = 'chatbot-section-card chatbot-cart-card msg-enter-product chatbot-cart-card-premium';
+
+    const totalNum = typeof total === 'number' ? total : parseFloat(String(total).replace(/[^0-9.]/g, '')) || 0;
+    const totalFormatted = `$${totalNum.toFixed(2)}`;
+    const itemCount = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+    const itemLabel = itemCount === 1 ? 'item' : 'items';
+    const subtotalLabel = cartPayload.subtotalLabel || `Subtotal (${itemCount} ${itemLabel})`;
+
+    if (items.length === 0) {
+        card.innerHTML = `
+            <div class="chatbot-cart-card-body">
+                <div class="chatbot-cart-empty">Your cart is empty. Add items to see them here.</div>
+            </div>
+        `;
+        return card;
+    }
+
+    const body = document.createElement('div');
+    body.className = 'chatbot-cart-card-body';
+
+    items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'chatbot-cart-item-row';
+        const qty = item.quantity != null ? item.quantity : 1;
+        const title = item.title || item.name || 'Product';
+        const priceStr = item.price != null ? (typeof item.price === 'string' ? item.price : `$${Number(item.price).toFixed(2)}`) : '$0.00';
+        const imgSrc = (item.image && String(item.image).trim()) ? item.image : 'https://placehold.co/80x80?text=Product';
+        const badge = item.badge ? `<span class="chatbot-cart-item-badge">${item.badge}</span>` : '';
+
+        row.innerHTML = `
+            <div class="chatbot-cart-item-thumb-wrap">
+                <img class="chatbot-cart-item-img" src="${imgSrc}" alt="${title.slice(0, 40)}" />
+                ${badge}
+            </div>
+            <div class="chatbot-cart-item-details">
+                <div class="chatbot-cart-item-name">${title}</div>
+                <div class="chatbot-cart-item-price">${priceStr}</div>
+                <div class="chatbot-cart-item-actions">
+                    <div class="chatbot-cart-qty-pill">
+                        <button type="button" class="chatbot-cart-qty-btn" data-action="minus" aria-label="Decrease">−</button>
+                        <span class="chatbot-cart-qty-num">${qty}</span>
+                        <button type="button" class="chatbot-cart-qty-btn" data-action="plus" aria-label="Increase">+</button>
                     </div>
-                    <div class="${stockClass}">${item.stockStatus || 'In Stock'}</div>
+                    <button type="button" class="chatbot-cart-remove-btn" aria-label="Remove">${TRASH_ICON_SVG}</button>
                 </div>
             </div>
         `;
-    }).join('');
-    rowsHtml += `
-        <div class="chatbot-section-card-row chatbot-cart-total-row">
-            <span class="chatbot-cart-total-label">Grand Total</span>
-            <span class="chatbot-cart-total-value">${totalFormatted}</span>
-        </div>
-    `;
-    const checkoutFooter = items.length > 0 && onCheckout
-        ? `<div class="chatbot-cart-checkout-footer">
-            <p class="chatbot-cart-checkout-prompt">Would you like to proceed to checkout?</p>
-            <button type="button" class="chatbot-cart-checkout-btn">Proceed to checkout</button>
-        </div>`
-        : '';
-    const hasActions = items.length > 0 && (onCheckout || onAddMore);
-    const cartSuggestionsHtml = hasActions
-        ? `<div class="chatbot-cart-suggestions">
-            <p class="chatbot-cart-suggestions-text">Add something else? Or proceed to checkout.</p>
-            <div class="chatbot-cart-suggestion-pills"></div>
-        </div>`
-        : '';
-    card.innerHTML = `
-        <div class="chatbot-section-card-title chatbot-cart-card-title">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                ${cartIcon}
-                <span>Your Cart</span>
-            </div>
-            <button type="button" class="chatbot-cart-edit-link" style="background: none; border: none; color: ${primary}; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">Edit Bag</button>
-        </div>
-        <div class="chatbot-section-card-body">${rowsHtml}</div>
-        ${checkoutFooter}
-        ${cartSuggestionsHtml}
-    `;
-    if (items.length > 0 && onCheckout) {
-        const btn = card.querySelector('.chatbot-cart-checkout-btn');
-        if (btn) btn.addEventListener('click', () => onCheckout());
-        
-        const editLink = card.querySelector('.chatbot-cart-edit-link');
-        if (editLink) editLink.addEventListener('click', () => onAddMore && onAddMore());
-    }
-    if (hasActions) {
-        const pillsContainer = card.querySelector('.chatbot-cart-suggestion-pills');
-        if (pillsContainer) {
-            if (onAddMore) {
-                const addMorePill = document.createElement('button');
-                addMorePill.type = 'button';
-                addMorePill.className = 'chatbot-cart-pill';
-                addMorePill.textContent = 'Add another product';
-                addMorePill.addEventListener('click', () => onAddMore());
-                pillsContainer.appendChild(addMorePill);
-            }
-            if (onCheckout) {
-                const checkoutPill = document.createElement('button');
-                checkoutPill.type = 'button';
-                checkoutPill.className = 'chatbot-cart-pill chatbot-cart-pill-checkout';
-                checkoutPill.textContent = 'Proceed to checkout';
-                checkoutPill.addEventListener('click', () => onCheckout());
-                pillsContainer.appendChild(checkoutPill);
-            }
+
+        const minusBtn = row.querySelector('[data-action="minus"]');
+        const plusBtn = row.querySelector('[data-action="plus"]');
+        const qtyNum = row.querySelector('.chatbot-cart-qty-num');
+        const removeBtn = row.querySelector('.chatbot-cart-remove-btn');
+
+        if (onUpdateQty && qtyNum) {
+            minusBtn?.addEventListener('click', () => {
+                const v = Math.max(0, (parseInt(qtyNum.textContent, 10) || 1) - 1);
+                qtyNum.textContent = v;
+                onUpdateQty(item, v);
+                if (v === 0 && removeBtn) removeBtn.click();
+            });
+            plusBtn?.addEventListener('click', () => {
+                const v = (parseInt(qtyNum.textContent, 10) || 1) + 1;
+                qtyNum.textContent = v;
+                onUpdateQty(item, v);
+            });
         }
-    }
+        if (onRemove && removeBtn) {
+            removeBtn.addEventListener('click', () => onRemove(item));
+        }
+
+        body.appendChild(row);
+    });
+
+    const summary = document.createElement('div');
+    summary.className = 'chatbot-cart-summary';
+    summary.innerHTML = `
+        <div class="chatbot-cart-summary-row">
+            <span class="chatbot-cart-summary-label">${subtotalLabel}</span>
+            <span class="chatbot-cart-summary-value">${totalFormatted}</span>
+        </div>
+        <div class="chatbot-cart-summary-row">
+            <span class="chatbot-cart-summary-label">Shipping</span>
+            <span class="chatbot-cart-shipping-free">FREE</span>
+        </div>
+        <div class="chatbot-cart-summary-divider"></div>
+        <div class="chatbot-cart-summary-row chatbot-cart-summary-total">
+            <span class="chatbot-cart-summary-label">Total</span>
+            <span class="chatbot-cart-summary-total-value">${totalFormatted}</span>
+        </div>
+    `;
+
+    const checkoutBtn = document.createElement('button');
+    checkoutBtn.type = 'button';
+    checkoutBtn.className = 'chatbot-cart-checkout-btn-premium';
+    checkoutBtn.innerHTML = 'Proceed to Checkout <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+    if (onCheckout) checkoutBtn.addEventListener('click', () => onCheckout());
+
+    body.appendChild(summary);
+    body.appendChild(checkoutBtn);
+    card.appendChild(body);
     return card;
 }
 
@@ -635,191 +1057,249 @@ export function createCheckoutFlowCard(payload, handlers = {}) {
     const wrapper = document.createElement('div');
     wrapper.className = 'chatbot-checkout-wrapper msg-enter-product';
 
+    const phoneIconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+    const lockIconSvg = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+    const arrowRightSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+
     if (step === 'mobile') {
         wrapper.innerHTML = `
-            <div class="checkout-auth-tabs">
-                <button class="checkout-auth-tab active">Login</button>
-                <button class="checkout-auth-tab">Sign Up</button>
-            </div>
-            <div class="checkout-form-card">
+            <div class="checkout-form-card checkout-mobile-card">
                 <div class="checkout-field">
-                    <label>Mobile Number</label>
-                    <div class="checkout-input-wrap">
-                        <span style="position: absolute; left: 12px; font-size: 13px; font-weight: 600; color: ${colorTextMain}">+91</span>
-                        <input type="tel" class="checkout-input" style="padding-left: 45px" placeholder="9876543210" id="checkout-mobile" value="${state.mobile || ''}" />
+                    <label class="checkout-label-uppercase">MOBILE NUMBER</label>
+                    <div class="checkout-mobile-input-wrap">
+                        <span class="checkout-mobile-icon">${phoneIconSvg}</span>
+                        <span class="checkout-mobile-prefix">+91</span>
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" class="checkout-mobile-input" placeholder="9876543210" id="checkout-mobile" value="${(state.mobile || '').replace(/\D/g, '').slice(0, 10)}" autocomplete="tel" />
                     </div>
                 </div>
-                <button class="checkout-primary-btn" id="mobile-submit-btn">
-                    Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <button type="button" class="checkout-send-otp-btn" id="mobile-submit-btn">
+                    Send OTP ${arrowRightSvg}
                 </button>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 4px;">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <span style="font-size: 11px; color: #9ca3af; font-weight: 500;">Encrypted and secure</span>
+                <div class="checkout-secure-note">
+                    ${lockIconSvg}
+                    <span>Encrypted and secure</span>
                 </div>
             </div>
         `;
+        const input = wrapper.querySelector('#checkout-mobile');
         const submitBtn = wrapper.querySelector('#mobile-submit-btn');
-        submitBtn.onclick = () => onAction('submitMobile', { mobile: wrapper.querySelector('#checkout-mobile').value });
+        const updateBtn = () => {
+            const val = (input.value || '').replace(/\D/g, '');
+            submitBtn.disabled = val.length !== 10;
+        };
+        input.addEventListener('input', () => {
+            input.value = input.value.replace(/\D/g, '').slice(0, 10);
+            updateBtn();
+        });
+        updateBtn();
+        submitBtn.addEventListener('click', () => {
+            const mobile = (input.value || '').replace(/\D/g, '').slice(0, 10);
+            if (mobile.length === 10) onAction('submitMobile', { mobile });
+        });
     }
     else if (step === 'otp') {
+        const sentTo = state.mobile ? ('+91 ' + String(state.mobile).replace(/(\d{2})(\d{4})(\d+)/, '$1 $2 $3').trim()) : '+91 ••••••••••';
         wrapper.innerHTML = `
-            <div class="checkout-form-card">
-                <h3 style="font-size: 15px; font-weight: 700; color: ${colorTextMain}; text-align: center; margin-bottom: 4px;">Enter OTP</h3>
-                <p style="font-size: 12px; color: ${colorTextMuted}; text-align: center; margin-bottom: 12px;">We've sent a 4-digit code to +91 ${state.mobile}</p>
-                <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 16px;">
-                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-1" />
-                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-2" />
-                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-3" />
-                    <input type="text" maxlength="1" class="checkout-input" style="padding: 10px; width: 45px; text-align: center; font-size: 18px; font-weight: 700;" id="otp-4" />
+            <div class="checkout-form-card checkout-otp-card">
+                <div class="checkout-otp-header">
+                    <h3 class="checkout-otp-title">ENTER OTP</h3>
+                    <button type="button" class="checkout-change-number-link">Change Number</button>
                 </div>
-                <button class="checkout-primary-btn" id="otp-verify-btn">
-                    Verify & Continue <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <p class="checkout-otp-sent-to">Sent to ${sentTo}</p>
+                <div class="checkout-otp-boxes">
+                    <input type="text" inputmode="numeric" maxlength="1" class="checkout-otp-box" data-otp="1" />
+                    <input type="text" inputmode="numeric" maxlength="1" class="checkout-otp-box" data-otp="2" />
+                    <input type="text" inputmode="numeric" maxlength="1" class="checkout-otp-box" data-otp="3" />
+                    <input type="text" inputmode="numeric" maxlength="1" class="checkout-otp-box" data-otp="4" />
+                </div>
+                <button type="button" class="checkout-resend-link">Resend OTP</button>
+                <button type="button" class="checkout-verify-btn" id="otp-verify-btn">
+                    Verify & Continue ${arrowRightSvg}
                 </button>
-                <button style="background: none; border: none; color: ${primary}; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 8px;">Resend code in 0:45</button>
             </div>
         `;
-        const inputs = wrapper.querySelectorAll('input');
+        const inputs = wrapper.querySelectorAll('.checkout-otp-box');
         inputs.forEach((input, i) => {
-            input.oninput = (e) => {
-                if (e.target.value && i < 3) inputs[i+1].focus();
-            };
+            input.addEventListener('input', (e) => {
+                const v = e.target.value.replace(/\D/g, '').slice(0, 1);
+                e.target.value = v;
+                if (v && i < 3) inputs[i + 1].focus();
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && i > 0) inputs[i - 1].focus();
+            });
         });
-        const verifyBtn = wrapper.querySelector('#otp-verify-btn');
-        verifyBtn.onclick = () => onAction('verifyOtp');
+        if (inputs[0]) inputs[0].focus();
+        wrapper.querySelector('#otp-verify-btn').addEventListener('click', () => {
+            const code = Array.from(wrapper.querySelectorAll('.checkout-otp-box')).map(b => b.value || '').join('').slice(0, 4);
+            onAction('verifyOtp', { code });
+        });
+        wrapper.querySelector('.checkout-change-number-link').addEventListener('click', () => onAction('changeAuthMode', { mode: 'mobile' }));
+        wrapper.querySelector('.checkout-resend-link').addEventListener('click', () => onAction('submitMobile', { mobile: state.mobile }));
     }
     else if (step === 'address') {
         const addresses = data.addresses || [];
         const selectedId = state.selectedAddressId;
         
-        let addressesHtml = addresses.map(addr => `
+        const homeIconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+        const workIconSvg = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22V12h6v10"/></svg>';
+        const phoneSvg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+        let addressesHtml = addresses.map(addr => {
+            const typeUpper = (addr.type || 'home').toUpperCase();
+            const isHome = (addr.type || 'home').toLowerCase() === 'home';
+            return `
             <div class="checkout-address-card ${addr.id === selectedId ? 'selected' : ''}" data-id="${addr.id}">
-                <div class="address-icon-box">
-                    ${addr.type === 'home' 
-                        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
-                        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22V12h6v10"/></svg>'
-                    }
-                </div>
+                <div class="address-icon-box ${isHome ? 'address-icon-home' : ''}">${isHome ? homeIconSvg : workIconSvg}</div>
                 <div class="address-info">
                     <div class="address-header">
-                        <span class="address-name" style="font-size: 15px;">${addr.name}</span>
-                        <span class="address-type" style="margin-left: 6px;">${addr.type}</span>
+                        <span class="address-name">${addr.name}</span>
+                        <span class="address-type-badge">${typeUpper}</span>
                     </div>
-                    <div class="address-text" style="font-size: 13px;">${addr.street}</div>
-                    <div class="address-text" style="font-size: 13px;">${addr.city}, ${addr.zip}</div>
-                    <div class="address-phone" style="font-size: 12px; margin-top: 6px;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                        ${addr.phone}
-                    </div>
+                    <div class="address-text">${addr.street}</div>
+                    <div class="address-text">${addr.city}, ${addr.state || ''} ${addr.zip}</div>
+                    <div class="address-phone">${phoneSvg} ${addr.phone}</div>
                 </div>
-                ${addr.id === selectedId ? `
-                    <div class="selection-check-badge">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    </div>
-                ` : ''}
-            </div>
-        `).join('');
+                ${addr.id === selectedId ? '<div class="selection-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>' : ''}
+            </div>`;
+        }).join('');
 
         wrapper.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="checkout-address-step">
                 ${addressesHtml}
-                <button class="checkout-add-address" style="border-radius: 20px; padding: 14px;">
+                <div class="checkout-add-address-form-wrap" id="add-address-form-wrap" style="display: none;">
+                    <div class="checkout-form-card" style="text-align: left;">
+                        <label class="checkout-label-uppercase">Full Name</label>
+                        <input type="text" class="checkout-input" id="addr-name" placeholder="John Doe" />
+                        <label class="checkout-label-uppercase">Street</label>
+                        <input type="text" class="checkout-input" id="addr-street" placeholder="123 Main St, Apt 4B" />
+                        <label class="checkout-label-uppercase">City</label>
+                        <input type="text" class="checkout-input" id="addr-city" placeholder="New York" />
+                        <label class="checkout-label-uppercase">State</label>
+                        <input type="text" class="checkout-input" id="addr-state" placeholder="NY" />
+                        <label class="checkout-label-uppercase">ZIP</label>
+                        <input type="text" class="checkout-input" id="addr-zip" placeholder="10001" />
+                        <label class="checkout-label-uppercase">Phone</label>
+                        <input type="tel" class="checkout-input" id="addr-phone" placeholder="+1 (555) 123-4567" />
+                        <div style="display: flex; gap: 8px; margin-top: 12px;">
+                            <button type="button" class="checkout-primary-btn" id="addr-save-btn">Save Address</button>
+                            <button type="button" class="checkout-add-address-dashed" id="addr-cancel-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="checkout-add-address checkout-add-address-dashed" id="add-address-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Add New Address
+                    + Add New Address
                 </button>
-                ${selectedId ? `
-                    <button class="checkout-primary-btn" id="addr-continue-btn" style="padding: 14px;">
-                        Continue to Payment <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                    </button>
-                ` : ''}
+                ${(selectedId != null) ? '<button type="button" class="checkout-primary-btn" id="addr-continue-btn">Continue to Payment ' + arrowRightSvg + '</button>' : ''}
             </div>
         `;
-        
         wrapper.querySelectorAll('.checkout-address-card').forEach(card => {
             card.onclick = () => onAction('selectAddress', { id: card.dataset.id });
         });
-        
+        const addBtn = wrapper.querySelector('#add-address-btn');
+        const formWrap = wrapper.querySelector('#add-address-form-wrap');
+        const cancelBtn = wrapper.querySelector('#addr-cancel-btn');
+        const saveBtn = wrapper.querySelector('#addr-save-btn');
+        if (addBtn && formWrap) {
+            addBtn.addEventListener('click', () => { formWrap.style.display = formWrap.style.display === 'none' ? 'block' : 'none'; });
+        }
+        if (cancelBtn && formWrap) {
+            cancelBtn.addEventListener('click', () => { formWrap.style.display = 'none'; });
+        }
+        if (saveBtn && formWrap) {
+            saveBtn.addEventListener('click', () => {
+                const name = (wrapper.querySelector('#addr-name')?.value || '').trim();
+                const street = (wrapper.querySelector('#addr-street')?.value || '').trim();
+                const city = (wrapper.querySelector('#addr-city')?.value || '').trim();
+                const state = (wrapper.querySelector('#addr-state')?.value || '').trim();
+                const zip = (wrapper.querySelector('#addr-zip')?.value || '').trim();
+                const phone = (wrapper.querySelector('#addr-phone')?.value || '').trim();
+                if (!street) return;
+                onAction('addAddress', { address: { type: 'home', name, street, city, state, zip, phone } });
+                formWrap.style.display = 'none';
+            });
+        }
         const contBtn = wrapper.querySelector('#addr-continue-btn');
         if (contBtn) contBtn.onclick = () => onAction('continueToPayment');
     }
     else if (step === 'payment') {
         const method = state.paymentMethod;
+        const subtotal = Number(data.subtotal) || 0;
+        const tax = subtotal * 0.1;
+        const total = subtotal + tax;
         wrapper.innerHTML = `
-            <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="checkout-payment-step">
                 <div class="checkout-method-card ${method === 'cod' ? 'selected' : ''}" data-method="cod">
-                    <div class="method-icon-box">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 12h.01"/><path d="M17 12h.01"/><path d="M7 12h.01"/><path d="M2 10h20"/><path d="M2 14h20"/></svg>
+                    <div class="method-icon-box method-icon-cod">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1z"/><path d="M7 15h.01"/><path d="M12 15h.01"/><path d="M17 15h.01"/></svg>
                     </div>
                     <div class="method-info">
-                        <h4 style="font-size: 15px;">Cash on Delivery</h4>
-                        <p style="font-size: 13px;">Pay when you receive</p>
+                        <h4 class="method-title">Cash on Delivery</h4>
+                        <p class="method-desc">Pay when you receive</p>
                     </div>
-                    ${method === 'cod' ? `
-                        <div class="selection-check-badge">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                    ` : ''}
+                    ${method === 'cod' ? '<div class="selection-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>' : ''}
                 </div>
                 <div class="checkout-method-card ${method === 'prepaid' ? 'selected' : ''}" data-method="prepaid">
-                    <div class="method-icon-box">
+                    <div class="method-icon-box method-icon-card">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                     </div>
                     <div class="method-info">
-                        <h4 style="font-size: 15px;">Credit / Debit Card</h4>
-                        <p style="font-size: 13px;">Secure payment</p>
+                        <h4 class="method-title">Credit / Debit Card</h4>
+                        <p class="method-desc">Secure payment</p>
                     </div>
-                    ${method === 'prepaid' ? `
-                        <div class="selection-check-badge">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                    ` : ''}
+                    ${method === 'prepaid' ? '<div class="selection-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>' : ''}
                 </div>
-                
-                ${method ? `
-                    <div class="checkout-summary-card">
-                        <h4 class="summary-title">Order Summary</h4>
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span>$${data.subtotal.toFixed(2)}</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Shipping</span>
-                            <span style="color: #10b981; font-weight: 700;">FREE</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Tax (10%)</span>
-                            <span>$${(data.subtotal * 0.1).toFixed(2)}</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total</span>
-                            <span class="total-value">$${(data.subtotal * 1.1).toFixed(2)}</span>
-                        </div>
-                    </div>
-                    <button class="checkout-primary-btn" id="place-order-btn" style="background: ${primary}; padding: 14px; margin-top: 4px;">
-                        Place Order <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-                    </button>
-                ` : ''}
+                <div class="checkout-summary-card">
+                    <h4 class="summary-title">ORDER SUMMARY</h4>
+                    <div class="summary-row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+                    <div class="summary-row"><span>Shipping</span><span class="summary-shipping-free">FREE</span></div>
+                    <div class="summary-row"><span>Tax</span><span>$${tax.toFixed(2)}</span></div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row summary-total"><span>Total</span><span class="total-value">$${total.toFixed(2)}</span></div>
+                </div>
+                <button class="checkout-place-order-btn" id="place-order-btn" ${method ? '' : 'disabled'}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    Place Order – $${total.toFixed(2)}
+                </button>
             </div>
         `;
-        
         wrapper.querySelectorAll('.checkout-method-card').forEach(card => {
             card.onclick = () => onAction('selectPayment', { method: card.dataset.method });
         });
-        
         const placeBtn = wrapper.querySelector('#place-order-btn');
-        if (placeBtn) placeBtn.onclick = () => onAction('placeOrder');
+        if (placeBtn) placeBtn.onclick = () => { if (method) onAction('placeOrder'); };
     }
     else if (step === 'confirmation') {
-        const orderId = data.orderId || `ORD-${Math.floor(Math.random() * 10000)}`;
+        const orderId = state.orderId || data.orderId || `ORD-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+        const orderItems = data.orderItems || state.orderItems || [];
+        const productsHtml = orderItems.length
+            ? `<div class="confirmation-products">
+                <div class="confirmation-products-title">Products ordered</div>
+                ${orderItems.map(item => {
+                    const qty = item.quantity || 1;
+                    const price = (item.price || 0) * qty;
+                    const img = item.image ? `<img src="${item.image}" alt="" class="confirmation-product-img" onerror="this.style.display='none'" />` : '<div class="confirmation-product-placeholder"></div>';
+                    return `<div class="confirmation-product-row">
+                        ${img}
+                        <div class="confirmation-product-info">
+                            <span class="confirmation-product-name">${(item.name || '').replace(/</g, '&lt;')}</span>
+                            <span class="confirmation-product-meta">Qty: ${qty} × $${(item.price || 0).toFixed(2)} = $${price.toFixed(2)}</span>
+                        </div>
+                    </div>`;
+                }).join('')}
+               </div>`
+            : '';
         wrapper.innerHTML = `
             <div class="checkout-confirmation">
                 <div class="success-icon-box">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 style="font-size: 18px; font-weight: 800; color: #111827;">Order Confirmed!</h3>
-                <p style="font-size: 14px; color: #4b5563; line-height: 1.6;">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
-                <div class="order-number-badge" style="padding: 10px 20px; border-radius: 25px;">
-                    <span style="font-size: 13px;">Order #</span>
-                    <b style="font-size: 15px;">${orderId}</b>
+                <h3 class="confirmation-title">Order Confirmed!</h3>
+                <p class="confirmation-message">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
+                ${productsHtml}
+                <div class="order-number-badge">
+                    <span>Order #</span>
+                    <b>${orderId}</b>
                 </div>
             </div>
         `;

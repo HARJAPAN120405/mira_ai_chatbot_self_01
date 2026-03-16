@@ -12,7 +12,7 @@ export function renderInputArea(onSend, config) {
     const placeholders = config.placeholders && config.placeholders.length > 0
         ? config.placeholders
         : DEFAULT_PLACEHOLDERS;
-    const placeholder = config.inputPlaceholder || placeholders[0];
+    const placeholder = config.inputPlaceholder || 'Ask anything about orders, products...';
 
     const wrap = document.createElement('div');
     wrap.className = 'chatbot-input-wrap';
@@ -36,11 +36,9 @@ export function renderInputArea(onSend, config) {
     sendBtn.innerHTML = SEND_SVG;
 
     const updateSendState = () => {
-        if (input.value.trim()) {
-            sendBtn.classList.add('active');
-        } else {
-            sendBtn.classList.remove('active');
-        }
+        const hasText = input.value.trim().length > 0;
+        sendBtn.classList.toggle('active', hasText);
+        sendBtn.disabled = !hasText;
     };
     input.addEventListener('input', updateSendState);
     input.addEventListener('focus', updateSendState);

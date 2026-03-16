@@ -17,6 +17,7 @@ import {
 import { renderInputArea } from './InputArea.js';
 import { createTypingIndicator } from './TypingIndicator.js';
 import { getAIResponse } from '../services/ai.js';
+import { checkoutSendOtp, checkoutVerifyOtp, checkoutGetAddresses, checkoutAddAddress, checkoutPlaceOrder } from '../services/api.js';
 import { applyMagnetic } from '../utils/magnetic.js';
 import { getRelevantSuggestionChips } from '../utils/suggestionChips.js';
 import { createToastAPI } from '../utils/toast.js';
@@ -118,80 +119,176 @@ export function initChatbot(userConfig) {
     };
 
     const mockAddresses = [
-        { id: '1', type: 'home', name: 'John Doe', street: '123 Main St, Apt 4B', city: 'New York', state: 'NY', zip: '10001', phone: '+1 (555) 012-3456' }
+        { id: '1', type: 'home', name: 'John Doe', street: '123 Main Street, Apt 4B', city: 'New York', state: 'NY', zip: '10001', phone: '+1 (555) 123-4567' }
     ];
 
     // Handle checkout actions from the UI
     const handleCheckoutAction = async (action, data) => {
         if (action === 'changeAuthMode') {
             checkoutState.authMode = data.mode;
+            if (data.mode === 'mobile') checkoutState.step = 'mobile';
             renderCheckoutMsg();
         } 
         else if (action === 'submitMobile') {
-            checkoutState.mobile = data.mobile;
-            checkoutState.step = 'otp';
+            const mobile = (data.mobile || '').replace(/\D/g, '').slice(-10);
+            try {
+                const result = await checkoutSendOtp(sessionId, mobile, config.apiBaseUrl);
+                if (!result.success) {
+                    toastApi.showToast({ title: 'Error', message: result.message || 'Could not send OTP' });
+                    return;
+                }
+                checkoutState.mobile = mobile;
+                checkoutState.step = 'otp';
+                const code = result.code || '';
+                toastApi.showToast({ title: 'OTP Sent', message: code ? `Your OTP: ${code} (see backend console)` : result.message });
+            } catch (e) {
+                toastApi.showToast({ title: 'Error', message: 'Could not send OTP. Is the backend running?' });
+                return;
+            }
             renderCheckoutMsg();
         }
         else if (action === 'verifyOtp') {
-            // Simulate OTP success
-            toastApi.showToast({ title: 'Success', message: 'Mobile verified' });
+            const code = (data.code || '').replace(/\D/g, '').slice(0, 4);
+            try {
+                const result = await checkoutVerifyOtp(sessionId, checkoutState.mobile, code, config.apiBaseUrl);
+                if (!result.success) {
+                    toastApi.showToast({ title: 'Verification failed', message: result.message || 'Invalid OTP. Use the code from backend.' });
+                    return;
+                }
+                const addrs = await checkoutGetAddresses(sessionId, config.apiBaseUrl);
+                checkoutState.addresses = Array.isArray(addrs) ? addrs : [];
+                checkoutState.isAuthenticated = true;
+            } catch (e) {
+                toastApi.showToast({ title: 'Error', message: 'Verification failed. Use the OTP shown in backend console.' });
+                return;
+            }
             checkoutState.step = 'address';
+            const addrs = checkoutState.addresses || mockAddresses;
+            if (addrs.length && (checkoutState.selectedAddressId == null || !addrs.some(a => (a.id ?? 0) === checkoutState.selectedAddressId)))
+                checkoutState.selectedAddressId = addrs[0]?.id ?? 0;
+            messageList.appendChild(createTextMessage('Continue to address selection', false, config));
+            smoothScrollToBottom();
             renderCheckoutMsg();
         }
         else if (action === 'submitAuth') {
             checkoutState.email = data.email;
             checkoutState.name = data.name;
-            // Simulate auth success
-            toastApi.showToast({ title: 'Success', message: data.mode === 'login' ? 'Logged in successfully' : 'Account created' });
+            toastApi.showToast({ title: 'Successfully logged in!', message: '' });
+            checkoutState.isAuthenticated = true;
             checkoutState.step = 'address';
+            const addrs = checkoutState.addresses || mockAddresses;
+            if (!checkoutState.selectedAddressId && addrs.length) checkoutState.selectedAddressId = addrs[0].id;
+            messageList.appendChild(createTextMessage('Continue to address selection', false, config));
+            smoothScrollToBottom();
             renderCheckoutMsg();
-        } 
+        }
+        else if (action === 'addAddress') {
+            if (data.address && config.apiBaseUrl) {
+                try {
+                    const result = await checkoutAddAddress(sessionId, data.address, config.apiBaseUrl);
+                    if (!result.success) {
+                        toastApi.showToast({ title: 'Error', message: result.message || 'Could not add address' });
+                        return;
+                    }
+                    const addrs = await checkoutGetAddresses(sessionId, config.apiBaseUrl);
+                    checkoutState.addresses = addrs;
+                    checkoutState.selectedAddressId = result.id;
+                    toastApi.showToast({ title: 'Address saved', message: '' });
+                } catch (e) {
+                    toastApi.showToast({ title: 'Error', message: 'Could not add address' });
+                    return;
+                }
+            }
+            renderCheckoutMsg();
+        }
         else if (action === 'selectAddress') {
             checkoutState.selectedAddressId = data.id;
             renderCheckoutMsg();
-        } 
+        }
         else if (action === 'continueToPayment') {
             checkoutState.step = 'payment';
+            if (!checkoutState.paymentMethod) checkoutState.paymentMethod = 'cod';
+            messageList.appendChild(createTextMessage('Continue to payment', false, config));
+            smoothScrollToBottom();
             renderCheckoutMsg();
-        } 
+        }
         else if (action === 'selectPayment') {
             checkoutState.paymentMethod = data.method;
             renderCheckoutMsg();
-        } 
+        }
         else if (action === 'placeOrder') {
+            try {
+                const addressId = checkoutState.selectedAddressId != null ? Number(checkoutState.selectedAddressId) : 0;
+                const result = await checkoutPlaceOrder(sessionId, addressId, checkoutState.paymentMethod || 'cod', config.apiBaseUrl);
+                if (!result.success) {
+                    toastApi.showToast({ title: 'Order failed', message: result.message || 'Could not place order' });
+                    return;
+                }
+                checkoutState.orderItems = (result.items || []).map((i) => ({ name: i.title, price: typeof i.price === 'string' ? i.price : `$${Number(i.price).toFixed(2)}`, quantity: 1, image: null }));
+                checkoutState.orderId = result.orderId;
+                if (setCartCount) setCartCount(0);
+            } catch (e) {
+                toastApi.showToast({ title: 'Error', message: 'Could not place order. Is the backend running?' });
+                return;
+            }
             checkoutState.step = 'confirmation';
+            messageList.appendChild(createTextMessage('Place order', false, config));
+            smoothScrollToBottom();
             renderCheckoutMsg();
-            toastApi.showToast({ title: 'Order Placed', message: 'Thank you for your order!' });
+            toastApi.showToast({ title: 'Order Placed', message: 'Thank you! Check "Order history" to see it.' });
         }
     };
 
+    const CHECKOUT_STEP_MESSAGES = {
+        mobile: "To complete your order, please login or create an account.",
+        otp: "",
+        address: "Please select a delivery address or add a new one.",
+        payment: "Choose your preferred payment method.",
+        confirmation: "Your order has been placed successfully! You'll receive a confirmation email shortly."
+    };
+
     let lastCheckoutMsg = null;
-    const renderCheckoutMsg = () => {
+    const renderCheckoutMsg = async () => {
+        const step = checkoutState.step;
+        if (step === 'address' && config.apiBaseUrl && (!checkoutState.addresses || checkoutState.addresses.length === 0)) {
+            try {
+                checkoutState.addresses = await checkoutGetAddresses(sessionId, config.apiBaseUrl);
+            } catch (e) {
+                checkoutState.addresses = [];
+            }
+        }
         const payload = {
-            step: checkoutState.step,
-            data: { addresses: mockAddresses, subtotal: checkoutState.subtotal },
+            step,
+            data: {
+                addresses: checkoutState.addresses || mockAddresses,
+                subtotal: checkoutState.subtotal ?? cart.reduce((s, i) => s + (i.price || 0) * (i.quantity || 1), 0),
+                orderItems: checkoutState.orderItems || []
+            },
             state: checkoutState
         };
         const newCard = createCheckoutFlowCard(payload, { onAction: handleCheckoutAction });
-        
+        const stepMessage = CHECKOUT_STEP_MESSAGES[step] || "";
+
         if (lastCheckoutMsg) {
             const content = lastCheckoutMsg.querySelector('.chatbot-message-content') || lastCheckoutMsg;
             const existingCheckout = content.querySelector('.chatbot-checkout-wrapper');
+            const bubble = lastCheckoutMsg.querySelector('.chatbot-bubble');
+            if (bubble) bubble.innerHTML = stepMessage ? parseMarkdown(stepMessage) : '';
             if (existingCheckout) {
                 existingCheckout.replaceWith(newCard);
                 smoothScrollToBottom();
                 return;
             }
         }
-        
-        const botMsg = createTextMessage("", true, config);
+
+        const botMsg = createTextMessage(stepMessage, true, config);
         const content = document.createElement('div');
         content.className = 'chatbot-message-content';
         const bubble = botMsg.querySelector('.chatbot-bubble');
         bubble.parentNode.insertBefore(content, bubble);
         content.appendChild(bubble);
         content.appendChild(newCard);
-        
+
         messageList.appendChild(botMsg);
         lastCheckoutMsg = botMsg;
         smoothScrollToBottom();
@@ -505,13 +602,24 @@ export function initChatbot(userConfig) {
 
     const welcomeBubble = document.createElement('div');
     welcomeBubble.className = 'welcome-bubble';
-    welcomeBubble.innerHTML = `
-        <span id="typewriter-bubble" style="vertical-align: middle; font-size: 14px; font-weight: 600;"></span>
-    `;
+    welcomeBubble.innerHTML = `<span style="vertical-align: middle; font-size: 14px; font-weight: 600;">Need help? 👋</span>`;
 
-    // Auto-hide shortly after first reveal, then allow re-show later via typewriter loop
+    function scheduleWelcomeReappear() {
+        setTimeout(() => {
+            if (!isOpen) {
+                welcomeBubble.classList.remove('hidden');
+                setTimeout(() => {
+                    welcomeBubble.classList.add('hidden');
+                    scheduleWelcomeReappear();
+                }, 5000);
+            } else {
+                scheduleWelcomeReappear();
+            }
+        }, 15000);
+    }
     setTimeout(() => {
-        if (!hasOpenedOnce) welcomeBubble.classList.add('hidden');
+        welcomeBubble.classList.add('hidden');
+        scheduleWelcomeReappear();
     }, 5000);
 
     const openChat = () => {

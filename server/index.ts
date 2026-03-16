@@ -6,8 +6,8 @@ import { cors } from 'hono/cors'
 import { HumanMessage, AIMessage } from "@langchain/core/messages"
 import { streamSSE } from 'hono/streaming'
 import { agent } from "./agent.js"
-import { sessionCarts } from "./tools.js"
-import { activeSessions } from "./auth.js"
+import { sessionCarts, getCartGrouped, runCheckout } from "./tools.js"
+import { activeSessions, requestOTPLogic, verifyOTPLogic, getAddressesForSession, addAddressForSession } from "./auth.js"
 import { mockOrders } from "./data.js"
 
 const app = new Hono()
@@ -113,20 +113,10 @@ app.post('/api/chat', async (c) => {
                 // Send "Your Cart" card payload when viewCart is called
                 if (isToolEnd(event, "viewCart")) {
                     try {
-                        const sid = config.configurable?.sessionId;
-                        const cart = sid ? sessionCarts.get(sid) : null;
-                        const items = cart && cart.length > 0 ? cart : [];
-                        const total = items.reduce((sum, p) => sum + (parseFloat(String(p.price).replace(/[$,]/g, '')) || 0), 0);
-                        const DEFAULT_IMG = 'https://placehold.co/80x80?text=Product';
-                        const payload = items.map((p: any) => ({
-                            title: p.title,
-                            image: p.image || DEFAULT_IMG,
-                            price: p.price,
-                            originalPrice: p.originalPrice ?? null,
-                            stockStatus: p.stockStatus ?? 'In Stock',
-                        }));
+                        const sid = config.configurable?.sessionId || '';
+                        const { items, total } = getCartGrouped(sid);
                         await stream.writeSSE({
-                            data: JSON.stringify({ type: 'cart', content: { items: payload, total } })
+                            data: JSON.stringify({ type: 'cart', content: { items, total } })
                         });
                     } catch (e) {
                         console.error("Failed to send cart payload", e);
@@ -166,7 +156,53 @@ app.post('/api/chat', async (c) => {
             await stream.writeSSE({ data: JSON.stringify({ type: 'done' }) });
         }
     });
-})
+});
+
+// --- REST: checkout (OTP, addresses, place order) ---
+app.post('/api/checkout/send-otp', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const phone = String(body.phone || '').replace(/\D/g, '').slice(-10);
+    if (phone.length < 10) return c.json({ success: false, message: 'Valid 10-digit phone required' }, 400);
+    const result = requestOTPLogic(phone);
+    return c.json({ success: result.success, message: result.message, code: result.code });
+});
+
+app.post('/api/checkout/verify-otp', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const phone = String(body.phone || '').replace(/\D/g, '').slice(-10);
+    const code = String(body.code || '').replace(/\D/g, '').slice(0, 4);
+    if (!phone || !code) return c.json({ success: false, message: 'Phone and code required' }, 400);
+    const result = verifyOTPLogic(sessionId, phone, code);
+    return c.json({ success: result.success, message: result.message });
+});
+
+app.get('/api/checkout/addresses', async (c) => {
+    const sessionId = c.req.query('sessionId') || 'default_session';
+    const addresses = getAddressesForSession(sessionId);
+    return c.json({ addresses });
+});
+
+app.post('/api/checkout/address', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const address = body.address;
+    if (!address || !address.street) return c.json({ success: false, message: 'Address with street required' }, 400);
+    const result = addAddressForSession(sessionId, address);
+    return c.json({ success: result.success, id: result.id, message: result.message });
+});
+
+app.post('/api/checkout/place-order', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const addressId = Number(body.addressId);
+    const paymentMethod = body.paymentMethod === 'prepaid' ? 'Prepaid' : 'COD';
+    if (Number.isNaN(addressId) || addressId < 0) return c.json({ success: false, message: 'Valid addressId required' }, 400);
+    const result = runCheckout(sessionId, addressId, paymentMethod);
+    if (!result.success) return c.json({ success: false, message: result.message }, 400);
+    return c.json({ success: true, orderId: result.orderId, total: result.total, items: result.items, message: result.message });
+});
 
 export default {
     port: process.env.PORT || 3000,
