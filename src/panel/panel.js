@@ -168,15 +168,21 @@ function applyChanges() {
     }
 }
 
-// Load external URL logic
+// Panel base path: when deployed at "/" (rewrite), assets are under /panel/src/panel/
+function getPanelBasePath() {
+    const p = window.location.pathname;
+    if (p === '/' || p === '') return '/panel/src/panel/';
+    return p.replace(/[^/]+$/, '') || '/';
+}
+
+// Load external URL logic (resolve relative URLs so preview works when panel is served from "/")
 domElements.btnLoadUrl.addEventListener('click', () => {
     let targetUrl = domElements.previewUrlInput.value.trim();
-    if (targetUrl) {
-        if (!targetUrl.startsWith('http')) {
-            targetUrl = 'https://' + targetUrl;
-        }
-        domElements.previewIframe.src = targetUrl;
+    if (!targetUrl) return;
+    if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
+        targetUrl = getPanelBasePath() + targetUrl.replace(/^\//, '');
     }
+    domElements.previewIframe.src = targetUrl;
 });
 
 // Relay ecom-add-to-cart events to the iframe
@@ -197,6 +203,10 @@ domElements.btnCopy.addEventListener('click', () => {
 
 // Initial Setup
 window.addEventListener('DOMContentLoaded', () => {
+    // Set iframe to preview.html using panel base path (fixes 404 when deployed with root rewrite)
+    if (domElements.previewIframe) {
+        domElements.previewIframe.src = getPanelBasePath() + 'preview.html';
+    }
     // Small delay to ensure widget script is loaded
     setTimeout(() => {
         applyChanges();
