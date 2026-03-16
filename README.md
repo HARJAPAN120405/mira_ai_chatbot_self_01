@@ -86,7 +86,7 @@ document.getElementById('help-btn').addEventListener('click', () => {
 - **thinkingStatuses**: Array of status strings for the AI thinking state (e.g. `["Thinking...", "Searching products..."]`). The backend can override these by sending SSE events with `type: 'status'` and `content: "Searching products..."`.
 - **headerStatus**: String shown next to the green dot in the header (default `"Always Available"`).
 - **botSubtitle**: Unused in current header layout; status line uses **headerStatus** only.
-- **apiBaseUrl**: Backend base URL for chat (e.g. `"http://localhost:3000"` or `"https://your-api.com"`). Empty or omitted uses `http://localhost:3000`. The widget calls `POST ${apiBaseUrl}/api/chat` with `{ message, history, sessionId }`.
+- **apiBaseUrl**: Backend base URL for chat. **Empty or omitted** = same-origin `/api` (use when widget and API are on the same domain, e.g. Vercel). For local dev set `"http://localhost:3000"`. The widget calls `POST ${apiBaseUrl}/api/chat` and checkout endpoints under `/api/checkout/*`.
 
 ### MessageList API (programmatic messages)
 
@@ -219,9 +219,9 @@ The Live Preview area is a **size container** (`container-type: size`, `containe
 
 ---
 
-## Deploy to Vercel (static: panel + widget CDN)
+## Deploy to Vercel (static + API)
 
-The **frontend** (panel app + widget bundle) can be deployed to Vercel as a static site. The backend (Bun + Hono in `server/`) is separate; deploy it elsewhere (e.g. Railway, Render) and set `apiBaseUrl` in the widget config to point to that API.
+The project deploys to Vercel as a **full stack** app: static panel + widget from `dist/`, and the Hono backend as serverless under `/api/*` via `api/[[...path]].ts`.
 
 ### 1. Set Git identity (one-time)
 
@@ -255,14 +255,16 @@ git push -u origin main
 2. Click **Add New…** → **Project**.
 3. **Import** the `ecom-chatbot-cdn` repository (or the one you pushed to).
 4. Leave **Framework Preset** as **Other** (or **Vite** if shown).
-5. **Build and Output Settings** (should match `vercel.json`):
+5. **Build and Output Settings** (Vercel reads these from `vercel.json`; you can leave defaults or set):
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
-   - **Install Command:** `npm install`
-6. Click **Deploy**. Wait for the build to finish.
+   - **Install Command:** `npm install --legacy-peer-deps`
+6. **Environment variables (required before first deploy):** In the project import screen, expand **Environment Variables**, or after creating the project go to **Settings** → **Environment Variables**. Add:
+   - **GOOGLE_API_KEY** – Your Google AI (Gemini) API key (required for chat and product search).
+7. Click **Deploy**. Wait for the build to finish.
 
 ### 4. After deployment
 
 - **Panel:** `https://<your-project>.vercel.app/panel/` (and `/panel/preview.html`, `/panel/demo.html` if you use them).
 - **Widget script (CDN):** `https://<your-project>.vercel.app/chatbot.min.js`
-- In your site's `chatbotConfig`, set `apiBaseUrl` to your backend URL (e.g. `https://your-api.railway.app`), and use the Vercel URL above for the script `src`.
+- **API:** Same origin – e.g. `https://<your-project>.vercel.app/api/chat`, `/api/checkout/send-otp`, etc. The widget uses **same-origin** `/api` by default when `apiBaseUrl` is empty, so no extra config is needed when the widget is loaded from the same Vercel domain. To use a different backend, set `apiBaseUrl` in `chatbotConfig`.

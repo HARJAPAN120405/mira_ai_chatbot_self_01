@@ -204,7 +204,5 @@ app.post('/api/checkout/place-order', async (c) => {
     return c.json({ success: true, orderId: result.orderId, total: result.total, items: result.items, message: result.message });
 });
 
-export default {
-    port: process.env.PORT || 3000,
-    fetch: app.fetch,
-}
+export { app };
+export default { port: process.env.PORT || 3000, fetch: app.fetch };

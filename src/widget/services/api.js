@@ -1,5 +1,5 @@
 /** REST API for checkout: OTP, addresses, place order */
-const defaultBase = 'http://localhost:3000';
+const defaultBase = ''; // same-origin when empty (production); use config.apiBaseUrl for localhost
 
 function base(apiBaseUrl) {
     return (apiBaseUrl || defaultBase).replace(/\/$/, '');

@@ -82,7 +82,7 @@ export const defaultConfig = {
     addToCartLabel: 'Add to Cart',
     theme: 'default',
     thinkingStatuses: DEFAULT_THINKING_STATUSES,
-    apiBaseUrl: 'http://localhost:3000',
+    apiBaseUrl: '', // '' = same-origin /api (Vercel); set to 'http://localhost:3000' for local dev
 };
 
 export function mergeConfig(userConfig = {}) {
