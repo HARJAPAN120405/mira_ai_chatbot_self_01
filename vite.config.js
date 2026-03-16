@@ -33,8 +33,9 @@ export default defineConfig(({ mode }) => {
     };
   }
 
-  // Panel Build
+  // Panel Build (base so script/assets resolve when served from / or /panel/src/panel/)
   return {
+    base: '/panel/',
     server: commonServerConfig,
     preview: commonPreviewConfig,
     build: {
