@@ -1,8 +1,9 @@
-const defaultApiBase = "http://localhost:3000";
-
 export async function getAIResponse(message, history = [], onToken, onData, onDone, sessionId = 'default', onStatus = null, onCart = null, onOrderHistory = null, apiBaseUrl = null) {
-    const base = (apiBaseUrl || defaultApiBase).replace(/\/$/, '');
-    const url = `${base}/api/chat`;
+    // Empty string = same-origin (production). Non-empty = that base (e.g. http://localhost:3000 for dev).
+    const base = (apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== '')
+        ? String(apiBaseUrl).replace(/\/$/, '')
+        : '';
+    const url = base ? `${base}/api/chat` : '/api/chat';
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -10,7 +11,11 @@ export async function getAIResponse(message, history = [], onToken, onData, onDo
             body: JSON.stringify({ message, history, sessionId })
         });
 
-        if (!response.ok) throw new Error();
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error("AI API error", response.status, errText);
+            throw new Error(response.status === 503 ? "Backend not configured (missing API key)." : `API ${response.status}`);
+        }
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -46,7 +51,10 @@ export async function getAIResponse(message, history = [], onToken, onData, onDo
 
     } catch (error) {
         console.error("AI Service Error:", error);
-        if (onToken) onToken("My neural network is temporarily offline.");
+        const message = error?.message?.includes("API key") || error?.message?.includes("503")
+            ? "Chat is unavailable. The server needs an API key (check deployment settings)."
+            : "My neural network is temporarily offline. Please try again.";
+        if (onToken) onToken(message);
         if (onDone) onDone();
     }
 }
