@@ -1,8 +1,8 @@
 /** REST API for checkout: OTP, addresses, place order */
-const defaultBase = ''; // same-origin when empty (production); use config.apiBaseUrl for localhost
+import { getApiBase } from './ai.js';
 
 function base(apiBaseUrl) {
-    return (apiBaseUrl || defaultBase).replace(/\/$/, '');
+    return getApiBase(apiBaseUrl);
 }
 
 export async function checkoutSendOtp(sessionId, phone, apiBaseUrl) {
@@ -47,6 +47,40 @@ export async function checkoutPlaceOrder(sessionId, addressId, paymentMethod, ap
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sessionId, addressId: Number(addressId), paymentMethod: paymentMethod === 'prepaid' ? 'prepaid' : 'COD' }),
+    });
+    return res.json();
+}
+
+/** Cart REST (for widget +/- and delete). */
+export async function cartGet(sessionId, apiBaseUrl) {
+    const res = await fetch(`${base(apiBaseUrl)}/api/cart?sessionId=${encodeURIComponent(sessionId)}`);
+    const data = await res.json();
+    return { items: data.items || [], total: data.total != null ? data.total : 0 };
+}
+
+export async function cartAdd(sessionId, title, size, apiBaseUrl) {
+    const res = await fetch(`${base(apiBaseUrl)}/api/cart/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, title: String(title || '').trim(), size: size || undefined }),
+    });
+    return res.json();
+}
+
+export async function cartRemoveOne(sessionId, title, apiBaseUrl) {
+    const res = await fetch(`${base(apiBaseUrl)}/api/cart/remove-one`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, title: String(title || '').trim() }),
+    });
+    return res.json();
+}
+
+export async function cartRemoveAll(sessionId, title, apiBaseUrl) {
+    const res = await fetch(`${base(apiBaseUrl)}/api/cart/remove-all`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, title: String(title || '').trim() }),
     });
     return res.json();
 }

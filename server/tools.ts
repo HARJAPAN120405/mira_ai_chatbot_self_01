@@ -30,6 +30,48 @@ export function getCartGrouped(sessionId: string): { items: any[]; total: number
     return { items, total };
 }
 
+/** Add one unit of a product to the session cart (for REST / widget). */
+export function addOneToCart(sessionId: string, title: string, size?: string): { success: boolean; items: any[]; total: number; message?: string } {
+    const product = storeProducts.find(p => p.title.toLowerCase().includes(title.toLowerCase()));
+    if (!product) return { success: false, items: [], total: 0, message: `Product "${title}" not found.` };
+    let cart = sessionCarts.get(sessionId);
+    if (!cart) {
+        cart = [];
+        sessionCarts.set(sessionId, cart);
+    }
+    const toPush = size ? { ...product, lastAddedSize: size } as Product & { lastAddedSize?: string } : { ...product };
+    cart.push(toPush);
+    const { items, total } = getCartGrouped(sessionId);
+    return { success: true, items, total };
+}
+
+/** Remove one unit of a product from the session cart (for REST / widget). */
+export function removeOneFromCart(sessionId: string, title: string): { success: boolean; items: any[]; total: number; message?: string } {
+    const cart = sessionCarts.get(sessionId);
+    if (!cart || cart.length === 0) {
+        const empty = getCartGrouped(sessionId);
+        return { success: true, items: empty.items, total: empty.total };
+    }
+    const idx = cart.findIndex(p => p.title.toLowerCase().includes(title.toLowerCase()));
+    if (idx === -1) {
+        const { items, total } = getCartGrouped(sessionId);
+        return { success: false, items, total, message: `"${title}" not in cart.` };
+    }
+    cart.splice(idx, 1);
+    const { items, total } = getCartGrouped(sessionId);
+    return { success: true, items, total };
+}
+
+/** Remove all units of a product from the session cart (for REST / widget). */
+export function removeAllFromCart(sessionId: string, title: string): { success: boolean; items: any[]; total: number } {
+    let cart = sessionCarts.get(sessionId) || [];
+    const lower = title.toLowerCase();
+    cart = cart.filter(p => !p.title.toLowerCase().includes(lower));
+    sessionCarts.set(sessionId, cart);
+    const { items, total } = getCartGrouped(sessionId);
+    return { success: true, items, total };
+}
+
 // Tool to semantic search the catalog
 export const searchProductCatalog = tool(
     async ({ query, limit }: { query: string, limit?: number }) => {

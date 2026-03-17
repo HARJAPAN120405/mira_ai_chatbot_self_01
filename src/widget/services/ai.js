@@ -1,8 +1,21 @@
+/** Default backend URL when developing locally (Bun server). */
+const LOCAL_API_BASE = 'http://localhost:3000';
+
+function isLocalDev() {
+    if (typeof window === 'undefined' || !window.location) return false;
+    const host = window.location.hostname || '';
+    return host === 'localhost' || host === '127.0.0.1';
+}
+
+export function getApiBase(apiBaseUrl) {
+    const explicit = apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== '';
+    if (explicit) return String(apiBaseUrl).replace(/\/$/, '');
+    if (isLocalDev()) return LOCAL_API_BASE;
+    return '';
+}
+
 export async function getAIResponse(message, history = [], onToken, onData, onDone, sessionId = 'default', onStatus = null, onCart = null, onOrderHistory = null, apiBaseUrl = null) {
-    // Empty string = same-origin (production). Non-empty = that base (e.g. http://localhost:3000 for dev).
-    const base = (apiBaseUrl !== undefined && apiBaseUrl !== null && apiBaseUrl !== '')
-        ? String(apiBaseUrl).replace(/\/$/, '')
-        : '';
+    const base = getApiBase(apiBaseUrl);
     const url = base ? `${base}/api/chat` : '/api/chat';
     try {
         const response = await fetch(url, {

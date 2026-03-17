@@ -34,8 +34,11 @@ export const DEFAULT_PLACEHOLDERS = [
     'Recommend something for me...'
 ];
 
-/** Suggestion chips shown after bot messages */
+/** Suggestion chips shown after bot messages (e.g. below carousel) */
 export const DEFAULT_SUGGESTION_CHIPS = [
+    'View All',
+    'Filter by Price',
+    'Sale Items',
     'Show sneakers under $100',
     'Trending items',
     'Best running shoes',

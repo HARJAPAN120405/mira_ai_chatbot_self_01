@@ -12,12 +12,13 @@ import {
     createOrderHistoryCard,
     createCheckoutFlowCard,
     createQuickActionGrid,
-    parseMarkdown
+    parseMarkdown,
+    parseOrderConfirmationFromText
 } from './MessageList.js';
 import { renderInputArea } from './InputArea.js';
 import { createTypingIndicator } from './TypingIndicator.js';
 import { getAIResponse } from '../services/ai.js';
-import { checkoutSendOtp, checkoutVerifyOtp, checkoutGetAddresses, checkoutAddAddress, checkoutPlaceOrder } from '../services/api.js';
+import { checkoutSendOtp, checkoutVerifyOtp, checkoutGetAddresses, checkoutAddAddress, checkoutPlaceOrder, cartGet, cartAdd, cartRemoveOne, cartRemoveAll } from '../services/api.js';
 import { applyMagnetic } from '../utils/magnetic.js';
 import { getRelevantSuggestionChips } from '../utils/suggestionChips.js';
 import { createToastAPI } from '../utils/toast.js';
@@ -384,10 +385,14 @@ export function initChatbot(userConfig) {
                 aiFullText = introText;
             }
             const carouselMsg = createProductCarousel(carouselData, handleAddToCart, config);
-            lastCarouselData = carouselData;
-            lastBotBlock = carouselMsg;
-            messageList.appendChild(carouselMsg);
-            chatHistory.push({ role: 'bot', content: "Displayed a product carousel to the user.", carousel: carouselData });
+            if (carouselMsg) {
+                lastCarouselData = carouselData;
+                lastBotBlock = carouselMsg;
+                messageList.appendChild(carouselMsg);
+                chatHistory.push({ role: 'bot', content: "Displayed a product carousel to the user.", carousel: carouselData });
+            } else {
+                lastBotBlock = botTextMsg;
+            }
             sessionStorage.setItem('ecom-chat-history', JSON.stringify(chatHistory));
             applyMessageGrouping();
             smoothScrollToBottom();
@@ -411,18 +416,44 @@ export function initChatbot(userConfig) {
                 bubble.parentNode.insertBefore(contentCol, bubble);
                 contentCol.appendChild(bubble);
             }
-            const cartCard = createYourCartCard(cartData, {
-                onCheckout: () => {
-                    checkoutState.step = 'mobile';
-                    checkoutState.subtotal = cartData.total || 0;
-                    renderCheckoutMsg();
+            const getCartCardOptions = (replaceCartCard) => ({
+                onCheckout: () => handleSend("Proceed to checkout"),
+                onUpdateQty: async (item, newQty) => {
+                    const currentQty = item.quantity != null ? item.quantity : 1;
+                    const title = item.title || item.name || '';
+                    if (newQty <= 0) {
+                        await cartRemoveAll(sessionId, title, config.apiBaseUrl);
+                    } else if (newQty > currentQty) {
+                        for (let i = currentQty; i < newQty; i++) {
+                            await cartAdd(sessionId, title, item.size, config.apiBaseUrl);
+                        }
+                    } else {
+                        for (let i = newQty; i < currentQty; i++) {
+                            await cartRemoveOne(sessionId, title, config.apiBaseUrl);
+                        }
+                    }
+                    const newData = await cartGet(sessionId, config.apiBaseUrl);
+                    replaceCartCard(newData);
                 },
-                onAddMore: () => handleSend("I'd like to add something else"),
+                onRemove: async (item) => {
+                    const title = item.title || item.name || '';
+                    await cartRemoveAll(sessionId, title, config.apiBaseUrl);
+                    const newData = await cartGet(sessionId, config.apiBaseUrl);
+                    replaceCartCard(newData);
+                },
             });
+            let replaceCartCard;
+            replaceCartCard = (newCartData) => {
+                const oldCard = contentCol.querySelector('.chatbot-cart-card');
+                if (!oldCard) return;
+                const newCard = createYourCartCard(newCartData, getCartCardOptions(replaceCartCard));
+                oldCard.replaceWith(newCard);
+            };
+            const cartCard = createYourCartCard(cartData, getCartCardOptions(replaceCartCard));
             if (cartCard && contentCol) {
                 contentCol.appendChild(cartCard);
             } else if (cartCard) {
-                botMsg.appendChild(cartCard);
+                botTextMsg.appendChild(cartCard);
             }
             const intro = aiFullText ? aiFullText : "Here’s what’s in your cart:";
             chatHistory.push({ role: 'bot', content: intro, cart: cartData });
@@ -468,11 +499,59 @@ export function initChatbot(userConfig) {
                 chatHistory.push({ role: 'bot', content: aiFullText });
                 sessionStorage.setItem('ecom-chat-history', JSON.stringify(chatHistory));
             }
+            // If AI response is the backend checkout-tool confirmation markdown, replace with premium order card
+            const parsedConfirmation = parseOrderConfirmationFromText(aiFullText || '');
+            if (parsedConfirmation && lastBotBlock) {
+                const payload = {
+                    step: 'confirmation',
+                    data: {
+                        orderItems: parsedConfirmation.items,
+                        addresses: [{ street: parsedConfirmation.shippingAddress }],
+                        subtotal: parsedConfirmation.total
+                    },
+                    state: {
+                        orderId: parsedConfirmation.orderId,
+                        paymentMethod: parsedConfirmation.paymentMethod,
+                        subtotal: parsedConfirmation.total,
+                        orderItems: parsedConfirmation.items,
+                        addresses: [{ street: parsedConfirmation.shippingAddress }],
+                        selectedAddressId: 0
+                    }
+                };
+                const card = createCheckoutFlowCard(payload, {});
+                const contentCol = lastBotBlock.querySelector('.chatbot-message-content');
+                const bubble = lastBotBlock.querySelector('.chatbot-bubble');
+                if (contentCol) {
+                    contentCol.innerHTML = '';
+                    contentCol.appendChild(card);
+                } else if (bubble) {
+                    bubble.replaceWith(card);
+                } else {
+                    lastBotBlock.innerHTML = '';
+                    lastBotBlock.appendChild(card);
+                }
+                applyMessageGrouping();
+                smoothScrollToBottom();
+            }
             // Add suggestion chips once, at the end of the response, to the last bot block (carousel or text)
-            const contextForChips = aiFullText || (lastCarouselData ? (lastCarouselData || []).map((p) => p.title || '').join(' ') : '');
-            const relevantChips = getRelevantSuggestionChips(contextForChips, config.suggestionChips || [], 4);
+            const isAddToCartSuccess = /added to (your )?(cart|shopping bag|bag)/i.test(aiFullText || '');
+            const isPaymentOptionsMessage = /how would you like to pay|COD.*Prepaid|Prepaid.*COD|Cash on Delivery|Online Payment/i.test(aiFullText || '');
+            const isOtpMessage = /one-time password|OTP|sent to your phone|enter the.*digit code|verify your identity|for demo purposes.*code/i.test(aiFullText || '');
+            const isAddressMessage = /shipping address|saved addresses|add a new one|get your shipping|delivery address/i.test(aiFullText || '');
+            let relevantChips;
+            let chipSendFn = (label) => handleSend(label);
+            if (isOtpMessage || isAddressMessage) {
+                relevantChips = [];
+            } else if (isAddToCartSuccess) {
+                relevantChips = ['Proceed to checkout', 'Browse more products'];
+            } else if (isPaymentOptionsMessage) {
+                relevantChips = ['COD', 'PREPAID'];
+                chipSendFn = (label) => handleSend(label === 'COD' ? 'cod' : label === 'PREPAID' ? 'prepaid' : label);
+            } else {
+                relevantChips = getRelevantSuggestionChips(aiFullText || (lastCarouselData ? (lastCarouselData || []).map((p) => p.title || '').join(' ') : ''), config.suggestionChips || [], 4);
+            }
             if (relevantChips.length > 0 && lastBotBlock) {
-                const chipWrap = createSuggestionChips(relevantChips, (label) => handleSend(label), config);
+                const chipWrap = createSuggestionChips(relevantChips, chipSendFn, config);
                 chipWrap.classList.add('chatbot-chips-below');
                 const bubble = lastBotBlock.querySelector('.chatbot-bubble');
                 if (bubble) {
@@ -522,7 +601,8 @@ export function initChatbot(userConfig) {
                 messageList.appendChild(createTextMessage(msg.content, false, config));
             } else if (msg.role === 'bot') {
                 if (msg.carousel) {
-                    messageList.appendChild(createProductCarousel(msg.carousel, handleAddToCart, config));
+                    const restoredCarousel = createProductCarousel(msg.carousel, handleAddToCart, config);
+                    if (restoredCarousel) messageList.appendChild(restoredCarousel);
                 } else if (msg.cart) {
                     const botMsg = createTextMessage(msg.content || "Here’s what’s in your cart:", true, config);
                     const bubble = botMsg.querySelector('.chatbot-bubble');
@@ -531,10 +611,40 @@ export function initChatbot(userConfig) {
                         contentCol.className = 'chatbot-message-content';
                         bubble.parentNode.insertBefore(contentCol, bubble);
                         contentCol.appendChild(bubble);
-                        const cartCard = createYourCartCard(msg.cart, {
-                        onCheckout: () => handleSend("I'd like to proceed to checkout"),
-                        onAddMore: () => handleSend("I'd like to add something else"),
-                    });
+                        const getCartCardOptions = (replaceCartCard) => ({
+                            onCheckout: () => handleSend("Proceed to checkout"),
+                            onUpdateQty: async (item, newQty) => {
+                                const currentQty = item.quantity != null ? item.quantity : 1;
+                                const title = item.title || item.name || '';
+                                if (newQty <= 0) {
+                                    await cartRemoveAll(sessionId, title, config.apiBaseUrl);
+                                } else if (newQty > currentQty) {
+                                    for (let i = currentQty; i < newQty; i++) {
+                                        await cartAdd(sessionId, title, item.size, config.apiBaseUrl);
+                                    }
+                                } else {
+                                    for (let i = newQty; i < currentQty; i++) {
+                                        await cartRemoveOne(sessionId, title, config.apiBaseUrl);
+                                    }
+                                }
+                                const newData = await cartGet(sessionId, config.apiBaseUrl);
+                                replaceCartCard(newData);
+                            },
+                            onRemove: async (item) => {
+                                const title = item.title || item.name || '';
+                                await cartRemoveAll(sessionId, title, config.apiBaseUrl);
+                                const newData = await cartGet(sessionId, config.apiBaseUrl);
+                                replaceCartCard(newData);
+                            },
+                        });
+                        let replaceCartCard;
+                        replaceCartCard = (newCartData) => {
+                            const oldCard = contentCol.querySelector('.chatbot-cart-card');
+                            if (!oldCard) return;
+                            const newCard = createYourCartCard(newCartData, getCartCardOptions(replaceCartCard));
+                            oldCard.replaceWith(newCard);
+                        };
+                        const cartCard = createYourCartCard(msg.cart, getCartCardOptions(replaceCartCard));
                         if (cartCard) contentCol.appendChild(cartCard);
                     }
                     messageList.appendChild(botMsg);
@@ -549,6 +659,19 @@ export function initChatbot(userConfig) {
                         const orderCard = createOrderHistoryCard(msg.orderHistory);
                         if (orderCard) contentCol.appendChild(orderCard);
                     }
+                    messageList.appendChild(botMsg);
+                } else if (msg.content && parseOrderConfirmationFromText(msg.content)) {
+                    const parsed = parseOrderConfirmationFromText(msg.content);
+                    const payload = {
+                        step: 'confirmation',
+                        data: { orderItems: parsed.items, addresses: [{ street: parsed.shippingAddress }], subtotal: parsed.total },
+                        state: { orderId: parsed.orderId, paymentMethod: parsed.paymentMethod, subtotal: parsed.total, orderItems: parsed.items, addresses: [{ street: parsed.shippingAddress }], selectedAddressId: 0 }
+                    };
+                    const botMsg = createTextMessage('', true, config, handleSend);
+                    const bubble = botMsg.querySelector('.chatbot-bubble');
+                    const card = createCheckoutFlowCard(payload, {});
+                    if (bubble) bubble.replaceWith(card);
+                    else botMsg.appendChild(card);
                     messageList.appendChild(botMsg);
                 } else if (msg.content && msg.content !== "Displayed a product carousel to the user.") {
                     messageList.appendChild(createTextMessage(msg.content, true, config));

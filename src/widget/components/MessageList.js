@@ -606,32 +606,36 @@ export function createProductCard(productData, onAddToCart, config = null) {
 
 const PRODUCT_IMAGE_PLACEHOLDER = 'https://placehold.co/300x200?text=Product';
 
-function productsWithImageFirst(products) {
+/** Returns only products that have a valid image URL (carousel shows image-only). */
+function productsWithImagesOnly(products) {
     if (!Array.isArray(products) || products.length === 0) return [];
     const hasImage = (p) => p && (p.image != null && String(p.image).trim() !== '');
-    const withImage = products.filter(hasImage);
-    return withImage.length > 0 ? withImage : products;
+    return products.filter(hasImage);
+}
+
+/** Badge text from store product (bestseller or explicit badge). */
+function getProductBadge(product) {
+    if (product.badge && String(product.badge).trim()) return String(product.badge).trim();
+    if (product.bestseller) return 'Bestseller';
+    return null;
 }
 
 export function createProductCarousel(products, onAddToCart, config = null) {
+    const toShow = productsWithImagesOnly(products);
+    if (toShow.length === 0) return null;
+
     const listWrapper = document.createElement('div');
     listWrapper.className = 'chatbot-message bot-message msg-enter-product';
 
-    const toShow = productsWithImageFirst(products);
     const placeholder = PRODUCT_IMAGE_PLACEHOLDER;
 
     const avatarImage = config?.launcherIconUrl ? `<img src="${config.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />` : `<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>`;
-    const avatarHtml = `
-        <div class="chatbot-message-avatar">
-            ${avatarImage}
-        </div>
-    `;
-
-    // Wrap the carousel inside a flex row so avatar sits flush left
     const messageRow = document.createElement('div');
     messageRow.style.display = 'flex';
     messageRow.style.width = '100%';
-    messageRow.innerHTML = avatarHtml;
+    messageRow.innerHTML = `
+        <div class="chatbot-message-avatar">${avatarImage}</div>
+    `;
 
     const outerContainer = document.createElement('div');
     outerContainer.className = 'carousel-container';
@@ -641,11 +645,10 @@ export function createProductCarousel(products, onAddToCart, config = null) {
     outerContainer.style.flexDirection = 'column';
     outerContainer.style.gap = '6px';
 
-    const carouselHeadings = ['Have a look', 'Choose from these', 'Here are some picks'];
-    const headingText = carouselHeadings[Math.floor(Math.random() * carouselHeadings.length)];
+    const carouselHeadings = ['Here are some of our curated products:', 'Have a look', 'Choose from these', 'Here are some picks'];
     const headingEl = document.createElement('div');
     headingEl.className = 'carousel-heading';
-    headingEl.textContent = headingText;
+    headingEl.textContent = carouselHeadings[Math.floor(Math.random() * carouselHeadings.length)];
     outerContainer.appendChild(headingEl);
 
     const carouselRow = document.createElement('div');
@@ -654,83 +657,111 @@ export function createProductCarousel(products, onAddToCart, config = null) {
     carouselRow.style.alignItems = 'center';
     carouselRow.style.position = 'relative';
 
-    // Left Button
     const leftBtn = document.createElement('button');
     leftBtn.className = 'carousel-nav-btn carousel-nav-left';
+    leftBtn.setAttribute('type', 'button');
     leftBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>';
-
-    // Right Button
     const rightBtn = document.createElement('button');
     rightBtn.className = 'carousel-nav-btn carousel-nav-right';
+    rightBtn.setAttribute('type', 'button');
     rightBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';
 
     const carouselWrapper = document.createElement('div');
-    carouselWrapper.className = 'chatbot-product-carousel';
+    carouselWrapper.className = 'product-carousel chatbot-product-carousel';
 
-    // Scroll Logic
-    const SCROLL_AMOUNT = 232; // approx card width + gap
-    leftBtn.addEventListener('click', () => {
-        carouselWrapper.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' });
-    });
-    rightBtn.addEventListener('click', () => {
-        carouselWrapper.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' });
-    });
+    const SCROLL_AMOUNT = 212;
+    leftBtn.addEventListener('click', () => carouselWrapper.scrollBy({ left: -SCROLL_AMOUNT, behavior: 'smooth' }));
+    rightBtn.addEventListener('click', () => carouselWrapper.scrollBy({ left: SCROLL_AMOUNT, behavior: 'smooth' }));
 
-    toShow.forEach(product => {
+    toShow.forEach((product, index) => {
+        const name = product.title || product.name || 'Product';
         const imgSrc = (product.image && String(product.image).trim()) ? product.image : placeholder;
-        // Build individual card
+        const priceStr = product.price != null ? (typeof product.price === 'string' ? product.price : `$${product.price}`) : '';
+        const originalPriceStr = product.originalPrice != null ? (typeof product.originalPrice === 'string' ? product.originalPrice : `$${product.originalPrice}`) : '';
+        const badge = getProductBadge(product);
+        const badgeColor = product.badgeColor || '#2563eb';
+
         const card = document.createElement('div');
-        card.className = 'carousel-card';
+        card.className = 'product-card';
+        card.dataset.productId = product.id || index;
+        card.style.animationDelay = `${index * 100}ms`;
 
-        card.innerHTML = `
-            <img src="${imgSrc}" class="chatbot-product-img" alt="${product.title || 'Product Image'}" />
-            <div class="chatbot-product-content">
-                <div class="chatbot-product-header">
-                    <h4>${product.title || 'Unknown Product'}</h4>
-                    <span class="chatbot-product-price">${product.price || ''}</span>
-                </div>
-            </div>
-        `;
+        const imageWrap = document.createElement('div');
+        imageWrap.className = 'product-image-wrap';
 
-        const contentDiv = card.querySelector('.chatbot-product-content');
+        const img = document.createElement('img');
+        img.className = 'product-image';
+        img.src = imgSrc;
+        img.alt = name;
+        img.loading = 'lazy';
+        img.style.background = '#f3f4f6';
+        img.onerror = function () {
+            card.remove();
+        };
+        imageWrap.appendChild(img);
 
-        // Add size selection if available
+        if (badge) {
+            const badgeEl = document.createElement('div');
+            badgeEl.className = 'product-badge';
+            badgeEl.textContent = badge;
+            imageWrap.appendChild(badgeEl);
+        }
+        card.appendChild(imageWrap);
+
+        const nameEl = document.createElement('h4');
+        nameEl.className = 'product-name';
+        nameEl.textContent = name;
+        card.appendChild(nameEl);
+
+        const priceContainer = document.createElement('div');
+        priceContainer.className = 'product-price-container';
+        const priceSpan = document.createElement('span');
+        priceSpan.className = 'product-price';
+        priceSpan.textContent = priceStr;
+        priceContainer.appendChild(priceSpan);
+        if (originalPriceStr) {
+            const origSpan = document.createElement('span');
+            origSpan.className = 'product-original-price';
+            origSpan.textContent = originalPriceStr;
+            priceContainer.appendChild(origSpan);
+        }
+        card.appendChild(priceContainer);
+
         let selectedSize = null;
         if (product.sizes && Array.isArray(product.sizes)) {
             const sizesDiv = document.createElement('div');
             sizesDiv.className = 'chatbot-product-sizes';
-
             const sizesList = document.createElement('div');
             sizesList.className = 'sizes-list';
-
             product.sizes.forEach(size => {
                 const pill = document.createElement('button');
+                pill.type = 'button';
                 pill.className = 'size-pill';
                 pill.innerText = size;
                 pill.addEventListener('click', () => {
-                    sizesList.querySelectorAll('.size-pill').forEach(btn => btn.classList.remove('selected'));
+                    sizesList.querySelectorAll('.size-pill').forEach(p => p.classList.remove('selected'));
                     pill.classList.add('selected');
                     selectedSize = size;
                 });
                 sizesList.appendChild(pill);
             });
             sizesDiv.appendChild(sizesList);
-            contentDiv.appendChild(sizesDiv);
+            card.appendChild(sizesDiv);
         }
 
-        // Add Call to Action
-        const actionBtn = document.createElement('div');
-        actionBtn.className = 'chatbot-product-action';
-        actionBtn.innerText = config?.addToCartLabel || 'Add to Cart';
-        actionBtn.addEventListener('click', () => {
+        const addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'add-to-cart-btn';
+        addBtn.textContent = config?.addToCartLabel || 'Add to Cart';
+        addBtn.addEventListener('click', () => {
             if (product.sizes && !selectedSize) {
                 alert('Please select a size first!');
                 return;
             }
             if (onAddToCart) onAddToCart(product, selectedSize);
         });
+        card.appendChild(addBtn);
 
-        contentDiv.appendChild(actionBtn);
         apply3DTilt(card, 'carousel-card-3d');
         carouselWrapper.appendChild(card);
     });
@@ -739,10 +770,8 @@ export function createProductCarousel(products, onAddToCart, config = null) {
     carouselRow.appendChild(carouselWrapper);
     carouselRow.appendChild(rightBtn);
     outerContainer.appendChild(carouselRow);
-
     messageRow.appendChild(outerContainer);
     listWrapper.appendChild(messageRow);
-
     return listWrapper;
 }
 
@@ -919,9 +948,9 @@ export function createYourCartCard(cartPayload, options = {}) {
         if (onUpdateQty && qtyNum) {
             minusBtn?.addEventListener('click', () => {
                 const v = Math.max(0, (parseInt(qtyNum.textContent, 10) || 1) - 1);
-                qtyNum.textContent = v;
+                qtyNum.textContent = String(v);
                 onUpdateQty(item, v);
-                if (v === 0 && removeBtn) removeBtn.click();
+                // when v is 0, onUpdateQty removes the item and replaces the card
             });
             plusBtn?.addEventListener('click', () => {
                 const v = (parseInt(qtyNum.textContent, 10) || 1) + 1;
@@ -1044,6 +1073,53 @@ export function createQuickActionGrid(actions, handlers = {}) {
     });
     
     return grid;
+}
+
+/**
+ * Parse backend checkout-tool confirmation markdown into structured data.
+ * Returns null if text doesn't look like an order confirmation.
+ * @returns {{ orderId: string, items: Array<{name:string, price:number, size?:string}>, total: number, paymentMethod: string, shippingAddress: string } | null}
+ */
+export function parseOrderConfirmationFromText(text) {
+    if (!text || typeof text !== 'string') return null;
+    const t = text;
+    if (!/Order Confirmed!|Order ID:|Ships to:/i.test(t)) return null;
+
+    const orderIdMatch = t.match(/\*\*Order ID:\*\*\s*`?([A-Z0-9-]+)`?/i) || t.match(/Order ID:\s*`?([A-Z0-9-]+)`?/i);
+    const orderId = orderIdMatch ? orderIdMatch[1].trim() : `ORD-${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const totalMatch = t.match(/\*\*Total:\*\*\s*\$?([\d.,]+)/i) || t.match(/Total:\s*\$?([\d.,]+)/i);
+    const total = totalMatch ? parseFloat(totalMatch[1].replace(/,/g, '')) : 0;
+
+    const paymentMatch = t.match(/\*\*Payment:\*\*\s*[^\n·]*([^\n]+?)(?=\n\n|\n\*\*|$)/i) || t.match(/Payment:\s*[^\n·]*([^\n]+)/i);
+    let paymentMethod = 'cod';
+    if (paymentMatch) {
+        const p = paymentMatch[1].toLowerCase();
+        if (p.includes('prepaid') || p.includes('card') || p.includes('online')) paymentMethod = 'prepaid';
+    }
+
+    const shipsMatch = t.match(/\*\*Ships to:\*\*\s*([^\n]+)/i) || t.match(/Ships to:\s*([^\n]+)/i);
+    const shippingAddress = shipsMatch ? shipsMatch[1].trim() : '—';
+
+    const items = [];
+    const tableStart = t.indexOf('| Item | Price | Size |');
+    if (tableStart !== -1) {
+        const afterHeader = t.slice(tableStart);
+        const lines = afterHeader.split(/\r?\n/).filter((l) => l.trim().startsWith('|') && !l.includes(':---'));
+        for (const line of lines) {
+            const cells = line.split('|').map((c) => c.trim()).filter(Boolean);
+            if (cells.length >= 2 && cells[0] !== 'Item') {
+                const name = cells[0] || 'Item';
+                const priceStr = cells[1] || '$0';
+                const price = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
+                const size = cells[2] || 'N/A';
+                items.push({ name, price, size, quantity: 1, image: null });
+            }
+        }
+    }
+    if (items.length === 0 && total > 0) items.push({ name: 'Order items', price: total, quantity: 1, image: null });
+
+    return { orderId, items, total, paymentMethod, shippingAddress };
 }
 
 /**
@@ -1273,35 +1349,95 @@ export function createCheckoutFlowCard(payload, handlers = {}) {
     else if (step === 'confirmation') {
         const orderId = state.orderId || data.orderId || `ORD-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
         const orderItems = data.orderItems || state.orderItems || [];
+        const total = state.subtotal != null ? Number(state.subtotal) : orderItems.reduce((sum, i) => {
+            const p = typeof i.price === 'string' ? parseFloat(String(i.price).replace(/[^0-9.]/g, '')) || 0 : Number(i.price) || 0;
+            return sum + p * (i.quantity || 1);
+        }, 0);
+        const paymentMethod = (state.paymentMethod || 'cod').toLowerCase();
+        const paymentLabel = paymentMethod === 'prepaid' ? 'Card / Prepaid' : 'Cash on Delivery';
+        const paymentIcon = paymentMethod === 'prepaid' ? '💳' : '💵';
+        const addrId = state.selectedAddressId != null ? state.selectedAddressId : 0;
+        const addresses = state.addresses || [];
+        const addr = addresses.find(a => (a.id ?? a) === addrId) || addresses[addrId];
+        const shippingLine1 = addr ? (typeof addr === 'string' ? addr : [addr.street, addr.city, addr.state, addr.zip].filter(Boolean).join(', ')) : '—';
+        const shippingLine2 = addr && typeof addr !== 'string' && addr.city ? `${addr.city}${addr.state ? ', ' + addr.state : ''} ${addr.zip || ''}`.trim() : '';
+
         const productsHtml = orderItems.length
-            ? `<div class="confirmation-products">
-                <div class="confirmation-products-title">Products ordered</div>
+            ? `<div class="order-product">
+                <div class="order-product-label">Products ordered</div>
                 ${orderItems.map(item => {
                     const qty = item.quantity || 1;
-                    const price = (item.price || 0) * qty;
-                    const img = item.image ? `<img src="${item.image}" alt="" class="confirmation-product-img" onerror="this.style.display='none'" />` : '<div class="confirmation-product-placeholder"></div>';
-                    return `<div class="confirmation-product-row">
-                        ${img}
-                        <div class="confirmation-product-info">
-                            <span class="confirmation-product-name">${(item.name || '').replace(/</g, '&lt;')}</span>
-                            <span class="confirmation-product-meta">Qty: ${qty} × $${(item.price || 0).toFixed(2)} = $${price.toFixed(2)}</span>
+                    const unitPrice = typeof item.price === 'string' ? parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0 : Number(item.price) || 0;
+                    const lineTotal = unitPrice * qty;
+                    const img = item.image ? `<img src="${item.image}" alt="" class="order-product-img" onerror="this.style.display='none'" />` : '<div class="order-product-placeholder"></div>';
+                    return `<div class="order-product-row">
+                        <div class="order-product-img-wrap">${img}</div>
+                        <div class="order-product-info">
+                            <span class="order-product-name">${(item.name || item.title || '').replace(/</g, '&lt;')}</span>
+                            <span class="order-product-meta">Qty: ${qty} × $${unitPrice.toFixed(2)} = $${lineTotal.toFixed(2)}</span>
                         </div>
                     </div>`;
                 }).join('')}
-               </div>`
+            </div>`
             : '';
+
+        const progressHtml = `
+            <div class="order-progress">
+                <div class="order-progress-step order-progress-done">
+                    <span class="order-progress-dot"></span>
+                    <span class="order-progress-label">Order Placed</span>
+                </div>
+                <div class="order-progress-line order-progress-active"></div>
+                <div class="order-progress-step order-progress-active">
+                    <span class="order-progress-dot"></span>
+                    <span class="order-progress-label">Processing</span>
+                </div>
+                <div class="order-progress-line"></div>
+                <div class="order-progress-step">
+                    <span class="order-progress-dot"></span>
+                    <span class="order-progress-label">Shipped</span>
+                </div>
+                <div class="order-progress-line"></div>
+                <div class="order-progress-step">
+                    <span class="order-progress-dot"></span>
+                    <span class="order-progress-label">Delivered</span>
+                </div>
+            </div>`;
+
         wrapper.innerHTML = `
-            <div class="checkout-confirmation">
-                <div class="success-icon-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div class="order-card checkout-confirmation-premium">
+                <div class="order-header">
+                    <div class="order-header-glow"></div>
+                    <div class="order-header-badge">✅</div>
+                    <h3 class="order-header-title">Order Confirmed!</h3>
+                    <div class="order-header-id">${orderId}</div>
                 </div>
-                <h3 class="confirmation-title">Order Confirmed!</h3>
-                <p class="confirmation-message">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
                 ${productsHtml}
-                <div class="order-number-badge">
-                    <span>Order #</span>
-                    <b>${orderId}</b>
+                <div class="order-summary">
+                    <div class="order-summary-row order-summary-total">
+                        <span class="order-summary-label">Total</span>
+                        <span class="order-summary-value">$${total.toFixed(2)}</span>
+                    </div>
+                    <div class="order-summary-row order-summary-payment">
+                        <span class="order-summary-label">Payment</span>
+                        <span class="order-payment-badge">${paymentIcon} ${paymentLabel}</span>
+                    </div>
                 </div>
+                <div class="order-shipping">
+                    <div class="order-shipping-block">
+                        <span class="order-shipping-label">📍 Shipping Address</span>
+                        <span class="order-shipping-value">${shippingLine1}</span>
+                        ${shippingLine2 ? `<span class="order-shipping-value order-shipping-value-secondary">${shippingLine2}</span>` : ''}
+                    </div>
+                    <div class="order-shipping-block">
+                        <span class="order-shipping-label">🚚 Delivery Status</span>
+                        <span class="order-shipping-value">Your order is being processed.</span>
+                    </div>
+                </div>
+                <div class="order-status">
+                    <p class="order-status-message">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
+                </div>
+                ${progressHtml}
             </div>
         `;
     }

@@ -6,7 +6,7 @@ import { cors } from 'hono/cors'
 import { HumanMessage, AIMessage } from "@langchain/core/messages"
 import { streamSSE } from 'hono/streaming'
 import { agent } from "./agent.js"
-import { sessionCarts, getCartGrouped, runCheckout } from "./tools.js"
+import { sessionCarts, getCartGrouped, runCheckout, addOneToCart, removeOneFromCart, removeAllFromCart } from "./tools.js"
 import { activeSessions, requestOTPLogic, verifyOTPLogic, getAddressesForSession, addAddressForSession } from "./auth.js"
 import { mockOrders } from "./data.js"
 
@@ -17,6 +17,9 @@ app.use('/*', cors())
 app.get('/', (c) => c.text('eCommerce Chatbot API running on Bun + Hono!'))
 
 app.post('/api/chat', async (c) => {
+    if (!process.env.GOOGLE_API_KEY) {
+        return c.json({ error: 'GOOGLE_API_KEY not configured. Set it in Vercel Environment Variables.' }, 503);
+    }
     const body = await c.req.json();
     const userMessage = body.message;
     const history = body.history || [];
@@ -156,6 +159,42 @@ app.post('/api/chat', async (c) => {
             await stream.writeSSE({ data: JSON.stringify({ type: 'done' }) });
         }
     });
+});
+
+// --- REST: cart (for widget +/- and delete) ---
+app.get('/api/cart', async (c) => {
+    const sessionId = c.req.query('sessionId') || 'default_session';
+    const { items, total } = getCartGrouped(sessionId);
+    return c.json({ items, total });
+});
+
+app.post('/api/cart/add', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const title = String(body.title || '').trim();
+    const size = body.size != null ? String(body.size).trim() : undefined;
+    if (!title) return c.json({ success: false, message: 'title required' }, 400);
+    const result = addOneToCart(sessionId, title, size);
+    if (!result.success) return c.json({ success: false, message: result.message, items: result.items, total: result.total }, 400);
+    return c.json(result);
+});
+
+app.post('/api/cart/remove-one', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const title = String(body.title || '').trim();
+    if (!title) return c.json({ success: false, message: 'title required' }, 400);
+    const result = removeOneFromCart(sessionId, title);
+    return c.json(result);
+});
+
+app.post('/api/cart/remove-all', async (c) => {
+    const body = await c.req.json().catch(() => ({}));
+    const sessionId = body.sessionId || 'default_session';
+    const title = String(body.title || '').trim();
+    if (!title) return c.json({ success: false, message: 'title required' }, 400);
+    const result = removeAllFromCart(sessionId, title);
+    return c.json(result);
 });
 
 // --- REST: checkout (OTP, addresses, place order) ---
