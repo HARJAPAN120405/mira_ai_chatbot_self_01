@@ -68,7 +68,7 @@ export interface Order {
     id: string;
     phone: string;
     status: 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
-    items: { title: string; price: string; size?: string }[];
+    items: { title: string; price: string; size?: string; image?: string }[];
     total: number;
     date: string;
 }

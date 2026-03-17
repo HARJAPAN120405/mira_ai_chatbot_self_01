@@ -996,8 +996,8 @@ export function createYourCartCard(cartPayload, options = {}) {
 }
 
 /**
- * Order history card: header + order blocks (ID, date, status badge, items, total). Appealing, scannable layout.
- * orders: [{ id, date, status, items: [{ title, price, size? }], total }]
+ * Order history card: header + order blocks (ID, date, status badge, items with optional image, total).
+ * orders: [{ id, date, status, items: [{ title, price, size?, image? }], total }]
  */
 export function createOrderHistoryCard(orders) {
     if (!orders || !Array.isArray(orders)) return null;
@@ -1012,11 +1012,24 @@ export function createOrderHistoryCard(orders) {
         if (v === 'cancelled') return 'order-status-cancelled';
         return 'order-status-default';
     };
+    const defaultImg = 'https://placehold.co/80x80?text=Product';
     let bodyHtml = orders.length === 0
         ? '<div class="chatbot-order-history-empty">You don’t have any past orders yet.</div>'
         : orders.map((order) => {
             const totalFormatted = typeof order.total === 'number' ? `$${order.total.toFixed(2)}` : (order.total != null ? `$${Number(order.total).toFixed(2)}` : '—');
-            const itemsList = (order.items || []).map((i) => `<span class="chatbot-order-item-line">${i.title || 'Item'} ${i.price ? ` · ${i.price}` : ''}</span>`).join('');
+            const itemsList = (order.items || []).length === 0
+                ? '<span class="chatbot-order-item-line">No items</span>'
+                : (order.items || []).map((i) => {
+                    const imgSrc = (i.image && String(i.image).trim()) ? i.image : defaultImg;
+                    const title = (i.title || 'Item').replace(/</g, '&lt;');
+                    const price = i.price ? ` · ${i.price}` : '';
+                    return `<div class="chatbot-order-item-row">
+                        <div class="chatbot-order-item-thumb-wrap">
+                            <img src="${imgSrc}" alt="${title.slice(0, 40)}" class="chatbot-order-item-img" onerror="this.src='${defaultImg}';this.onerror=null;" />
+                        </div>
+                        <span class="chatbot-order-item-line">${title}${price}</span>
+                    </div>`;
+                }).join('');
             return `
                 <div class="chatbot-order-block">
                     <div class="chatbot-order-block-header">
@@ -1024,7 +1037,7 @@ export function createOrderHistoryCard(orders) {
                         <span class="chatbot-order-date">${order.date || '—'}</span>
                         <span class="chatbot-order-status ${statusClass(order.status)}">${order.status || '—'}</span>
                     </div>
-                    <div class="chatbot-order-items">${itemsList || '<span class="chatbot-order-item-line">No items</span>'}</div>
+                    <div class="chatbot-order-items">${itemsList}</div>
                     <div class="chatbot-order-total">Total ${totalFormatted}</div>
                 </div>
             `;
@@ -1362,6 +1375,7 @@ export function createCheckoutFlowCard(payload, handlers = {}) {
         const shippingLine1 = addr ? (typeof addr === 'string' ? addr : [addr.street, addr.city, addr.state, addr.zip].filter(Boolean).join(', ')) : '—';
         const shippingLine2 = addr && typeof addr !== 'string' && addr.city ? `${addr.city}${addr.state ? ', ' + addr.state : ''} ${addr.zip || ''}`.trim() : '';
 
+        const orderPlaceholderImg = 'https://placehold.co/80x80?text=Product';
         const productsHtml = orderItems.length
             ? `<div class="order-product">
                 <div class="order-product-label">Products ordered</div>
@@ -1369,11 +1383,14 @@ export function createCheckoutFlowCard(payload, handlers = {}) {
                     const qty = item.quantity || 1;
                     const unitPrice = typeof item.price === 'string' ? parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0 : Number(item.price) || 0;
                     const lineTotal = unitPrice * qty;
-                    const img = item.image ? `<img src="${item.image}" alt="" class="order-product-img" onerror="this.style.display='none'" />` : '<div class="order-product-placeholder"></div>';
+                    const imgSrc = (item.image && String(item.image).trim()) ? item.image : orderPlaceholderImg;
+                    const title = (item.name || item.title || '').replace(/</g, '&lt;');
                     return `<div class="order-product-row">
-                        <div class="order-product-img-wrap">${img}</div>
+                        <div class="order-product-img-wrap">
+                            <img src="${imgSrc}" alt="${title.slice(0, 40)}" class="order-product-img" onerror="this.src='${orderPlaceholderImg}';this.onerror=null;" />
+                        </div>
                         <div class="order-product-info">
-                            <span class="order-product-name">${(item.name || item.title || '').replace(/</g, '&lt;')}</span>
+                            <span class="order-product-name">${title}</span>
                             <span class="order-product-meta">Qty: ${qty} × $${unitPrice.toFixed(2)} = $${lineTotal.toFixed(2)}</span>
                         </div>
                     </div>`;

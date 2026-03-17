@@ -188,7 +188,7 @@ export const checkout = tool(
             id: orderId,
             phone: phone,
             status: 'Processing',
-            items: cart.map(p => ({ title: p.title, price: p.price, size: "N/A" })),
+            items: cart.map((p: any) => ({ title: p.title, price: p.price, size: "N/A", image: p.image || null })),
             total: total,
             date: new Date().toISOString().split('T')[0]
         };
@@ -300,7 +300,7 @@ export function runCheckout(sessionId: string, addressId: number, paymentMethod:
     }
     const orderId = "ORD-" + Math.floor(10000 + Math.random() * 90000);
     const total = cart.reduce((sum, p) => sum + parseFloat(String(p.price).replace(/[$,]/g, '')) || 0, 0);
-    const items = cart.map((p: any) => ({ title: p.title, price: p.price, size: (p.lastAddedSize as string) || "N/A" }));
+    const items = cart.map((p: any) => ({ title: p.title, price: p.price, size: (p.lastAddedSize as string) || "N/A", image: p.image || null }));
     const newOrder: Order = { id: orderId, phone, status: 'Processing', items, total, date: new Date().toISOString().split('T')[0] };
     mockOrders.push(newOrder);
     sessionCarts.set(sessionId, []);

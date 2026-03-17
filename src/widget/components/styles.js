@@ -1888,13 +1888,33 @@ export function getStyles(config) {
         .chatbot-order-items {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
             margin-bottom: 8px;
+        }
+        .chatbot-order-item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chatbot-order-item-thumb-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chatbot-order-item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .chatbot-order-item-line {
             font-size: 12px;
             color: ${colorTextMain};
             opacity: 0.95;
+            flex: 1;
+            min-width: 0;
         }
         .chatbot-order-total {
             font-size: 13px;
@@ -2614,9 +2634,10 @@ export function getStyles(config) {
             border-bottom: none;
         }
         .order-product-img-wrap {
+            position: relative;
             flex-shrink: 0;
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);

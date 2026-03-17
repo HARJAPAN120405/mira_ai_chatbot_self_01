@@ -1,6 +1,6 @@
-(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const a of document.querySelectorAll('link[rel="modulepreload"]'))s(a);new MutationObserver(a=>{for(const n of a)if(n.type==="childList")for(const r of n.addedNodes)r.tagName==="LINK"&&r.rel==="modulepreload"&&s(r)}).observe(document,{childList:!0,subtree:!0});function o(a){const n={};return a.integrity&&(n.integrity=a.integrity),a.referrerPolicy&&(n.referrerPolicy=a.referrerPolicy),a.crossOrigin==="use-credentials"?n.credentials="include":a.crossOrigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function s(a){if(a.ep)return;a.ep=!0;const n=o(a);fetch(a.href,n)}})();const ye=["Ask about products...","Find sneakers under $100...","Compare two products...","Show trending items...","What's on sale?","Recommend something for me..."],ke=["View All","Filter by Price","Sale Items","Show sneakers under $100","Trending items","Best running shoes","Summer jackets","What's on sale?","Add to cart"],Ce=["Thinking...","Searching products...","Analyzing your request...","Looking for the best options..."],$e={botName:"Aura Concierge",botSubtitle:"Always Available",botAvatarUrl:"",position:"bottom-right",marginBottom:24,marginSide:24,primaryColor:"#2563eb",textColor:"#ffffff",backgroundColor:"#ffffff",headerStatus:"Always Available",quickActions:[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],autoDetectProduct:!0,greetingMessage:"Hi! I'm Aura, your shopping assistant. What can I help you with today?",inputPlaceholder:"Ask anything about orders, products...",placeholders:ye,suggestionChips:ke,welcomeMessage:"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",welcomeIconUrl:"",addToCartLabel:"Add to Cart",theme:"default",thinkingStatuses:Ce,apiBaseUrl:""};function Se(t={}){return{...$e,...t}}function Ee(t){const e=t.position.includes("left"),o=t.primaryColor||"#2563eb",s="#4f46e5",a=`linear-gradient(135deg, ${o}, ${s})`,n=`linear-gradient(135deg, ${o}, ${s})`,r="linear-gradient(180deg, #f8fafc, #eef2ff)",d="0 20px 50px rgba(0,0,0,0.15)",p="0 6px 14px rgba(0,0,0,0.08)",m="#111827",i="#6b7280",l="1px solid #e5e7eb",u="16px",b="#60a5fa",c=`background: #fff; border: ${l};`,w=`
+(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const r of document.querySelectorAll('link[rel="modulepreload"]'))s(r);new MutationObserver(r=>{for(const l of r)if(l.type==="childList")for(const a of l.addedNodes)a.tagName==="LINK"&&a.rel==="modulepreload"&&s(a)}).observe(document,{childList:!0,subtree:!0});function o(r){const l={};return r.integrity&&(l.integrity=r.integrity),r.referrerPolicy&&(l.referrerPolicy=r.referrerPolicy),r.crossOrigin==="use-credentials"?l.credentials="include":r.crossOrigin==="anonymous"?l.credentials="omit":l.credentials="same-origin",l}function s(r){if(r.ep)return;r.ep=!0;const l=o(r);fetch(r.href,l)}})();const ye=["Ask about products...","Find sneakers under $100...","Compare two products...","Show trending items...","What's on sale?","Recommend something for me..."],ke=["View All","Filter by Price","Sale Items","Show sneakers under $100","Trending items","Best running shoes","Summer jackets","What's on sale?","Add to cart"],Ce=["Thinking...","Searching products...","Analyzing your request...","Looking for the best options..."],$e={botName:"Aura Concierge",botSubtitle:"Always Available",botAvatarUrl:"",position:"bottom-right",marginBottom:24,marginSide:24,primaryColor:"#2563eb",textColor:"#ffffff",backgroundColor:"#ffffff",headerStatus:"Always Available",quickActions:[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],autoDetectProduct:!0,greetingMessage:"Hi! I'm Aura, your shopping assistant. What can I help you with today?",inputPlaceholder:"Ask anything about orders, products...",placeholders:ye,suggestionChips:ke,welcomeMessage:"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",welcomeIconUrl:"",addToCartLabel:"Add to Cart",theme:"default",thinkingStatuses:Ce,apiBaseUrl:""};function Se(t={}){return{...$e,...t}}function Ee(t){const e=t.position.includes("left"),o=t.primaryColor||"#2563eb",s="#4f46e5",r=`linear-gradient(135deg, ${o}, ${s})`,l=`linear-gradient(135deg, ${o}, ${s})`,a="linear-gradient(180deg, #f8fafc, #eef2ff)",n="0 20px 50px rgba(0,0,0,0.15)",p="0 6px 14px rgba(0,0,0,0.08)",h="#111827",i="#6b7280",d="1px solid #e5e7eb",u="16px",b="#60a5fa",c=`background: #fff; border: ${d};`,v=`
         background: #fff;
-        border: ${l};
+        border: ${d};
         border-radius: ${u};
         box-shadow: ${p};
     `;return`
@@ -11,7 +11,7 @@
             --text-color: #ffffff;
             --bg-color: #ffffff;
             --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --shadow-panel: ${d};
+            --shadow-panel: ${n};
             --border-radius: 18px;
             --transition-speed: 0.3s;
             --ease-premium: cubic-bezier(0.16, 0.84, 0.44, 1);
@@ -57,7 +57,7 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            background: ${a};
+            background: ${r};
             color: #fff;
             border: none;
             padding: 0;
@@ -142,11 +142,11 @@
             height: 600px;
             max-height: min(600px, calc(100vh - ${t.marginBottom+80}px));
             min-height: 400px;
-            background: ${r};
+            background: ${a};
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 18px;
-            box-shadow: ${d};
+            box-shadow: ${n};
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -220,7 +220,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: ${a};
+            background: ${r};
             color: #fff;
             flex-shrink: 0;
             opacity: 0;
@@ -243,7 +243,7 @@
             border-radius: 50%;
             overflow: hidden;
             flex-shrink: 0;
-            background: ${a};
+            background: ${r};
             box-shadow: 0 0 10px rgba(59,130,246,0.5);
             display: flex;
             align-items: center;
@@ -501,7 +501,7 @@
         .chatbot-message.bot .chatbot-bubble {
             border-radius: 20px 20px 20px 6px;
             background: #fff;
-            color: ${m};
+            color: ${h};
             box-shadow: ${p};
         }
         .chatbot-message.bot .chatbot-bubble:hover {
@@ -509,7 +509,7 @@
         }
         .chatbot-message.user .chatbot-bubble {
             border-radius: 20px 20px 6px 20px;
-            background: ${n};
+            background: ${l};
             color: #fff;
             box-shadow: 0 8px 20px rgba(37,99,235,0.3);
         }
@@ -609,7 +609,7 @@
         }
 
         .chatbot-message.bot .chatbot-bubble {
-            color: ${m};
+            color: ${h};
         }
         .chatbot-message.user .chatbot-bubble {
             color: #fff;
@@ -644,7 +644,7 @@
 
         /* Product Card — Design-Chatbot-Widget: white, rounded-2xl, shadow */
         .chatbot-product-card {
-            ${w}
+            ${v}
             overflow: hidden;
             width: 240px;
             margin-top: 5px;
@@ -664,7 +664,7 @@
         .chatbot-product-title {
             font-size: 14px;
             font-weight: 600;
-            color: ${m};
+            color: ${h};
             margin-bottom: 5px;
         }
 
@@ -678,7 +678,7 @@
         .chatbot-product-header h4 {
             margin: 0;
             font-size: 14px;
-            color: ${m};
+            color: ${h};
             line-height: 1.3;
         }
 
@@ -743,14 +743,14 @@
             height: 32px;
             border-radius: 50%;
             background: rgba(255,255,255,0.95);
-            border: ${l};
+            border: ${d};
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
-            color: ${m};
+            color: ${h};
             transition: all 0.2s var(--ease-premium);
         }
         .carousel-nav-btn:hover {
@@ -899,10 +899,10 @@
         .size-pill {
             padding: 4px 8px;
             font-size: 11px;
-            border: ${l};
+            border: ${d};
             border-radius: 4px;
             background: #fff;
-            color: ${m};
+            color: ${h};
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -993,7 +993,7 @@
             border: none;
             outline: none;
             font-size: 14px;
-            color: ${m};
+            color: ${h};
             background: transparent;
             padding: 0 8px;
             min-width: 0;
@@ -1010,7 +1010,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            background: ${a};
+            background: ${r};
             color: #fff;
             flex-shrink: 0;
             transition: transform 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), opacity 0.2s var(--ease-premium);
@@ -1057,7 +1057,7 @@
             margin-right: 4px;
         }
         .chatbot-input-area .chatbot-attach-btn:hover {
-            color: ${m};
+            color: ${h};
         }
         .chatbot-input-area .chatbot-attach-btn svg {
             width: 16px;
@@ -1403,7 +1403,7 @@
         .quick-action-title {
             font-size: 13px;
             font-weight: 700;
-            color: ${m};
+            color: ${h};
             line-height: 1.2;
         }
 
@@ -1432,7 +1432,7 @@
             gap: 6px;
             background: #fff;
             border: 1px solid rgba(209,213,219,0.9);
-            color: ${m};
+            color: ${h};
             padding: 10px 12px;
             border-radius: 16px;
             font-size: 12px;
@@ -1443,7 +1443,7 @@
         }
 
         .preset-pill:hover {
-            background: ${a};
+            background: ${r};
             color: #fff;
             border-color: transparent;
             transform: translateY(-2px);
@@ -1666,7 +1666,7 @@
             padding: 14px 18px;
             font-size: 14px;
             font-weight: 600;
-            color: ${m};
+            color: ${h};
             border-bottom: 1px solid rgba(0,0,0,0.06);
         }
         .chatbot-section-card-body {
@@ -1707,7 +1707,7 @@
         .chatbot-cart-item-title {
             font-size: 13px;
             font-weight: 500;
-            color: ${m};
+            color: ${h};
             margin-bottom: 4px;
         }
         .chatbot-cart-item-pricing {
@@ -1726,7 +1726,7 @@
             margin-top: 6px;
             border-top: 1px solid rgba(0,0,0,0.08);
         }
-        .chatbot-cart-total-label { color: ${m}; font-size: 14px; }
+        .chatbot-cart-total-label { color: ${h}; font-size: 14px; }
         .chatbot-cart-total-value { color: var(--primary-color); font-size: 16px; font-weight: 700; }
         .chatbot-cart-checkout-footer {
             padding: 18px 20px;
@@ -1782,7 +1782,7 @@
             border-radius: 20px;
             border: 1px solid rgba(1, 100, 255, 0.35);
             background: rgba(0,0,0,0.04);
-            color: ${m};
+            color: ${h};
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -1868,13 +1868,33 @@
         .chatbot-order-items {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
             margin-bottom: 8px;
+        }
+        .chatbot-order-item-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chatbot-order-item-thumb-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .chatbot-order-item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .chatbot-order-item-line {
             font-size: 12px;
-            color: ${m};
+            color: ${h};
             opacity: 0.95;
+            flex: 1;
+            min-width: 0;
         }
         .chatbot-order-total {
             font-size: 13px;
@@ -2191,7 +2211,7 @@
             text-align: center;
             font-size: 20px;
             font-weight: 600;
-            color: ${m};
+            color: ${h};
             background: #fff;
             transition: border-color 0.2s var(--ease-premium), box-shadow 0.2s var(--ease-premium), transform 0.2s var(--ease-premium);
         }
@@ -2205,7 +2225,7 @@
         .checkout-primary-btn {
             width: 100%;
             padding: 12px;
-            background: ${a};
+            background: ${r};
             color: #fff;
             border: none;
             border-radius: 10px;
@@ -2301,7 +2321,7 @@
         .address-name {
             font-size: 15px;
             font-weight: 700;
-            color: ${m};
+            color: ${h};
         }
 
         .address-type,
@@ -2409,7 +2429,7 @@
         .method-info h4 {
             font-size: 15px;
             font-weight: 700;
-            color: ${m};
+            color: ${h};
         }
 
         .method-desc,
@@ -2433,7 +2453,7 @@
             font-size: 12px;
             font-weight: 800;
             text-transform: uppercase;
-            color: ${m};
+            color: ${h};
             letter-spacing: 0.08em;
             margin: 0 0 8px 0;
         }
@@ -2462,7 +2482,7 @@
             border-top: 1px solid #e5e7eb;
             font-weight: 800;
             font-size: 16px;
-            color: ${m};
+            color: ${h};
         }
 
         .total-value {
@@ -2594,9 +2614,10 @@
             border-bottom: none;
         }
         .order-product-img-wrap {
+            position: relative;
             flex-shrink: 0;
-            width: 56px;
-            height: 56px;
+            width: 64px;
+            height: 64px;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -2961,7 +2982,7 @@
                 min-height: min(320px, calc(100cqb - ${t.marginBottom+98}px));
             }
         }
-    `}const ze='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>';function Le(t,e={}){const{onClose:o,onCartClick:s,cartCount:a=0}=e,n=document.createElement("header");n.className="chatbot-header";const r=t.botName??"Aura Concierge",d=t.headerStatus??"Always Available",p=document.createElement("div");p.className="chatbot-header-left";const m=document.createElement("div");if(m.className="chatbot-header-avatar",t.botAvatarUrl){const h=document.createElement("img");h.src=t.botAvatarUrl,h.alt=`${r} avatar`,m.appendChild(h)}else m.innerHTML=ze;const i=document.createElement("div");i.className="chatbot-header-info";const l=document.createElement("h3");l.className="chatbot-header-title",l.textContent=r;const u=document.createElement("div");u.className="chatbot-header-row";const b=document.createElement("span");b.className="chatbot-header-status-dot";const c=document.createElement("span");c.className="chatbot-header-status",c.textContent=d,u.appendChild(b),u.appendChild(c),i.appendChild(l),i.appendChild(u),p.appendChild(m),p.appendChild(i),n.appendChild(p);const w=document.createElement("div");if(w.className="chatbot-header-actions",typeof s=="function"){const h=document.createElement("button");if(h.type="button",h.className="chatbot-header-btn",h.setAttribute("aria-label","View cart"),h.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',a>0){const k=document.createElement("span");k.className="chatbot-cart-badge",k.textContent=a>99?"99+":String(a),h.style.position="relative",h.appendChild(k)}h.addEventListener("click",s),w.appendChild(h)}const g=document.createElement("button");return g.type="button",g.className="chatbot-header-btn",g.setAttribute("aria-label","Close"),g.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',g.addEventListener("click",()=>o&&o()),w.appendChild(g),n.appendChild(w),n}function he(t,e={}){const o=e.strength??.15,s=e.radius??80;if(!t||typeof t.addEventListener!="function")return;let a=null,n=0,r=0,d=0,p=0;const m=(l,u,b)=>l+(u-l)*b,i=()=>{n=m(n,d,.2),r=m(r,p,.2),Math.abs(n-d)<.01&&(n=d),Math.abs(r-p)<.01&&(r=p),t.style.transform=`translate(${n}px, ${r}px)`,Math.abs(n)>.01||Math.abs(r)>.01||d!==0||p!==0?a=requestAnimationFrame(i):(a=null,t.style.willChange="")};return t.addEventListener("mouseenter",()=>{t.style.willChange="transform"}),t.addEventListener("mouseleave",()=>{d=0,p=0,a||(a=requestAnimationFrame(i))}),t.addEventListener("mousemove",l=>{const u=t.getBoundingClientRect(),b=u.left+u.width/2,c=u.top+u.height/2,w=l.clientX-b,g=l.clientY-c,h=Math.sqrt(w*w+g*g);if(h<s){const k=(1-h/s)*o;d=w*k,p=g*k}else d=0,p=0;a||(a=requestAnimationFrame(i))}),()=>{a&&cancelAnimationFrame(a)}}const Ae=`
+    `}const ze='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>';function Le(t,e={}){const{onClose:o,onCartClick:s,cartCount:r=0}=e,l=document.createElement("header");l.className="chatbot-header";const a=t.botName??"Aura Concierge",n=t.headerStatus??"Always Available",p=document.createElement("div");p.className="chatbot-header-left";const h=document.createElement("div");if(h.className="chatbot-header-avatar",t.botAvatarUrl){const m=document.createElement("img");m.src=t.botAvatarUrl,m.alt=`${a} avatar`,h.appendChild(m)}else h.innerHTML=ze;const i=document.createElement("div");i.className="chatbot-header-info";const d=document.createElement("h3");d.className="chatbot-header-title",d.textContent=a;const u=document.createElement("div");u.className="chatbot-header-row";const b=document.createElement("span");b.className="chatbot-header-status-dot";const c=document.createElement("span");c.className="chatbot-header-status",c.textContent=n,u.appendChild(b),u.appendChild(c),i.appendChild(d),i.appendChild(u),p.appendChild(h),p.appendChild(i),l.appendChild(p);const v=document.createElement("div");if(v.className="chatbot-header-actions",typeof s=="function"){const m=document.createElement("button");if(m.type="button",m.className="chatbot-header-btn",m.setAttribute("aria-label","View cart"),m.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',r>0){const w=document.createElement("span");w.className="chatbot-cart-badge",w.textContent=r>99?"99+":String(r),m.style.position="relative",m.appendChild(w)}m.addEventListener("click",s),v.appendChild(m)}const g=document.createElement("button");return g.type="button",g.className="chatbot-header-btn",g.setAttribute("aria-label","Close"),g.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',g.addEventListener("click",()=>o&&o()),v.appendChild(g),l.appendChild(v),l}function he(t,e={}){const o=e.strength??.15,s=e.radius??80;if(!t||typeof t.addEventListener!="function")return;let r=null,l=0,a=0,n=0,p=0;const h=(d,u,b)=>d+(u-d)*b,i=()=>{l=h(l,n,.2),a=h(a,p,.2),Math.abs(l-n)<.01&&(l=n),Math.abs(a-p)<.01&&(a=p),t.style.transform=`translate(${l}px, ${a}px)`,Math.abs(l)>.01||Math.abs(a)>.01||n!==0||p!==0?r=requestAnimationFrame(i):(r=null,t.style.willChange="")};return t.addEventListener("mouseenter",()=>{t.style.willChange="transform"}),t.addEventListener("mouseleave",()=>{n=0,p=0,r||(r=requestAnimationFrame(i))}),t.addEventListener("mousemove",d=>{const u=t.getBoundingClientRect(),b=u.left+u.width/2,c=u.top+u.height/2,v=d.clientX-b,g=d.clientY-c,m=Math.sqrt(v*v+g*g);if(m<s){const w=(1-m/s)*o;n=v*w,p=g*w}else n=0,p=0;r||(r=requestAnimationFrame(i))}),()=>{r&&cancelAnimationFrame(r)}}const Ae=`
 @keyframes messageIn {
   from { opacity: 0; transform: translateY(10px) scale(0.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -2984,17 +3005,17 @@
 }
 .messages-container::-webkit-scrollbar { display: none; }
 .product-scroll::-webkit-scrollbar { display: none; }
-`;function Ie(){if(typeof document<"u"&&!document.getElementById("messagelist-styles")){const t=document.createElement("style");t.id="messagelist-styles",t.textContent=Ae,document.head.appendChild(t)}}Ie();function Me(){const t=document.createElement("div");return t.className="chatbot-messages",t.id="chatbot-messages-container",t}function pe(t){if(!t)return"";let e=t;return e=e.replace(/\|(.+)\|[ \t]*\n\|[ \t]*[-:| \t]+[ \t]*\n((?:\|.+\|[ \t]*\n?)+)/g,(o,s,a)=>{const n=s.split("|").filter(d=>d.trim()).map(d=>`<th>${d.trim()}</th>`).join(""),r=a.trim().split(`
-`).filter(d=>d.trim()).map(d=>`<tr>${d.split("|").filter(m=>m.trim()).map(m=>`<td>${m.trim()}</td>`).join("")}</tr>`).join("");return`<div class="md-table-wrap"><table><thead><tr>${n}</tr></thead><tbody>${r}</tbody></table></div>
+`;function Ie(){if(typeof document<"u"&&!document.getElementById("messagelist-styles")){const t=document.createElement("style");t.id="messagelist-styles",t.textContent=Ae,document.head.appendChild(t)}}Ie();function Me(){const t=document.createElement("div");return t.className="chatbot-messages",t.id="chatbot-messages-container",t}function pe(t){if(!t)return"";let e=t;return e=e.replace(/\|(.+)\|[ \t]*\n\|[ \t]*[-:| \t]+[ \t]*\n((?:\|.+\|[ \t]*\n?)+)/g,(o,s,r)=>{const l=s.split("|").filter(n=>n.trim()).map(n=>`<th>${n.trim()}</th>`).join(""),a=r.trim().split(`
+`).filter(n=>n.trim()).map(n=>`<tr>${n.split("|").filter(h=>h.trim()).map(h=>`<td>${h.trim()}</td>`).join("")}</tr>`).join("");return`<div class="md-table-wrap"><table><thead><tr>${l}</tr></thead><tbody>${a}</tbody></table></div>
 `}),e=e.replace(/^>\s?(.*)$/gm,"<blockquote>$1</blockquote>"),e=e.replace(/^###\s+(.+)$/gm,'<h3 class="md-h3">$1</h3>'),e=e.replace(/^##\s+(.+)$/gm,'<h2 class="md-h2">$1</h2>'),e=e.replace(/^#\s+(.+)$/gm,'<h1 class="md-h1">$1</h1>'),e=e.replace(/^---+$/gm,'<hr class="md-hr"/>'),e=e.replace(/((?:^[ \t]*[-*]\s+.+\n?)+)/gm,o=>`<ul class="md-list">${o.trim().split(`
-`).map(a=>`<li>${a.replace(/^[ \t]*[-*]\s+/,"")}</li>`).join("")}</ul>
-`),e=e.replace(/\*\*\*(.+?)\*\*\*/g,"<strong><em>$1</em></strong>"),e=e.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"),e=e.replace(/\*([^*\n]+?)\*/g,"<em>$1</em>"),e=e.replace(/`([^`]+)`/g,'<code class="md-code">$1</code>'),e=e.replace(/\n{2,}/g,'</p><p class="md-p">'),e=e.replace(/\n/g,"<br/>"),e=`<p class="md-p">${e}</p>`,e}function Ne(){const t=document.createElement("span");t.className="chatbot-timestamp";const e=new Date,o=String(e.getHours()).padStart(2,"0"),s=String(e.getMinutes()).padStart(2,"0");return t.textContent=`${o}:${s}`,t}function J(t,e=!0,o=null,s=null){const a=document.createElement("div");a.className=`chatbot-message ${e?"bot":"user"} ${e?"msg-enter-bot":"msg-enter-user"}`;const n=document.createElement("div");if(n.className="chatbot-bubble",e){const p=o!=null&&o.launcherIconUrl?`<img src="${o.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';a.innerHTML=`
+`).map(r=>`<li>${r.replace(/^[ \t]*[-*]\s+/,"")}</li>`).join("")}</ul>
+`),e=e.replace(/\*\*\*(.+?)\*\*\*/g,"<strong><em>$1</em></strong>"),e=e.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>"),e=e.replace(/\*([^*\n]+?)\*/g,"<em>$1</em>"),e=e.replace(/`([^`]+)`/g,'<code class="md-code">$1</code>'),e=e.replace(/\n{2,}/g,'</p><p class="md-p">'),e=e.replace(/\n/g,"<br/>"),e=`<p class="md-p">${e}</p>`,e}function Ne(){const t=document.createElement("span");t.className="chatbot-timestamp";const e=new Date,o=String(e.getHours()).padStart(2,"0"),s=String(e.getMinutes()).padStart(2,"0");return t.textContent=`${o}:${s}`,t}function Q(t,e=!0,o=null,s=null){const r=document.createElement("div");r.className=`chatbot-message ${e?"bot":"user"} ${e?"msg-enter-bot":"msg-enter-user"}`;const l=document.createElement("div");if(l.className="chatbot-bubble",e){const p=o!=null&&o.launcherIconUrl?`<img src="${o.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';r.innerHTML=`
             <div class="chatbot-message-avatar">
                 ${p}
             </div>
-        `;const m=/\[Action:\s*(.*?)\]/g;let i=[],l=t.replace(m,(u,b)=>(i.push(b),""));if(n.innerHTML=pe(l),a.appendChild(n),i.length>0&&s){const u=document.createElement("div");u.className="chatbot-actions",i.forEach(b=>{const c=document.createElement("button");c.type="button",c.className="action-btn",c.textContent=b,c.onclick=()=>s(b),he(c,{strength:.1,radius:50}),u.appendChild(c)}),a.appendChild(u)}}else n.innerHTML=pe(t),a.appendChild(n);const r=document.createElement("div");r.className=`chatbot-message-ts-row ${e?"ts-bot":"ts-user"}`;const d=Ne();return r.appendChild(d),a.appendChild(r),a}const Te="https://placehold.co/300x200?text=Product";function Be(t){if(!Array.isArray(t)||t.length===0)return[];const e=o=>o&&o.image!=null&&String(o.image).trim()!=="";return t.filter(e)}function qe(t){return t.badge&&String(t.badge).trim()?String(t.badge).trim():t.bestseller?"Bestseller":null}function ue(t,e,o=null){const s=Be(t);if(s.length===0)return null;const a=document.createElement("div");a.className="chatbot-message bot-message msg-enter-product";const n=Te,r=o!=null&&o.launcherIconUrl?`<img src="${o.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>',d=document.createElement("div");d.style.display="flex",d.style.width="100%",d.innerHTML=`
-        <div class="chatbot-message-avatar">${r}</div>
-    `;const p=document.createElement("div");p.className="carousel-container",p.style.flex="1",p.style.minWidth="0",p.style.display="flex",p.style.flexDirection="column",p.style.gap="6px";const m=["Here are some of our curated products:","Have a look","Choose from these","Here are some picks"],i=document.createElement("div");i.className="carousel-heading",i.textContent=m[Math.floor(Math.random()*m.length)],p.appendChild(i);const l=document.createElement("div");l.className="carousel-row",l.style.display="flex",l.style.alignItems="center",l.style.position="relative";const u=document.createElement("button");u.className="carousel-nav-btn carousel-nav-left",u.setAttribute("type","button"),u.innerHTML='<svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>';const b=document.createElement("button");b.className="carousel-nav-btn carousel-nav-right",b.setAttribute("type","button"),b.innerHTML='<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';const c=document.createElement("div");c.className="product-carousel chatbot-product-carousel";const w=212;return u.addEventListener("click",()=>c.scrollBy({left:-w,behavior:"smooth"})),b.addEventListener("click",()=>c.scrollBy({left:w,behavior:"smooth"})),s.forEach((g,h)=>{const k=g.title||g.name||"Product",W=g.image&&String(g.image).trim()?g.image:n,O=g.price!=null?typeof g.price=="string"?g.price:`$${g.price}`:"",$=g.originalPrice!=null?typeof g.originalPrice=="string"?g.originalPrice:`$${g.originalPrice}`:"",P=qe(g);g.badgeColor;const y=document.createElement("div");y.className="product-card",y.dataset.productId=g.id||h,y.style.animationDelay=`${h*100}ms`;const B=document.createElement("div");B.className="product-image-wrap";const z=document.createElement("img");if(z.className="product-image",z.src=W,z.alt=k,z.loading="lazy",z.style.background="#f3f4f6",z.onerror=function(){y.remove()},B.appendChild(z),P){const j=document.createElement("div");j.className="product-badge",j.textContent=P,B.appendChild(j)}y.appendChild(B);const Y=document.createElement("h4");Y.className="product-name",Y.textContent=k,y.appendChild(Y);const F=document.createElement("div");F.className="product-price-container";const U=document.createElement("span");if(U.className="product-price",U.textContent=O,F.appendChild(U),$){const j=document.createElement("span");j.className="product-original-price",j.textContent=$,F.appendChild(j)}y.appendChild(F);let K=null;if(g.sizes&&Array.isArray(g.sizes)){const j=document.createElement("div");j.className="chatbot-product-sizes";const f=document.createElement("div");f.className="sizes-list",g.sizes.forEach(v=>{const x=document.createElement("button");x.type="button",x.className="size-pill",x.innerText=v,x.addEventListener("click",()=>{f.querySelectorAll(".size-pill").forEach(C=>C.classList.remove("selected")),x.classList.add("selected"),K=v}),f.appendChild(x)}),j.appendChild(f),y.appendChild(j)}const Z=document.createElement("button");Z.type="button",Z.className="add-to-cart-btn",Z.textContent=(o==null?void 0:o.addToCartLabel)||"Add to Cart",Z.addEventListener("click",()=>{if(g.sizes&&!K){alert("Please select a size first!");return}e&&e(g,K)}),y.appendChild(Z),He(y,"carousel-card-3d"),c.appendChild(y)}),l.appendChild(u),l.appendChild(c),l.appendChild(b),p.appendChild(l),d.appendChild(p),a.appendChild(d),a}function He(t,e="chatbot-product-card-3d"){t&&(t.classList.add(e),t.addEventListener("mousemove",o=>{const s=t.getBoundingClientRect(),a=(o.clientX-s.left)/s.width,r=((o.clientY-s.top)/s.height-.5)*8,d=(a-.5)*-8,p=4;t.style.transform=`perspective(800px) rotateX(${r}deg) rotateY(${d}deg) translateY(-${p}px)`}),t.addEventListener("mouseleave",()=>{t.style.transform=""}))}function Pe(){const t=document.createElement("div");return t.className="chatbot-message bot msg-enter-bot",t.setAttribute("data-skeleton","true"),t.innerHTML=`
+        `;const h=/\[Action:\s*(.*?)\]/g;let i=[],d=t.replace(h,(u,b)=>(i.push(b),""));if(l.innerHTML=pe(d),r.appendChild(l),i.length>0&&s){const u=document.createElement("div");u.className="chatbot-actions",i.forEach(b=>{const c=document.createElement("button");c.type="button",c.className="action-btn",c.textContent=b,c.onclick=()=>s(b),he(c,{strength:.1,radius:50}),u.appendChild(c)}),r.appendChild(u)}}else l.innerHTML=pe(t),r.appendChild(l);const a=document.createElement("div");a.className=`chatbot-message-ts-row ${e?"ts-bot":"ts-user"}`;const n=Ne();return a.appendChild(n),r.appendChild(a),r}const Te="https://placehold.co/300x200?text=Product";function Be(t){if(!Array.isArray(t)||t.length===0)return[];const e=o=>o&&o.image!=null&&String(o.image).trim()!=="";return t.filter(e)}function qe(t){return t.badge&&String(t.badge).trim()?String(t.badge).trim():t.bestseller?"Bestseller":null}function me(t,e,o=null){const s=Be(t);if(s.length===0)return null;const r=document.createElement("div");r.className="chatbot-message bot-message msg-enter-product";const l=Te,a=o!=null&&o.launcherIconUrl?`<img src="${o.launcherIconUrl}" alt="Bot" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`:'<svg viewBox="0 0 24 24" fill="var(--primary-color)"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>',n=document.createElement("div");n.style.display="flex",n.style.width="100%",n.innerHTML=`
+        <div class="chatbot-message-avatar">${a}</div>
+    `;const p=document.createElement("div");p.className="carousel-container",p.style.flex="1",p.style.minWidth="0",p.style.display="flex",p.style.flexDirection="column",p.style.gap="6px";const h=["Here are some of our curated products:","Have a look","Choose from these","Here are some picks"],i=document.createElement("div");i.className="carousel-heading",i.textContent=h[Math.floor(Math.random()*h.length)],p.appendChild(i);const d=document.createElement("div");d.className="carousel-row",d.style.display="flex",d.style.alignItems="center",d.style.position="relative";const u=document.createElement("button");u.className="carousel-nav-btn carousel-nav-left",u.setAttribute("type","button"),u.innerHTML='<svg viewBox="0 0 24 24"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>';const b=document.createElement("button");b.className="carousel-nav-btn carousel-nav-right",b.setAttribute("type","button"),b.innerHTML='<svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>';const c=document.createElement("div");c.className="product-carousel chatbot-product-carousel";const v=212;return u.addEventListener("click",()=>c.scrollBy({left:-v,behavior:"smooth"})),b.addEventListener("click",()=>c.scrollBy({left:v,behavior:"smooth"})),s.forEach((g,m)=>{const w=g.title||g.name||"Product",V=g.image&&String(g.image).trim()?g.image:l,U=g.price!=null?typeof g.price=="string"?g.price:`$${g.price}`:"",$=g.originalPrice!=null?typeof g.originalPrice=="string"?g.originalPrice:`$${g.originalPrice}`:"",j=qe(g);g.badgeColor;const C=document.createElement("div");C.className="product-card",C.dataset.productId=g.id||m,C.style.animationDelay=`${m*100}ms`;const L=document.createElement("div");L.className="product-image-wrap";const E=document.createElement("img");if(E.className="product-image",E.src=V,E.alt=w,E.loading="lazy",E.style.background="#f3f4f6",E.onerror=function(){C.remove()},L.appendChild(E),j){const F=document.createElement("div");F.className="product-badge",F.textContent=j,L.appendChild(F)}C.appendChild(L);const q=document.createElement("h4");q.className="product-name",q.textContent=w,C.appendChild(q);const Y=document.createElement("div");Y.className="product-price-container";const D=document.createElement("span");if(D.className="product-price",D.textContent=U,Y.appendChild(D),$){const F=document.createElement("span");F.className="product-original-price",F.textContent=$,Y.appendChild(F)}C.appendChild(Y);let J=null;if(g.sizes&&Array.isArray(g.sizes)){const F=document.createElement("div");F.className="chatbot-product-sizes";const f=document.createElement("div");f.className="sizes-list",g.sizes.forEach(y=>{const x=document.createElement("button");x.type="button",x.className="size-pill",x.innerText=y,x.addEventListener("click",()=>{f.querySelectorAll(".size-pill").forEach(k=>k.classList.remove("selected")),x.classList.add("selected"),J=y}),f.appendChild(x)}),F.appendChild(f),C.appendChild(F)}const K=document.createElement("button");K.type="button",K.className="add-to-cart-btn",K.textContent=(o==null?void 0:o.addToCartLabel)||"Add to Cart",K.addEventListener("click",()=>{if(g.sizes&&!J){alert("Please select a size first!");return}e&&e(g,J)}),C.appendChild(K),Pe(C,"carousel-card-3d"),c.appendChild(C)}),d.appendChild(u),d.appendChild(c),d.appendChild(b),p.appendChild(d),n.appendChild(p),r.appendChild(n),r}function Pe(t,e="chatbot-product-card-3d"){t&&(t.classList.add(e),t.addEventListener("mousemove",o=>{const s=t.getBoundingClientRect(),r=(o.clientX-s.left)/s.width,a=((o.clientY-s.top)/s.height-.5)*8,n=(r-.5)*-8,p=4;t.style.transform=`perspective(800px) rotateX(${a}deg) rotateY(${n}deg) translateY(-${p}px)`}),t.addEventListener("mouseleave",()=>{t.style.transform=""}))}function Oe(){const t=document.createElement("div");return t.className="chatbot-message bot msg-enter-bot",t.setAttribute("data-skeleton","true"),t.innerHTML=`
         <div class="chatbot-message-avatar" style="opacity:0.6;"></div>
         <div class="skeleton-product-row">
             <div class="skeleton-card"></div>
@@ -3002,28 +3023,28 @@
             <div class="skeleton-card"></div>
             <div class="skeleton-card"></div>
         </div>
-    `,t}function je(t,e,o){if(!t||t.length===0)return null;const s=document.createElement("div");return s.className="chatbot-suggestion-chips",t.forEach(a=>{const n=document.createElement("button");n.type="button",n.className="suggestion-chip",n.textContent=a,n.addEventListener("click",()=>e(a)),he(n,{strength:.1,radius:50}),s.appendChild(n)}),s}const Oe='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';function se(t,e={}){if(!t||!t.items||!Array.isArray(t.items))return null;const{items:o,total:s}=t,{onCheckout:a,onAddMore:n,onUpdateQty:r,onRemove:d}=e,p=document.createElement("div");p.className="chatbot-section-card chatbot-cart-card msg-enter-product chatbot-cart-card-premium";const i=`$${(typeof s=="number"?s:parseFloat(String(s).replace(/[^0-9.]/g,""))||0).toFixed(2)}`,l=o.reduce((h,k)=>h+(k.quantity||1),0),u=l===1?"item":"items",b=t.subtotalLabel||`Subtotal (${l} ${u})`;if(o.length===0)return p.innerHTML=`
+    `,t}function He(t,e,o){if(!t||t.length===0)return null;const s=document.createElement("div");return s.className="chatbot-suggestion-chips",t.forEach(r=>{const l=document.createElement("button");l.type="button",l.className="suggestion-chip",l.textContent=r,l.addEventListener("click",()=>e(r)),he(l,{strength:.1,radius:50}),s.appendChild(l)}),s}const je='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>';function se(t,e={}){if(!t||!t.items||!Array.isArray(t.items))return null;const{items:o,total:s}=t,{onCheckout:r,onAddMore:l,onUpdateQty:a,onRemove:n}=e,p=document.createElement("div");p.className="chatbot-section-card chatbot-cart-card msg-enter-product chatbot-cart-card-premium";const i=`$${(typeof s=="number"?s:parseFloat(String(s).replace(/[^0-9.]/g,""))||0).toFixed(2)}`,d=o.reduce((m,w)=>m+(w.quantity||1),0),u=d===1?"item":"items",b=t.subtotalLabel||`Subtotal (${d} ${u})`;if(o.length===0)return p.innerHTML=`
             <div class="chatbot-cart-card-body">
                 <div class="chatbot-cart-empty">Your cart is empty. Add items to see them here.</div>
             </div>
-        `,p;const c=document.createElement("div");c.className="chatbot-cart-card-body",o.forEach(h=>{const k=document.createElement("div");k.className="chatbot-cart-item-row";const W=h.quantity!=null?h.quantity:1,O=h.title||h.name||"Product",$=h.price!=null?typeof h.price=="string"?h.price:`$${Number(h.price).toFixed(2)}`:"$0.00",P=h.image&&String(h.image).trim()?h.image:"https://placehold.co/80x80?text=Product",y=h.badge?`<span class="chatbot-cart-item-badge">${h.badge}</span>`:"";k.innerHTML=`
+        `,p;const c=document.createElement("div");c.className="chatbot-cart-card-body",o.forEach(m=>{const w=document.createElement("div");w.className="chatbot-cart-item-row";const V=m.quantity!=null?m.quantity:1,U=m.title||m.name||"Product",$=m.price!=null?typeof m.price=="string"?m.price:`$${Number(m.price).toFixed(2)}`:"$0.00",j=m.image&&String(m.image).trim()?m.image:"https://placehold.co/80x80?text=Product",C=m.badge?`<span class="chatbot-cart-item-badge">${m.badge}</span>`:"";w.innerHTML=`
             <div class="chatbot-cart-item-thumb-wrap">
-                <img class="chatbot-cart-item-img" src="${P}" alt="${O.slice(0,40)}" />
-                ${y}
+                <img class="chatbot-cart-item-img" src="${j}" alt="${U.slice(0,40)}" />
+                ${C}
             </div>
             <div class="chatbot-cart-item-details">
-                <div class="chatbot-cart-item-name">${O}</div>
+                <div class="chatbot-cart-item-name">${U}</div>
                 <div class="chatbot-cart-item-price">${$}</div>
                 <div class="chatbot-cart-item-actions">
                     <div class="chatbot-cart-qty-pill">
                         <button type="button" class="chatbot-cart-qty-btn" data-action="minus" aria-label="Decrease">−</button>
-                        <span class="chatbot-cart-qty-num">${W}</span>
+                        <span class="chatbot-cart-qty-num">${V}</span>
                         <button type="button" class="chatbot-cart-qty-btn" data-action="plus" aria-label="Increase">+</button>
                     </div>
-                    <button type="button" class="chatbot-cart-remove-btn" aria-label="Remove">${Oe}</button>
+                    <button type="button" class="chatbot-cart-remove-btn" aria-label="Remove">${je}</button>
                 </div>
             </div>
-        `;const B=k.querySelector('[data-action="minus"]'),z=k.querySelector('[data-action="plus"]'),Y=k.querySelector(".chatbot-cart-qty-num"),F=k.querySelector(".chatbot-cart-remove-btn");r&&Y&&(B==null||B.addEventListener("click",()=>{const U=Math.max(0,(parseInt(Y.textContent,10)||1)-1);Y.textContent=String(U),r(h,U)}),z==null||z.addEventListener("click",()=>{const U=(parseInt(Y.textContent,10)||1)+1;Y.textContent=U,r(h,U)})),d&&F&&F.addEventListener("click",()=>d(h)),c.appendChild(k)});const w=document.createElement("div");w.className="chatbot-cart-summary",w.innerHTML=`
+        `;const L=w.querySelector('[data-action="minus"]'),E=w.querySelector('[data-action="plus"]'),q=w.querySelector(".chatbot-cart-qty-num"),Y=w.querySelector(".chatbot-cart-remove-btn");a&&q&&(L==null||L.addEventListener("click",()=>{const D=Math.max(0,(parseInt(q.textContent,10)||1)-1);q.textContent=String(D),a(m,D)}),E==null||E.addEventListener("click",()=>{const D=(parseInt(q.textContent,10)||1)+1;q.textContent=D,a(m,D)})),n&&Y&&Y.addEventListener("click",()=>n(m)),c.appendChild(w)});const v=document.createElement("div");v.className="chatbot-cart-summary",v.innerHTML=`
         <div class="chatbot-cart-summary-row">
             <span class="chatbot-cart-summary-label">${b}</span>
             <span class="chatbot-cart-summary-value">${i}</span>
@@ -3037,47 +3058,52 @@
             <span class="chatbot-cart-summary-label">Total</span>
             <span class="chatbot-cart-summary-total-value">${i}</span>
         </div>
-    `;const g=document.createElement("button");return g.type="button",g.className="chatbot-cart-checkout-btn-premium",g.innerHTML='Proceed to Checkout <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',a&&g.addEventListener("click",()=>a()),c.appendChild(w),c.appendChild(g),p.appendChild(c),p}function me(t){if(!t||!Array.isArray(t))return null;const e=document.createElement("div");e.className="chatbot-section-card chatbot-order-history-card msg-enter-product";const o='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',s=n=>{const r=(n||"").toLowerCase();return r==="delivered"?"order-status-delivered":r==="shipped"?"order-status-shipped":r==="processing"?"order-status-processing":r==="cancelled"?"order-status-cancelled":"order-status-default"};let a=t.length===0?'<div class="chatbot-order-history-empty">You don’t have any past orders yet.</div>':t.map(n=>{const r=typeof n.total=="number"?`$${n.total.toFixed(2)}`:n.total!=null?`$${Number(n.total).toFixed(2)}`:"—",d=(n.items||[]).map(p=>`<span class="chatbot-order-item-line">${p.title||"Item"} ${p.price?` · ${p.price}`:""}</span>`).join("");return`
+    `;const g=document.createElement("button");return g.type="button",g.className="chatbot-cart-checkout-btn-premium",g.innerHTML='Proceed to Checkout <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',r&&g.addEventListener("click",()=>r()),c.appendChild(v),c.appendChild(g),p.appendChild(c),p}function ue(t){if(!t||!Array.isArray(t))return null;const e=document.createElement("div");e.className="chatbot-section-card chatbot-order-history-card msg-enter-product";const o='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',s=a=>{const n=(a||"").toLowerCase();return n==="delivered"?"order-status-delivered":n==="shipped"?"order-status-shipped":n==="processing"?"order-status-processing":n==="cancelled"?"order-status-cancelled":"order-status-default"},r="https://placehold.co/80x80?text=Product";let l=t.length===0?'<div class="chatbot-order-history-empty">You don’t have any past orders yet.</div>':t.map(a=>{const n=typeof a.total=="number"?`$${a.total.toFixed(2)}`:a.total!=null?`$${Number(a.total).toFixed(2)}`:"—",p=(a.items||[]).length===0?'<span class="chatbot-order-item-line">No items</span>':(a.items||[]).map(h=>{const i=h.image&&String(h.image).trim()?h.image:r,d=(h.title||"Item").replace(/</g,"&lt;"),u=h.price?` · ${h.price}`:"";return`<div class="chatbot-order-item-row">
+                        <div class="chatbot-order-item-thumb-wrap">
+                            <img src="${i}" alt="${d.slice(0,40)}" class="chatbot-order-item-img" onerror="this.src='${r}';this.onerror=null;" />
+                        </div>
+                        <span class="chatbot-order-item-line">${d}${u}</span>
+                    </div>`}).join("");return`
                 <div class="chatbot-order-block">
                     <div class="chatbot-order-block-header">
-                        <span class="chatbot-order-id">${n.id||"—"}</span>
-                        <span class="chatbot-order-date">${n.date||"—"}</span>
-                        <span class="chatbot-order-status ${s(n.status)}">${n.status||"—"}</span>
+                        <span class="chatbot-order-id">${a.id||"—"}</span>
+                        <span class="chatbot-order-date">${a.date||"—"}</span>
+                        <span class="chatbot-order-status ${s(a.status)}">${a.status||"—"}</span>
                     </div>
-                    <div class="chatbot-order-items">${d||'<span class="chatbot-order-item-line">No items</span>'}</div>
-                    <div class="chatbot-order-total">Total ${r}</div>
+                    <div class="chatbot-order-items">${p}</div>
+                    <div class="chatbot-order-total">Total ${n}</div>
                 </div>
             `}).join("");return e.innerHTML=`
         <div class="chatbot-section-card-title chatbot-order-history-title">
             ${o}
             <span>Order History</span>
         </div>
-        <div class="chatbot-section-card-body chatbot-order-history-body">${a}</div>
-    `,e}const be=['<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h6"/></svg>'];function Ye(t,e={}){const{onAction:o}=e,s=document.createElement("div");return s.className="chatbot-quick-actions-grid",t.forEach((a,n)=>{const r=a.icon!=null?a.icon:be[n]??be[0],d=document.createElement("div");d.className="quick-action-card msg-enter-product",d.innerHTML=`
-            <div class="quick-action-icon-box">${r}</div>
+        <div class="chatbot-section-card-body chatbot-order-history-body">${l}</div>
+    `,e}const be=['<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>','<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M9 10h6"/><path d="M9 14h6"/><path d="M9 18h6"/></svg>'];function Ye(t,e={}){const{onAction:o}=e,s=document.createElement("div");return s.className="chatbot-quick-actions-grid",t.forEach((r,l)=>{const a=r.icon!=null?r.icon:be[l]??be[0],n=document.createElement("div");n.className="quick-action-card msg-enter-product",n.innerHTML=`
+            <div class="quick-action-icon-box">${a}</div>
             <div class="quick-action-info">
-                <span class="quick-action-title">${(a.title||"").replace(/</g,"&lt;")}</span>
-                <span class="quick-action-desc">${(a.desc||"").replace(/</g,"&lt;")}</span>
+                <span class="quick-action-title">${(r.title||"").replace(/</g,"&lt;")}</span>
+                <span class="quick-action-desc">${(r.desc||"").replace(/</g,"&lt;")}</span>
             </div>
-        `;const p=a.message!=null?a.message:a.title||"";d.onclick=()=>o("quickAction",{...a,message:p}),s.appendChild(d)}),s}function le(t){if(!t||typeof t!="string")return null;const e=t;if(!/Order Confirmed!|Order ID:|Ships to:/i.test(e))return null;const o=e.match(/\*\*Order ID:\*\*\s*`?([A-Z0-9-]+)`?/i)||e.match(/Order ID:\s*`?([A-Z0-9-]+)`?/i),s=o?o[1].trim():`ORD-${Math.floor(1e4+Math.random()*9e4)}`,a=e.match(/\*\*Total:\*\*\s*\$?([\d.,]+)/i)||e.match(/Total:\s*\$?([\d.,]+)/i),n=a?parseFloat(a[1].replace(/,/g,"")):0,r=e.match(/\*\*Payment:\*\*\s*[^\n·]*([^\n]+?)(?=\n\n|\n\*\*|$)/i)||e.match(/Payment:\s*[^\n·]*([^\n]+)/i);let d="cod";if(r){const u=r[1].toLowerCase();(u.includes("prepaid")||u.includes("card")||u.includes("online"))&&(d="prepaid")}const p=e.match(/\*\*Ships to:\*\*\s*([^\n]+)/i)||e.match(/Ships to:\s*([^\n]+)/i),m=p?p[1].trim():"—",i=[],l=e.indexOf("| Item | Price | Size |");if(l!==-1){const b=e.slice(l).split(/\r?\n/).filter(c=>c.trim().startsWith("|")&&!c.includes(":---"));for(const c of b){const w=c.split("|").map(g=>g.trim()).filter(Boolean);if(w.length>=2&&w[0]!=="Item"){const g=w[0]||"Item",h=w[1]||"$0",k=parseFloat(h.replace(/[^0-9.]/g,""))||0,W=w[2]||"N/A";i.push({name:g,price:k,size:W,quantity:1,image:null})}}}return i.length===0&&n>0&&i.push({name:"Order items",price:n,quantity:1,image:null}),{orderId:s,items:i,total:n,paymentMethod:d,shippingAddress:m}}function ge(t,e={}){const{step:o,data:s,state:a}=t,{onAction:n}=e,r=document.createElement("div");r.className="chatbot-checkout-wrapper msg-enter-product";const d='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',p='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',m='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';if(o==="mobile"){r.innerHTML=`
+        `;const p=r.message!=null?r.message:r.title||"";n.onclick=()=>o("quickAction",{...r,message:p}),s.appendChild(n)}),s}function le(t){if(!t||typeof t!="string")return null;const e=t;if(!/Order Confirmed!|Order ID:|Ships to:/i.test(e))return null;const o=e.match(/\*\*Order ID:\*\*\s*`?([A-Z0-9-]+)`?/i)||e.match(/Order ID:\s*`?([A-Z0-9-]+)`?/i),s=o?o[1].trim():`ORD-${Math.floor(1e4+Math.random()*9e4)}`,r=e.match(/\*\*Total:\*\*\s*\$?([\d.,]+)/i)||e.match(/Total:\s*\$?([\d.,]+)/i),l=r?parseFloat(r[1].replace(/,/g,"")):0,a=e.match(/\*\*Payment:\*\*\s*[^\n·]*([^\n]+?)(?=\n\n|\n\*\*|$)/i)||e.match(/Payment:\s*[^\n·]*([^\n]+)/i);let n="cod";if(a){const u=a[1].toLowerCase();(u.includes("prepaid")||u.includes("card")||u.includes("online"))&&(n="prepaid")}const p=e.match(/\*\*Ships to:\*\*\s*([^\n]+)/i)||e.match(/Ships to:\s*([^\n]+)/i),h=p?p[1].trim():"—",i=[],d=e.indexOf("| Item | Price | Size |");if(d!==-1){const b=e.slice(d).split(/\r?\n/).filter(c=>c.trim().startsWith("|")&&!c.includes(":---"));for(const c of b){const v=c.split("|").map(g=>g.trim()).filter(Boolean);if(v.length>=2&&v[0]!=="Item"){const g=v[0]||"Item",m=v[1]||"$0",w=parseFloat(m.replace(/[^0-9.]/g,""))||0,V=v[2]||"N/A";i.push({name:g,price:w,size:V,quantity:1,image:null})}}}return i.length===0&&l>0&&i.push({name:"Order items",price:l,quantity:1,image:null}),{orderId:s,items:i,total:l,paymentMethod:n,shippingAddress:h}}function ge(t,e={}){const{step:o,data:s,state:r}=t,{onAction:l}=e,a=document.createElement("div");a.className="chatbot-checkout-wrapper msg-enter-product";const n='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',p='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',h='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';if(o==="mobile"){a.innerHTML=`
             <div class="checkout-form-card checkout-mobile-card">
                 <div class="checkout-field">
                     <label class="checkout-label-uppercase">MOBILE NUMBER</label>
                     <div class="checkout-mobile-input-wrap">
-                        <span class="checkout-mobile-icon">${d}</span>
+                        <span class="checkout-mobile-icon">${n}</span>
                         <span class="checkout-mobile-prefix">+91</span>
-                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" class="checkout-mobile-input" placeholder="9876543210" id="checkout-mobile" value="${(a.mobile||"").replace(/\D/g,"").slice(0,10)}" autocomplete="tel" />
+                        <input type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" class="checkout-mobile-input" placeholder="9876543210" id="checkout-mobile" value="${(r.mobile||"").replace(/\D/g,"").slice(0,10)}" autocomplete="tel" />
                     </div>
                 </div>
                 <button type="button" class="checkout-send-otp-btn" id="mobile-submit-btn">
-                    Send OTP ${m}
+                    Send OTP ${h}
                 </button>
                 <div class="checkout-secure-note">
                     ${p}
                     <span>Encrypted and secure</span>
                 </div>
             </div>
-        `;const i=r.querySelector("#checkout-mobile"),l=r.querySelector("#mobile-submit-btn"),u=()=>{const b=(i.value||"").replace(/\D/g,"");l.disabled=b.length!==10};i.addEventListener("input",()=>{i.value=i.value.replace(/\D/g,"").slice(0,10),u()}),u(),l.addEventListener("click",()=>{const b=(i.value||"").replace(/\D/g,"").slice(0,10);b.length===10&&n("submitMobile",{mobile:b})})}else if(o==="otp"){const i=a.mobile?"+91 "+String(a.mobile).replace(/(\d{2})(\d{4})(\d+)/,"$1 $2 $3").trim():"+91 ••••••••••";r.innerHTML=`
+        `;const i=a.querySelector("#checkout-mobile"),d=a.querySelector("#mobile-submit-btn"),u=()=>{const b=(i.value||"").replace(/\D/g,"");d.disabled=b.length!==10};i.addEventListener("input",()=>{i.value=i.value.replace(/\D/g,"").slice(0,10),u()}),u(),d.addEventListener("click",()=>{const b=(i.value||"").replace(/\D/g,"").slice(0,10);b.length===10&&l("submitMobile",{mobile:b})})}else if(o==="otp"){const i=r.mobile?"+91 "+String(r.mobile).replace(/(\d{2})(\d{4})(\d+)/,"$1 $2 $3").trim():"+91 ••••••••••";a.innerHTML=`
             <div class="checkout-form-card checkout-otp-card">
                 <div class="checkout-otp-header">
                     <h3 class="checkout-otp-title">ENTER OTP</h3>
@@ -3092,25 +3118,25 @@
                 </div>
                 <button type="button" class="checkout-resend-link">Resend OTP</button>
                 <button type="button" class="checkout-verify-btn" id="otp-verify-btn">
-                    Verify & Continue ${m}
+                    Verify & Continue ${h}
                 </button>
             </div>
-        `;const l=r.querySelectorAll(".checkout-otp-box");l.forEach((u,b)=>{u.addEventListener("input",c=>{const w=c.target.value.replace(/\D/g,"").slice(0,1);c.target.value=w,w&&b<3&&l[b+1].focus()}),u.addEventListener("keydown",c=>{c.key==="Backspace"&&!c.target.value&&b>0&&l[b-1].focus()})}),l[0]&&l[0].focus(),r.querySelector("#otp-verify-btn").addEventListener("click",()=>{const u=Array.from(r.querySelectorAll(".checkout-otp-box")).map(b=>b.value||"").join("").slice(0,4);n("verifyOtp",{code:u})}),r.querySelector(".checkout-change-number-link").addEventListener("click",()=>n("changeAuthMode",{mode:"mobile"})),r.querySelector(".checkout-resend-link").addEventListener("click",()=>n("submitMobile",{mobile:a.mobile}))}else if(o==="address"){const i=s.addresses||[],l=a.selectedAddressId,u='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',b='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22V12h6v10"/></svg>',c='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';let w=i.map($=>{const P=($.type||"home").toUpperCase(),y=($.type||"home").toLowerCase()==="home";return`
-            <div class="checkout-address-card ${$.id===l?"selected":""}" data-id="${$.id}">
-                <div class="address-icon-box ${y?"address-icon-home":""}">${y?u:b}</div>
+        `;const d=a.querySelectorAll(".checkout-otp-box");d.forEach((u,b)=>{u.addEventListener("input",c=>{const v=c.target.value.replace(/\D/g,"").slice(0,1);c.target.value=v,v&&b<3&&d[b+1].focus()}),u.addEventListener("keydown",c=>{c.key==="Backspace"&&!c.target.value&&b>0&&d[b-1].focus()})}),d[0]&&d[0].focus(),a.querySelector("#otp-verify-btn").addEventListener("click",()=>{const u=Array.from(a.querySelectorAll(".checkout-otp-box")).map(b=>b.value||"").join("").slice(0,4);l("verifyOtp",{code:u})}),a.querySelector(".checkout-change-number-link").addEventListener("click",()=>l("changeAuthMode",{mode:"mobile"})),a.querySelector(".checkout-resend-link").addEventListener("click",()=>l("submitMobile",{mobile:r.mobile}))}else if(o==="address"){const i=s.addresses||[],d=r.selectedAddressId,u='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',b='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22V12h6v10"/></svg>',c='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';let v=i.map($=>{const j=($.type||"home").toUpperCase(),C=($.type||"home").toLowerCase()==="home";return`
+            <div class="checkout-address-card ${$.id===d?"selected":""}" data-id="${$.id}">
+                <div class="address-icon-box ${C?"address-icon-home":""}">${C?u:b}</div>
                 <div class="address-info">
                     <div class="address-header">
                         <span class="address-name">${$.name}</span>
-                        <span class="address-type-badge">${P}</span>
+                        <span class="address-type-badge">${j}</span>
                     </div>
                     <div class="address-text">${$.street}</div>
                     <div class="address-text">${$.city}, ${$.state||""} ${$.zip}</div>
                     <div class="address-phone">${c} ${$.phone}</div>
                 </div>
-                ${$.id===l?'<div class="selection-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>':""}
-            </div>`}).join("");r.innerHTML=`
+                ${$.id===d?'<div class="selection-check-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg></div>':""}
+            </div>`}).join("");a.innerHTML=`
             <div class="checkout-address-step">
-                ${w}
+                ${v}
                 <div class="checkout-add-address-form-wrap" id="add-address-form-wrap" style="display: none;">
                     <div class="checkout-form-card" style="text-align: left;">
                         <label class="checkout-label-uppercase">Full Name</label>
@@ -3135,9 +3161,9 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     + Add New Address
                 </button>
-                ${l!=null?'<button type="button" class="checkout-primary-btn" id="addr-continue-btn">Continue to Payment '+m+"</button>":""}
+                ${d!=null?'<button type="button" class="checkout-primary-btn" id="addr-continue-btn">Continue to Payment '+h+"</button>":""}
             </div>
-        `,r.querySelectorAll(".checkout-address-card").forEach($=>{$.onclick=()=>n("selectAddress",{id:$.dataset.id})});const g=r.querySelector("#add-address-btn"),h=r.querySelector("#add-address-form-wrap"),k=r.querySelector("#addr-cancel-btn"),W=r.querySelector("#addr-save-btn");g&&h&&g.addEventListener("click",()=>{h.style.display=h.style.display==="none"?"block":"none"}),k&&h&&k.addEventListener("click",()=>{h.style.display="none"}),W&&h&&W.addEventListener("click",()=>{var F,U,K,Z,j,f;const $=(((F=r.querySelector("#addr-name"))==null?void 0:F.value)||"").trim(),P=(((U=r.querySelector("#addr-street"))==null?void 0:U.value)||"").trim(),y=(((K=r.querySelector("#addr-city"))==null?void 0:K.value)||"").trim(),B=(((Z=r.querySelector("#addr-state"))==null?void 0:Z.value)||"").trim(),z=(((j=r.querySelector("#addr-zip"))==null?void 0:j.value)||"").trim(),Y=(((f=r.querySelector("#addr-phone"))==null?void 0:f.value)||"").trim();P&&(n("addAddress",{address:{type:"home",name:$,street:P,city:y,state:B,zip:z,phone:Y}}),h.style.display="none")});const O=r.querySelector("#addr-continue-btn");O&&(O.onclick=()=>n("continueToPayment"))}else if(o==="payment"){const i=a.paymentMethod,l=Number(s.subtotal)||0,u=l*.1,b=l+u;r.innerHTML=`
+        `,a.querySelectorAll(".checkout-address-card").forEach($=>{$.onclick=()=>l("selectAddress",{id:$.dataset.id})});const g=a.querySelector("#add-address-btn"),m=a.querySelector("#add-address-form-wrap"),w=a.querySelector("#addr-cancel-btn"),V=a.querySelector("#addr-save-btn");g&&m&&g.addEventListener("click",()=>{m.style.display=m.style.display==="none"?"block":"none"}),w&&m&&w.addEventListener("click",()=>{m.style.display="none"}),V&&m&&V.addEventListener("click",()=>{var Y,D,J,K,F,f;const $=(((Y=a.querySelector("#addr-name"))==null?void 0:Y.value)||"").trim(),j=(((D=a.querySelector("#addr-street"))==null?void 0:D.value)||"").trim(),C=(((J=a.querySelector("#addr-city"))==null?void 0:J.value)||"").trim(),L=(((K=a.querySelector("#addr-state"))==null?void 0:K.value)||"").trim(),E=(((F=a.querySelector("#addr-zip"))==null?void 0:F.value)||"").trim(),q=(((f=a.querySelector("#addr-phone"))==null?void 0:f.value)||"").trim();j&&(l("addAddress",{address:{type:"home",name:$,street:j,city:C,state:L,zip:E,phone:q}}),m.style.display="none")});const U=a.querySelector("#addr-continue-btn");U&&(U.onclick=()=>l("continueToPayment"))}else if(o==="payment"){const i=r.paymentMethod,d=Number(s.subtotal)||0,u=d*.1,b=d+u;a.innerHTML=`
             <div class="checkout-payment-step">
                 <div class="checkout-method-card ${i==="cod"?"selected":""}" data-method="cod">
                     <div class="method-icon-box method-icon-cod">
@@ -3161,7 +3187,7 @@
                 </div>
                 <div class="checkout-summary-card">
                     <h4 class="summary-title">ORDER SUMMARY</h4>
-                    <div class="summary-row"><span>Subtotal</span><span>$${l.toFixed(2)}</span></div>
+                    <div class="summary-row"><span>Subtotal</span><span>$${d.toFixed(2)}</span></div>
                     <div class="summary-row"><span>Shipping</span><span class="summary-shipping-free">FREE</span></div>
                     <div class="summary-row"><span>Tax</span><span>$${u.toFixed(2)}</span></div>
                     <div class="summary-divider"></div>
@@ -3172,16 +3198,18 @@
                     Place Order – $${b.toFixed(2)}
                 </button>
             </div>
-        `,r.querySelectorAll(".checkout-method-card").forEach(w=>{w.onclick=()=>n("selectPayment",{method:w.dataset.method})});const c=r.querySelector("#place-order-btn");c&&(c.onclick=()=>{i&&n("placeOrder")})}else if(o==="confirmation"){const i=a.orderId||s.orderId||`ORD-${String(Math.floor(Math.random()*1e4)).padStart(4,"0")}`,l=s.orderItems||a.orderItems||[],u=a.subtotal!=null?Number(a.subtotal):l.reduce((y,B)=>{const z=typeof B.price=="string"?parseFloat(String(B.price).replace(/[^0-9.]/g,""))||0:Number(B.price)||0;return y+z*(B.quantity||1)},0),b=(a.paymentMethod||"cod").toLowerCase(),c=b==="prepaid"?"Card / Prepaid":"Cash on Delivery",w=b==="prepaid"?"💳":"💵",g=a.selectedAddressId!=null?a.selectedAddressId:0,h=a.addresses||[],k=h.find(y=>(y.id??y)===g)||h[g],W=k?typeof k=="string"?k:[k.street,k.city,k.state,k.zip].filter(Boolean).join(", "):"—",O=k&&typeof k!="string"&&k.city?`${k.city}${k.state?", "+k.state:""} ${k.zip||""}`.trim():"",$=l.length?`<div class="order-product">
+        `,a.querySelectorAll(".checkout-method-card").forEach(v=>{v.onclick=()=>l("selectPayment",{method:v.dataset.method})});const c=a.querySelector("#place-order-btn");c&&(c.onclick=()=>{i&&l("placeOrder")})}else if(o==="confirmation"){const i=r.orderId||s.orderId||`ORD-${String(Math.floor(Math.random()*1e4)).padStart(4,"0")}`,d=s.orderItems||r.orderItems||[],u=r.subtotal!=null?Number(r.subtotal):d.reduce((L,E)=>{const q=typeof E.price=="string"?parseFloat(String(E.price).replace(/[^0-9.]/g,""))||0:Number(E.price)||0;return L+q*(E.quantity||1)},0),b=(r.paymentMethod||"cod").toLowerCase(),c=b==="prepaid"?"Card / Prepaid":"Cash on Delivery",v=b==="prepaid"?"💳":"💵",g=r.selectedAddressId!=null?r.selectedAddressId:0,m=r.addresses||[],w=m.find(L=>(L.id??L)===g)||m[g],V=w?typeof w=="string"?w:[w.street,w.city,w.state,w.zip].filter(Boolean).join(", "):"—",U=w&&typeof w!="string"&&w.city?`${w.city}${w.state?", "+w.state:""} ${w.zip||""}`.trim():"",$="https://placehold.co/80x80?text=Product",j=d.length?`<div class="order-product">
                 <div class="order-product-label">Products ordered</div>
-                ${l.map(y=>{const B=y.quantity||1,z=typeof y.price=="string"?parseFloat(String(y.price).replace(/[^0-9.]/g,""))||0:Number(y.price)||0,Y=z*B;return`<div class="order-product-row">
-                        <div class="order-product-img-wrap">${y.image?`<img src="${y.image}" alt="" class="order-product-img" onerror="this.style.display='none'" />`:'<div class="order-product-placeholder"></div>'}</div>
+                ${d.map(L=>{const E=L.quantity||1,q=typeof L.price=="string"?parseFloat(String(L.price).replace(/[^0-9.]/g,""))||0:Number(L.price)||0,Y=q*E,D=L.image&&String(L.image).trim()?L.image:$,J=(L.name||L.title||"").replace(/</g,"&lt;");return`<div class="order-product-row">
+                        <div class="order-product-img-wrap">
+                            <img src="${D}" alt="${J.slice(0,40)}" class="order-product-img" onerror="this.src='${$}';this.onerror=null;" />
+                        </div>
                         <div class="order-product-info">
-                            <span class="order-product-name">${(y.name||y.title||"").replace(/</g,"&lt;")}</span>
-                            <span class="order-product-meta">Qty: ${B} × $${z.toFixed(2)} = $${Y.toFixed(2)}</span>
+                            <span class="order-product-name">${J}</span>
+                            <span class="order-product-meta">Qty: ${E} × $${q.toFixed(2)} = $${Y.toFixed(2)}</span>
                         </div>
                     </div>`}).join("")}
-            </div>`:"",P=`
+            </div>`:"",C=`
             <div class="order-progress">
                 <div class="order-progress-step order-progress-done">
                     <span class="order-progress-dot"></span>
@@ -3202,7 +3230,7 @@
                     <span class="order-progress-dot"></span>
                     <span class="order-progress-label">Delivered</span>
                 </div>
-            </div>`;r.innerHTML=`
+            </div>`;a.innerHTML=`
             <div class="order-card checkout-confirmation-premium">
                 <div class="order-header">
                     <div class="order-header-glow"></div>
@@ -3210,7 +3238,7 @@
                     <h3 class="order-header-title">Order Confirmed!</h3>
                     <div class="order-header-id">${i}</div>
                 </div>
-                ${$}
+                ${j}
                 <div class="order-summary">
                     <div class="order-summary-row order-summary-total">
                         <span class="order-summary-label">Total</span>
@@ -3218,14 +3246,14 @@
                     </div>
                     <div class="order-summary-row order-summary-payment">
                         <span class="order-summary-label">Payment</span>
-                        <span class="order-payment-badge">${w} ${c}</span>
+                        <span class="order-payment-badge">${v} ${c}</span>
                     </div>
                 </div>
                 <div class="order-shipping">
                     <div class="order-shipping-block">
                         <span class="order-shipping-label">📍 Shipping Address</span>
-                        <span class="order-shipping-value">${W}</span>
-                        ${O?`<span class="order-shipping-value order-shipping-value-secondary">${O}</span>`:""}
+                        <span class="order-shipping-value">${V}</span>
+                        ${U?`<span class="order-shipping-value order-shipping-value-secondary">${U}</span>`:""}
                     </div>
                     <div class="order-shipping-block">
                         <span class="order-shipping-label">🚚 Delivery Status</span>
@@ -3235,13 +3263,13 @@
                 <div class="order-status">
                     <p class="order-status-message">Your order has been placed successfully. You'll receive a confirmation email shortly.</p>
                 </div>
-                ${P}
+                ${C}
             </div>
-        `}return r}const Fe='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',De='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>';function Re(t,e){const o=document.createElement("div");o.className="chatbot-input-area",o.setAttribute("data-region","input-bar");const s=e.placeholders&&e.placeholders.length>0?e.placeholders:ye,a=e.inputPlaceholder||"Ask anything about orders, products...",n=document.createElement("div");n.className="chatbot-input-wrap";const r=document.createElement("button");r.type="button",r.className="chatbot-attach-btn",r.setAttribute("aria-label","Attach"),r.innerHTML=Fe;const d=document.createElement("input");d.type="text",d.placeholder=a,d.className="chatbot-input",d.setAttribute("aria-label","Message input");const p=document.createElement("button");p.type="button",p.className="chatbot-send-btn",p.setAttribute("aria-label","Send message"),p.innerHTML=De;const m=()=>{const c=d.value.trim().length>0;p.classList.toggle("active",c),p.disabled=!c};d.addEventListener("input",m),d.addEventListener("focus",m),d.addEventListener("blur",m),m();let i=0;const u=setInterval(()=>{!d.matches(":focus")&&s.length>1&&(i=(i+1)%s.length,d.placeholder=s[i])},3500);d.addEventListener("focus",()=>{d.placeholder=e.inputPlaceholder||"Ask anything about orders, products..."}),d.addEventListener("blur",()=>{d.placeholder=s[i%s.length]});const b=()=>{const c=d.value.trim();c&&(t(c),d.value="",i=0,d.placeholder=s[0],m())};return d.addEventListener("keypress",c=>{c.key==="Enter"&&b()}),p.addEventListener("click",b),n.appendChild(r),n.appendChild(d),n.appendChild(p),o.appendChild(n),he(p,{strength:.12,radius:60}),o.destroy=()=>clearInterval(u),o}function Ue(t="Thinking..."){const e=document.createElement("div");e.className="chatbot-message bot typing-indicator-wrapper msg-enter-bot";const o=document.createElement("div");o.className="chatbot-message-avatar",o.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';const s=document.createElement("div");return s.className="message-bubble typing-indicator",s.setAttribute("aria-live","polite"),s.setAttribute("role","status"),s.innerHTML='<span class="dot"></span><span class="dot"></span><span class="dot"></span>',e.appendChild(o),e.appendChild(s),e.setStatus=()=>{},e}const We="http://localhost:3000";function Ve(){if(typeof window>"u"||!window.location)return!1;const t=window.location.hostname||"";return t==="localhost"||t==="127.0.0.1"}function ve(t){return t!=null&&t!==""?String(t).replace(/\/$/,""):Ve()?We:""}async function _e(t,e=[],o,s,a,n="default",r=null,d=null,p=null,m=null){var u,b;const i=ve(m),l=i?`${i}/api/chat`:"/api/chat";try{const c=await fetch(l,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,history:e,sessionId:n})});if(!c.ok){const k=await c.text();throw console.error("AI API error",c.status,k),new Error(c.status===503?"Backend not configured (missing API key).":`API ${c.status}`)}const w=c.body.getReader(),g=new TextDecoder;let h="";for(;;){const{value:k,done:W}=await w.read();if(W)break;h+=g.decode(k,{stream:!0});const O=h.split(`
-`);h=O.pop();for(const $ of O)if($.startsWith("data: ")){const P=$.replace("data: ","").trim();try{if(P){const y=JSON.parse(P);y.type==="text"&&o&&o(y.content),y.type==="carousel"&&s&&s(y.content),y.type==="cart"&&d&&d(y.content),y.type==="orderHistory"&&p&&p(y.content),y.type==="status"&&r&&r(y.content),y.type==="done"&&a&&a()}}catch{}}}}catch(c){console.error("AI Service Error:",c);const w=(u=c==null?void 0:c.message)!=null&&u.includes("API key")||(b=c==null?void 0:c.message)!=null&&b.includes("503")?"Chat is unavailable. The server needs an API key (check deployment settings).":"My neural network is temporarily offline. Please try again.";o&&o(w),a&&a()}}function ce(t){return ve(t)}async function ne(t,e){const s=await(await fetch(`${ce(e)}/api/cart?sessionId=${encodeURIComponent(t)}`)).json();return{items:s.items||[],total:s.total!=null?s.total:0}}async function fe(t,e,o,s){return(await fetch(`${ce(s)}/api/cart/add`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim(),size:o||void 0})})).json()}async function xe(t,e,o){return(await fetch(`${ce(o)}/api/cart/remove-one`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim()})})).json()}async function ie(t,e,o){return(await fetch(`${ce(o)}/api/cart/remove-all`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim()})})).json()}function Ge(t,e=[],o=4){if(!e||e.length===0)return[];const s=(t||"").toLowerCase(),a=e.map(r=>{const d=r.toLowerCase();let p=0;const m=d.split(/\s+/).filter(i=>i.length>2);for(const i of m)s.includes(i)&&(p+=2),s.includes(i.replace(/[^a-z0-9]/g,""))&&(p+=1);return r.toLowerCase().includes("sneaker")&&(s.includes("sneaker")||s.includes("shoe"))&&(p+=3),r.toLowerCase().includes("trending")&&(s.includes("trending")||s.includes("bestseller")||s.includes("popular"))&&(p+=3),r.toLowerCase().includes("sale")&&(s.includes("sale")||s.includes("price")||s.includes("$"))&&(p+=2),r.toLowerCase().includes("running")&&s.includes("running")&&(p+=3),r.toLowerCase().includes("jacket")&&(s.includes("jacket")||s.includes("apparel"))&&(p+=2),{label:r,score:p}});a.sort((r,d)=>d.score-r.score);const n=a.filter(r=>r.score>0).slice(0,o).map(r=>r.label);return n.length===0&&s.length<500?e.slice(0,Math.min(3,o)):n}function Xe(t){if(!t)return null;const e=document.createElement("div");return e.className="chatbot-toast-host",t.appendChild(e),{showToast:({title:s,message:a,image:n,duration:r=3e3}={})=>{const d=document.createElement("div");d.className="chatbot-toast",d.innerHTML=`
-            ${n?`<div class="chatbot-toast-image-wrap"><img src="${n}" alt="" /></div>`:""}
+        `}return a}const De='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',Fe='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>';function Re(t,e){const o=document.createElement("div");o.className="chatbot-input-area",o.setAttribute("data-region","input-bar");const s=e.placeholders&&e.placeholders.length>0?e.placeholders:ye,r=e.inputPlaceholder||"Ask anything about orders, products...",l=document.createElement("div");l.className="chatbot-input-wrap";const a=document.createElement("button");a.type="button",a.className="chatbot-attach-btn",a.setAttribute("aria-label","Attach"),a.innerHTML=De;const n=document.createElement("input");n.type="text",n.placeholder=r,n.className="chatbot-input",n.setAttribute("aria-label","Message input");const p=document.createElement("button");p.type="button",p.className="chatbot-send-btn",p.setAttribute("aria-label","Send message"),p.innerHTML=Fe;const h=()=>{const c=n.value.trim().length>0;p.classList.toggle("active",c),p.disabled=!c};n.addEventListener("input",h),n.addEventListener("focus",h),n.addEventListener("blur",h),h();let i=0;const u=setInterval(()=>{!n.matches(":focus")&&s.length>1&&(i=(i+1)%s.length,n.placeholder=s[i])},3500);n.addEventListener("focus",()=>{n.placeholder=e.inputPlaceholder||"Ask anything about orders, products..."}),n.addEventListener("blur",()=>{n.placeholder=s[i%s.length]});const b=()=>{const c=n.value.trim();c&&(t(c),n.value="",i=0,n.placeholder=s[0],h())};return n.addEventListener("keypress",c=>{c.key==="Enter"&&b()}),p.addEventListener("click",b),l.appendChild(a),l.appendChild(n),l.appendChild(p),o.appendChild(l),he(p,{strength:.12,radius:60}),o.destroy=()=>clearInterval(u),o}function Ue(t="Thinking..."){const e=document.createElement("div");e.className="chatbot-message bot typing-indicator-wrapper msg-enter-bot";const o=document.createElement("div");o.className="chatbot-message-avatar",o.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>';const s=document.createElement("div");return s.className="message-bubble typing-indicator",s.setAttribute("aria-live","polite"),s.setAttribute("role","status"),s.innerHTML='<span class="dot"></span><span class="dot"></span><span class="dot"></span>',e.appendChild(o),e.appendChild(s),e.setStatus=()=>{},e}const We="http://localhost:3000";function Ve(){if(typeof window>"u"||!window.location)return!1;const t=window.location.hostname||"";return t==="localhost"||t==="127.0.0.1"}function ve(t){return t!=null&&t!==""?String(t).replace(/\/$/,""):Ve()?We:""}async function _e(t,e=[],o,s,r,l="default",a=null,n=null,p=null,h=null){var u,b;const i=ve(h),d=i?`${i}/api/chat`:"/api/chat";try{const c=await fetch(d,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:t,history:e,sessionId:l})});if(!c.ok){const w=await c.text();throw console.error("AI API error",c.status,w),new Error(c.status===503?"Backend not configured (missing API key).":`API ${c.status}`)}const v=c.body.getReader(),g=new TextDecoder;let m="";for(;;){const{value:w,done:V}=await v.read();if(V)break;m+=g.decode(w,{stream:!0});const U=m.split(`
+`);m=U.pop();for(const $ of U)if($.startsWith("data: ")){const j=$.replace("data: ","").trim();try{if(j){const C=JSON.parse(j);C.type==="text"&&o&&o(C.content),C.type==="carousel"&&s&&s(C.content),C.type==="cart"&&n&&n(C.content),C.type==="orderHistory"&&p&&p(C.content),C.type==="status"&&a&&a(C.content),C.type==="done"&&r&&r()}}catch{}}}}catch(c){console.error("AI Service Error:",c);const v=(u=c==null?void 0:c.message)!=null&&u.includes("API key")||(b=c==null?void 0:c.message)!=null&&b.includes("503")?"Chat is unavailable. The server needs an API key (check deployment settings).":"My neural network is temporarily offline. Please try again.";o&&o(v),r&&r()}}function ce(t){return ve(t)}async function ne(t,e){const s=await(await fetch(`${ce(e)}/api/cart?sessionId=${encodeURIComponent(t)}`)).json();return{items:s.items||[],total:s.total!=null?s.total:0}}async function fe(t,e,o,s){return(await fetch(`${ce(s)}/api/cart/add`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim(),size:o||void 0})})).json()}async function xe(t,e,o){return(await fetch(`${ce(o)}/api/cart/remove-one`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim()})})).json()}async function ie(t,e,o){return(await fetch(`${ce(o)}/api/cart/remove-all`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:t,title:String(e||"").trim()})})).json()}function Ge(t,e=[],o=4){if(!e||e.length===0)return[];const s=(t||"").toLowerCase(),r=e.map(a=>{const n=a.toLowerCase();let p=0;const h=n.split(/\s+/).filter(i=>i.length>2);for(const i of h)s.includes(i)&&(p+=2),s.includes(i.replace(/[^a-z0-9]/g,""))&&(p+=1);return a.toLowerCase().includes("sneaker")&&(s.includes("sneaker")||s.includes("shoe"))&&(p+=3),a.toLowerCase().includes("trending")&&(s.includes("trending")||s.includes("bestseller")||s.includes("popular"))&&(p+=3),a.toLowerCase().includes("sale")&&(s.includes("sale")||s.includes("price")||s.includes("$"))&&(p+=2),a.toLowerCase().includes("running")&&s.includes("running")&&(p+=3),a.toLowerCase().includes("jacket")&&(s.includes("jacket")||s.includes("apparel"))&&(p+=2),{label:a,score:p}});r.sort((a,n)=>n.score-a.score);const l=r.filter(a=>a.score>0).slice(0,o).map(a=>a.label);return l.length===0&&s.length<500?e.slice(0,Math.min(3,o)):l}function Xe(t){if(!t)return null;const e=document.createElement("div");return e.className="chatbot-toast-host",t.appendChild(e),{showToast:({title:s,message:r,image:l,duration:a=3e3}={})=>{const n=document.createElement("div");n.className="chatbot-toast",n.innerHTML=`
+            ${l?`<div class="chatbot-toast-image-wrap"><img src="${l}" alt="" /></div>`:""}
             <div class="chatbot-toast-content">
                 ${s?`<div class="chatbot-toast-title">${s}</div>`:""}
-                ${a?`<div class="chatbot-toast-message">${a}</div>`:""}
+                ${r?`<div class="chatbot-toast-message">${r}</div>`:""}
             </div>
-        `,e.appendChild(d),requestAnimationFrame(()=>{d.classList.add("chatbot-toast-visible")}),setTimeout(()=>{d.classList.remove("chatbot-toast-visible"),d.addEventListener("transitionend",()=>{d.remove()},{once:!0})},r)}}}function Je(t){const e=Se(t);console.log("Chatbot initialized in Shadow DOM with config:",e);let o=sessionStorage.getItem("ecom-session-id");o||(o="sess_"+Math.random().toString(36).substring(2,9),sessionStorage.setItem("ecom-session-id",o));const s=e.parentElement||document.body,a=s.querySelector("#ecom-chatbot-host");a&&a.remove();const n=document.createElement("div");n.id="ecom-chatbot-host",s.appendChild(n);const r=n.attachShadow({mode:"open"}),d=Xe(r),p=document.createElement("style");p.textContent=Ee(e),r.appendChild(p);const m=document.createElement("div");m.className="ecom-chatbot-wrapper";const i=document.createElement("div");i.className="chatbot-window";const l=Me();function u(){l.scrollTo({top:l.scrollHeight,behavior:"smooth"})}function b(){let f=null;Array.from(l.children).filter(x=>x.classList&&!x.hasAttribute("data-skeleton")&&(x.classList.contains("chatbot-message")||x.classList.contains("typing-indicator-wrapper"))).forEach(x=>{const C=x.classList.contains("user"),L=x.classList.contains("bot")||x.classList.contains("typing-indicator-wrapper"),q=C?"user":L?"bot":null;q&&(x.classList.remove("group-same","group-first"),f===q?x.classList.add("group-same"):x.classList.add("group-first"),f=q)})}let c=[];try{const f=sessionStorage.getItem("ecom-chat-history");f&&(c=JSON.parse(f),console.log("Restored chat history from session:",c))}catch(f){console.error("Failed to parse session chat history",f)}let w=0,g=null;const h=async f=>{const v=i.querySelector(".chatbot-presets");v&&v.remove();const x=i.querySelector(".chatbot-quick-actions-grid");x&&x.remove();const C=J(f,!1,e);l.appendChild(C),u();const L=Ue();l.appendChild(L),u();const q=[...c];c.push({role:"user",content:f}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c));let S=null,A="",M=!1,I=null,D=null,G=null;const X=()=>{L.parentNode&&l.removeChild(L),G&&G.parentNode&&l.removeChild(G)},V=()=>{if(y)return;const E=m.querySelector(".chatbot-toggle-btn");if(E&&!E.querySelector(".chatbot-ripple-ring")){const T=document.createElement("span");T.className="chatbot-ripple-ring",E.appendChild(T),setTimeout(()=>T.remove(),1400)}};await _e(f,q,E=>{X(),M||(M=!0,V()),S||(S=J("",!0,e,h),l.appendChild(S),I=S),A+=E;const T=S.querySelector(".chatbot-bubble");T&&(T.innerHTML=pe(A)),u()},E=>{X(),M||(M=!0,V());const T=["Here's what we have:","Have a look at these.","Here are some picks."],N=T[Math.floor(Math.random()*T.length)];(!S||!A.trim())&&(S=J(N,!0,e,h),l.appendChild(S),A=N);const H=ue(E,W,e);H?(D=E,I=H,l.appendChild(H),c.push({role:"bot",content:"Displayed a product carousel to the user.",carousel:E})):I=S,sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},()=>{X(),A&&(c.push({role:"bot",content:A}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)));const E=le(A||"");if(E&&I){const H={step:"confirmation",data:{orderItems:E.items,addresses:[{street:E.shippingAddress}],subtotal:E.total},state:{orderId:E.orderId,paymentMethod:E.paymentMethod,subtotal:E.total,orderItems:E.items,addresses:[{street:E.shippingAddress}],selectedAddressId:0}},_=ge(H,{}),R=I.querySelector(".chatbot-message-content"),ae=I.querySelector(".chatbot-bubble");R?(R.innerHTML="",R.appendChild(_)):ae?ae.replaceWith(_):(I.innerHTML="",I.appendChild(_)),b(),u()}const N=/added to (your )?(cart|shopping bag|bag)/i.test(A||"")?["Proceed to checkout","Browse more products"]:Ge(A||(D?(D||[]).map(H=>H.title||"").join(" "):""),e.suggestionChips||[],4);if(N.length>0&&I){const H=je(N,R=>h(R));H.classList.add("chatbot-chips-below");const _=I.querySelector(".chatbot-bubble");if(_){let R=I.querySelector(".chatbot-message-content");R||(R=document.createElement("div"),R.className="chatbot-message-content",_.parentNode.insertBefore(R,_),R.appendChild(_)),R.appendChild(H)}else I.appendChild(H)}b(),u()},o,E=>{L.setStatus&&L.setStatus(E),E&&/searching|product|looking for|options|recommend/i.test(E)&&!G&&(G=Pe(),l.appendChild(G),u())},E=>{X(),M||(M=!0,V()),S||(S=J("",!0,e,h),l.appendChild(S));const T=S.querySelector(".chatbot-bubble");let N=S.querySelector(".chatbot-message-content");!N&&T&&(N=document.createElement("div"),N.className="chatbot-message-content",T.parentNode.insertBefore(N,T),N.appendChild(T));const H=re=>({onCheckout:()=>h("Proceed to checkout"),onUpdateQty:async(Q,ee)=>{const te=Q.quantity!=null?Q.quantity:1,de=Q.title||Q.name||"";if(ee<=0)await ie(o,de,e.apiBaseUrl);else if(ee>te)for(let oe=te;oe<ee;oe++)await fe(o,de,Q.size,e.apiBaseUrl);else for(let oe=ee;oe<te;oe++)await xe(o,de,e.apiBaseUrl);const we=await ne(o,e.apiBaseUrl);re(we)},onRemove:async Q=>{const ee=Q.title||Q.name||"";await ie(o,ee,e.apiBaseUrl);const te=await ne(o,e.apiBaseUrl);re(te)}});let _;_=re=>{const Q=N.querySelector(".chatbot-cart-card");if(!Q)return;const ee=se(re,H(_));Q.replaceWith(ee)};const R=se(E,H(_));R&&N?N.appendChild(R):R&&S.appendChild(R);const ae=A||"Here’s what’s in your cart:";c.push({role:"bot",content:ae,cart:E}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},E=>{X(),M||(M=!0,V()),S||(S=J("",!0,e,h),l.appendChild(S));const T=S.querySelector(".chatbot-bubble");let N=S.querySelector(".chatbot-message-content");!N&&T&&(N=document.createElement("div"),N.className="chatbot-message-content",T.parentNode.insertBefore(N,T),N.appendChild(T));const H=me(E);H&&N?N.appendChild(H):H&&S.appendChild(H);const _=A||"Here’s your order history.";c.push({role:"bot",content:_,orderHistory:E}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},e.apiBaseUrl||void 0)},k=Re(h,e),W=(f,v)=>{const x=v?` (Size: ${v})`:"",C=J(`✅ Added 1x **${f.title}** ${x} to your cart for ${f.price}!`,!0,e);l.appendChild(C),b(),u(),window.dispatchEvent(new CustomEvent("ecom-add-to-cart",{detail:{product:f,selectedSize:v}})),g&&g(w+1),d&&f&&d.showToast({title:"Added to cart",message:`${f.title||""} · ${f.price||""}`,image:f.image})};if(c.length>0)c.forEach(f=>{if(f.role==="user")l.appendChild(J(f.content,!1,e));else if(f.role==="bot")if(f.carousel){const v=ue(f.carousel,W,e);v&&l.appendChild(v)}else if(f.cart){const v=J(f.content||"Here’s what’s in your cart:",!0,e),x=v.querySelector(".chatbot-bubble");if(x){const C=document.createElement("div");C.className="chatbot-message-content",x.parentNode.insertBefore(C,x),C.appendChild(x);const L=A=>({onCheckout:()=>h("Proceed to checkout"),onUpdateQty:async(M,I)=>{const D=M.quantity!=null?M.quantity:1,G=M.title||M.name||"";if(I<=0)await ie(o,G,e.apiBaseUrl);else if(I>D)for(let V=D;V<I;V++)await fe(o,G,M.size,e.apiBaseUrl);else for(let V=I;V<D;V++)await xe(o,G,e.apiBaseUrl);const X=await ne(o,e.apiBaseUrl);A(X)},onRemove:async M=>{const I=M.title||M.name||"";await ie(o,I,e.apiBaseUrl);const D=await ne(o,e.apiBaseUrl);A(D)}});let q;q=A=>{const M=C.querySelector(".chatbot-cart-card");if(!M)return;const I=se(A,L(q));M.replaceWith(I)};const S=se(f.cart,L(q));S&&C.appendChild(S)}l.appendChild(v)}else if(f.orderHistory){const v=J(f.content||"Here’s your order history.",!0,e),x=v.querySelector(".chatbot-bubble");if(x){const C=document.createElement("div");C.className="chatbot-message-content",x.parentNode.insertBefore(C,x),C.appendChild(x);const L=me(f.orderHistory);L&&C.appendChild(L)}l.appendChild(v)}else if(f.content&&le(f.content)){const v=le(f.content),x={step:"confirmation",data:{orderItems:v.items,addresses:[{street:v.shippingAddress}],subtotal:v.total},state:{orderId:v.orderId,paymentMethod:v.paymentMethod,subtotal:v.total,orderItems:v.items,addresses:[{street:v.shippingAddress}],selectedAddressId:0}},C=J("",!0,e,h),L=C.querySelector(".chatbot-bubble"),q=ge(x,{});L?L.replaceWith(q):C.appendChild(q),l.appendChild(C)}else f.content&&f.content!=="Displayed a product carousel to the user."&&l.appendChild(J(f.content,!0,e))}),b(),u();else{const f=e.welcomeMessage??"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",v=J(f,!0,e);l.appendChild(v);const x=[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],C=e.quickActions&&e.quickActions.length>=4?e.quickActions.slice(0,4):x,L=Ye(C,{onAction:(q,S)=>{const A=S.message!=null&&String(S.message).trim()?S.message:S.title;A&&h(A)}});l.appendChild(L),c.push({role:"bot",content:f})}const O=document.createElement("div");O.className="chatbot-orb-wrapper";const $=document.createElement("button");$.type="button",$.className="chatbot-toggle-btn",$.setAttribute("aria-label","Open chat");const P='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:P,O.appendChild($);let y=!1;const B=sessionStorage.getItem("ecom-chatbot-open")==="true",z=document.createElement("div");z.className="welcome-bubble",z.innerHTML='<span style="vertical-align: middle; font-size: 14px; font-weight: 600;">Need help? 👋</span>';function Y(){setTimeout(()=>{y?Y():(z.classList.remove("hidden"),setTimeout(()=>{z.classList.add("hidden"),Y()},5e3))},15e3)}setTimeout(()=>{z.classList.add("hidden"),Y()},5e3);const F=()=>{y=!0,sessionStorage.setItem("ecom-chatbot-open","true"),z.classList.add("hidden"),i.classList.add("is-open"),$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:P,setTimeout(u,50)},U=()=>{y=!1,sessionStorage.setItem("ecom-chatbot-open","false"),i.classList.remove("is-open"),$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:P},K=()=>{z.classList.add("hidden"),y?U():F()};$.addEventListener("click",K);const Z=Le(e,{onClose:U,onCartClick:()=>{F(),h("View Cart")},cartCount:0});g=f=>{w=Math.max(0,f||0);const v=Z.querySelector('button[aria-label="View cart"]');if(v){let C=v.querySelector(".chatbot-cart-badge");w>0?(C||(C=document.createElement("span"),C.className="chatbot-cart-badge",v.appendChild(C)),C.textContent=w>99?"99+":String(w)):C&&C.remove()}let x=$.querySelector(".chatbot-launcher-badge");w>0?(x||(x=document.createElement("span"),x.className="chatbot-launcher-badge",$.appendChild(x)),x.textContent=w>99?"99+":String(w),x.classList.remove("cart-badge-pop"),x.offsetWidth,x.classList.add("cart-badge-pop")):x&&x.remove()},i.appendChild(Z),i.appendChild(l),i.appendChild(k);const j=document.createElement("div");j.className="chatbot-footer",j.innerHTML="<p>Powered by Aura AI</p>",i.appendChild(j),window.EcomChatbot&&(window.EcomChatbot.open=F,window.EcomChatbot.close=U,window.EcomChatbot.toggle=K,window.EcomChatbot.sendMessage=f=>{F(),h(f)},window.EcomChatbot.resetAnimation=()=>{}),m.appendChild(i),m.appendChild(z),m.appendChild(O),r.appendChild(m),B&&F(),function(){const f=["Hi! I'm Aura, your shopping assistant.","I can help you discover products.","I can track your orders for you.","Looking for the best deals? 🔥","What brings you here today?"],v=r.getElementById("typewriter-bubble");if(!v)return;let x=0,C=0,L=!1,q=!1;const S=68,A=38,M=1800,I=320;v.style.display="inline-block",v.style.minWidth="10px";const D=document.createElement("span");D.textContent="|",D.style.cssText="display:inline-block;margin-left:2px;animation:twCursor 0.8s steps(1) infinite;color:inherit;font-weight:300;opacity:0.7";const G=document.createElement("style");G.textContent="@keyframes twCursor{0%,100%{opacity:1}50%{opacity:0}}",r.appendChild(G),v.appendChild(D);function X(){if(q)return;const V=f[x];if(L){if(C--,v.firstChild&&v.firstChild!==D&&(v.firstChild.textContent=V.slice(0,C)),C===0){L=!1,x=(x+1)%f.length,q=!0,setTimeout(()=>{q=!1,X()},I);return}}else if(C++,v.firstChild&&v.firstChild!==D?v.firstChild.textContent=V.slice(0,C):v.insertBefore(document.createTextNode(V.slice(0,C)),D),C===V.length){q=!0,setTimeout(()=>{q=!1,L=!0,X()},M);return}setTimeout(X,L?A:S)}v.innerHTML="",v.appendChild(document.createTextNode("")),v.appendChild(D),X()}()}window.EcomChatbot={init:t=>{Je(t)}};
+        `,e.appendChild(n),requestAnimationFrame(()=>{n.classList.add("chatbot-toast-visible")}),setTimeout(()=>{n.classList.remove("chatbot-toast-visible"),n.addEventListener("transitionend",()=>{n.remove()},{once:!0})},a)}}}function Je(t){const e=Se(t);console.log("Chatbot initialized in Shadow DOM with config:",e);let o=sessionStorage.getItem("ecom-session-id");o||(o="sess_"+Math.random().toString(36).substring(2,9),sessionStorage.setItem("ecom-session-id",o));const s=e.parentElement||document.body,r=s.querySelector("#ecom-chatbot-host");r&&r.remove();const l=document.createElement("div");l.id="ecom-chatbot-host",s.appendChild(l);const a=l.attachShadow({mode:"open"}),n=Xe(a),p=document.createElement("style");p.textContent=Ee(e),a.appendChild(p);const h=document.createElement("div");h.className="ecom-chatbot-wrapper";const i=document.createElement("div");i.className="chatbot-window";const d=Me();function u(){d.scrollTo({top:d.scrollHeight,behavior:"smooth"})}function b(){let f=null;Array.from(d.children).filter(x=>x.classList&&!x.hasAttribute("data-skeleton")&&(x.classList.contains("chatbot-message")||x.classList.contains("typing-indicator-wrapper"))).forEach(x=>{const k=x.classList.contains("user"),I=x.classList.contains("bot")||x.classList.contains("typing-indicator-wrapper"),O=k?"user":I?"bot":null;O&&(x.classList.remove("group-same","group-first"),f===O?x.classList.add("group-same"):x.classList.add("group-first"),f=O)})}let c=[];try{const f=sessionStorage.getItem("ecom-chat-history");f&&(c=JSON.parse(f),console.log("Restored chat history from session:",c))}catch(f){console.error("Failed to parse session chat history",f)}let v=0,g=null;const m=async f=>{const y=i.querySelector(".chatbot-presets");y&&y.remove();const x=i.querySelector(".chatbot-quick-actions-grid");x&&x.remove();const k=Q(f,!1,e);d.appendChild(k),u();const I=Ue();d.appendChild(I),u();const O=[...c];c.push({role:"user",content:f}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c));let S=null,A="",N=!1,M=null,W=null,G=null;const Z=()=>{I.parentNode&&d.removeChild(I),G&&G.parentNode&&d.removeChild(G)},_=()=>{if(C)return;const z=h.querySelector(".chatbot-toggle-btn");if(z&&!z.querySelector(".chatbot-ripple-ring")){const T=document.createElement("span");T.className="chatbot-ripple-ring",z.appendChild(T),setTimeout(()=>T.remove(),1400)}};await _e(f,O,z=>{Z(),N||(N=!0,_()),S||(S=Q("",!0,e,m),d.appendChild(S),M=S),A+=z;const T=S.querySelector(".chatbot-bubble");T&&(T.innerHTML=pe(A)),u()},z=>{Z(),N||(N=!0,_());const T=["Here's what we have:","Have a look at these.","Here are some picks."],B=T[Math.floor(Math.random()*T.length)];(!S||!A.trim())&&(S=Q(B,!0,e,m),d.appendChild(S),A=B);const X=me(z,V,e);X?(W=z,M=X,d.appendChild(X),c.push({role:"bot",content:"Displayed a product carousel to the user.",carousel:z})):M=S,sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},()=>{Z(),A&&(c.push({role:"bot",content:A}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)));const z=le(A||"");if(z&&M){const R={step:"confirmation",data:{orderItems:z.items,addresses:[{street:z.shippingAddress}],subtotal:z.total},state:{orderId:z.orderId,paymentMethod:z.paymentMethod,subtotal:z.total,orderItems:z.items,addresses:[{street:z.shippingAddress}],selectedAddressId:0}},P=ge(R,{}),H=M.querySelector(".chatbot-message-content"),te=M.querySelector(".chatbot-bubble");H?(H.innerHTML="",H.appendChild(P)):te?te.replaceWith(P):(M.innerHTML="",M.appendChild(P)),b(),u()}const T=/added to (your )?(cart|shopping bag|bag)/i.test(A||""),B=/how would you like to pay|COD.*Prepaid|Prepaid.*COD|Cash on Delivery|Online Payment/i.test(A||""),X=/one-time password|OTP|sent to your phone|enter the.*digit code|verify your identity|for demo purposes.*code/i.test(A||""),oe=/shipping address|saved addresses|add a new one|get your shipping|delivery address/i.test(A||"");let ee,re=R=>m(R);if(X||oe?ee=[]:T?ee=["Proceed to checkout","Browse more products"]:B?(ee=["COD","PREPAID"],re=R=>m(R==="COD"?"cod":R==="PREPAID"?"prepaid":R)):ee=Ge(A||(W?(W||[]).map(R=>R.title||"").join(" "):""),e.suggestionChips||[],4),ee.length>0&&M){const R=He(ee,re);R.classList.add("chatbot-chips-below");const P=M.querySelector(".chatbot-bubble");if(P){let H=M.querySelector(".chatbot-message-content");H||(H=document.createElement("div"),H.className="chatbot-message-content",P.parentNode.insertBefore(H,P),H.appendChild(P)),H.appendChild(R)}else M.appendChild(R)}b(),u()},o,z=>{I.setStatus&&I.setStatus(z),z&&/searching|product|looking for|options|recommend/i.test(z)&&!G&&(G=Oe(),d.appendChild(G),u())},z=>{Z(),N||(N=!0,_()),S||(S=Q("",!0,e,m),d.appendChild(S));const T=S.querySelector(".chatbot-bubble");let B=S.querySelector(".chatbot-message-content");!B&&T&&(B=document.createElement("div"),B.className="chatbot-message-content",T.parentNode.insertBefore(B,T),B.appendChild(T));const X=R=>({onCheckout:()=>m("Proceed to checkout"),onUpdateQty:async(P,H)=>{const te=P.quantity!=null?P.quantity:1,de=P.title||P.name||"";if(H<=0)await ie(o,de,e.apiBaseUrl);else if(H>te)for(let ae=te;ae<H;ae++)await fe(o,de,P.size,e.apiBaseUrl);else for(let ae=H;ae<te;ae++)await xe(o,de,e.apiBaseUrl);const we=await ne(o,e.apiBaseUrl);R(we)},onRemove:async P=>{const H=P.title||P.name||"";await ie(o,H,e.apiBaseUrl);const te=await ne(o,e.apiBaseUrl);R(te)}});let oe;oe=R=>{const P=B.querySelector(".chatbot-cart-card");if(!P)return;const H=se(R,X(oe));P.replaceWith(H)};const ee=se(z,X(oe));ee&&B?B.appendChild(ee):ee&&S.appendChild(ee);const re=A||"Here’s what’s in your cart:";c.push({role:"bot",content:re,cart:z}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},z=>{Z(),N||(N=!0,_()),S||(S=Q("",!0,e,m),d.appendChild(S));const T=S.querySelector(".chatbot-bubble");let B=S.querySelector(".chatbot-message-content");!B&&T&&(B=document.createElement("div"),B.className="chatbot-message-content",T.parentNode.insertBefore(B,T),B.appendChild(T));const X=ue(z);X&&B?B.appendChild(X):X&&S.appendChild(X);const oe=A||"Here’s your order history.";c.push({role:"bot",content:oe,orderHistory:z}),sessionStorage.setItem("ecom-chat-history",JSON.stringify(c)),b(),u()},e.apiBaseUrl||void 0)},w=Re(m,e),V=(f,y)=>{const x=y?` (Size: ${y})`:"",k=Q(`✅ Added 1x **${f.title}** ${x} to your cart for ${f.price}!`,!0,e);d.appendChild(k),b(),u(),window.dispatchEvent(new CustomEvent("ecom-add-to-cart",{detail:{product:f,selectedSize:y}})),g&&g(v+1),n&&f&&n.showToast({title:"Added to cart",message:`${f.title||""} · ${f.price||""}`,image:f.image})};if(c.length>0)c.forEach(f=>{if(f.role==="user")d.appendChild(Q(f.content,!1,e));else if(f.role==="bot")if(f.carousel){const y=me(f.carousel,V,e);y&&d.appendChild(y)}else if(f.cart){const y=Q(f.content||"Here’s what’s in your cart:",!0,e),x=y.querySelector(".chatbot-bubble");if(x){const k=document.createElement("div");k.className="chatbot-message-content",x.parentNode.insertBefore(k,x),k.appendChild(x);const I=A=>({onCheckout:()=>m("Proceed to checkout"),onUpdateQty:async(N,M)=>{const W=N.quantity!=null?N.quantity:1,G=N.title||N.name||"";if(M<=0)await ie(o,G,e.apiBaseUrl);else if(M>W)for(let _=W;_<M;_++)await fe(o,G,N.size,e.apiBaseUrl);else for(let _=M;_<W;_++)await xe(o,G,e.apiBaseUrl);const Z=await ne(o,e.apiBaseUrl);A(Z)},onRemove:async N=>{const M=N.title||N.name||"";await ie(o,M,e.apiBaseUrl);const W=await ne(o,e.apiBaseUrl);A(W)}});let O;O=A=>{const N=k.querySelector(".chatbot-cart-card");if(!N)return;const M=se(A,I(O));N.replaceWith(M)};const S=se(f.cart,I(O));S&&k.appendChild(S)}d.appendChild(y)}else if(f.orderHistory){const y=Q(f.content||"Here’s your order history.",!0,e),x=y.querySelector(".chatbot-bubble");if(x){const k=document.createElement("div");k.className="chatbot-message-content",x.parentNode.insertBefore(k,x),k.appendChild(x);const I=ue(f.orderHistory);I&&k.appendChild(I)}d.appendChild(y)}else if(f.content&&le(f.content)){const y=le(f.content),x={step:"confirmation",data:{orderItems:y.items,addresses:[{street:y.shippingAddress}],subtotal:y.total},state:{orderId:y.orderId,paymentMethod:y.paymentMethod,subtotal:y.total,orderItems:y.items,addresses:[{street:y.shippingAddress}],selectedAddressId:0}},k=Q("",!0,e,m),I=k.querySelector(".chatbot-bubble"),O=ge(x,{});I?I.replaceWith(O):k.appendChild(O),d.appendChild(k)}else f.content&&f.content!=="Displayed a product carousel to the user."&&d.appendChild(Q(f.content,!0,e))}),b(),u();else{const f=e.welcomeMessage??"Hi! I'm Aura, your shopping assistant. I can help you discover products, track orders, and more. What brings you here today?",y=Q(f,!0,e);d.appendChild(y);const x=[{title:"Browse Collections",desc:"View all products",message:"Show me your collections"},{title:"View Cart",desc:"See shopping bag",message:"View my cart"},{title:"Order Status",desc:"Track orders",message:"Order status"},{title:"Track My Order",desc:"Get updates",message:"Track my order"}],k=e.quickActions&&e.quickActions.length>=4?e.quickActions.slice(0,4):x,I=Ye(k,{onAction:(O,S)=>{const A=S.message!=null&&String(S.message).trim()?S.message:S.title;A&&m(A)}});d.appendChild(I),c.push({role:"bot",content:f})}const U=document.createElement("div");U.className="chatbot-orb-wrapper";const $=document.createElement("button");$.type="button",$.className="chatbot-toggle-btn",$.setAttribute("aria-label","Open chat");const j='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:j,U.appendChild($);let C=!1;const L=sessionStorage.getItem("ecom-chatbot-open")==="true",E=document.createElement("div");E.className="welcome-bubble",E.innerHTML='<span style="vertical-align: middle; font-size: 14px; font-weight: 600;">Need help? 👋</span>';function q(){setTimeout(()=>{C?q():(E.classList.remove("hidden"),setTimeout(()=>{E.classList.add("hidden"),q()},5e3))},15e3)}setTimeout(()=>{E.classList.add("hidden"),q()},5e3);const Y=()=>{C=!0,sessionStorage.setItem("ecom-chatbot-open","true"),E.classList.add("hidden"),i.classList.add("is-open"),$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:j,setTimeout(u,50)},D=()=>{C=!1,sessionStorage.setItem("ecom-chatbot-open","false"),i.classList.remove("is-open"),$.innerHTML=e.launcherIconUrl?`<img src="${e.launcherIconUrl}" alt="Chat" />`:j},J=()=>{E.classList.add("hidden"),C?D():Y()};$.addEventListener("click",J);const K=Le(e,{onClose:D,onCartClick:()=>{Y(),m("View Cart")},cartCount:0});g=f=>{v=Math.max(0,f||0);const y=K.querySelector('button[aria-label="View cart"]');if(y){let k=y.querySelector(".chatbot-cart-badge");v>0?(k||(k=document.createElement("span"),k.className="chatbot-cart-badge",y.appendChild(k)),k.textContent=v>99?"99+":String(v)):k&&k.remove()}let x=$.querySelector(".chatbot-launcher-badge");v>0?(x||(x=document.createElement("span"),x.className="chatbot-launcher-badge",$.appendChild(x)),x.textContent=v>99?"99+":String(v),x.classList.remove("cart-badge-pop"),x.offsetWidth,x.classList.add("cart-badge-pop")):x&&x.remove()},i.appendChild(K),i.appendChild(d),i.appendChild(w);const F=document.createElement("div");F.className="chatbot-footer",F.innerHTML="<p>Powered by Aura AI</p>",i.appendChild(F),window.EcomChatbot&&(window.EcomChatbot.open=Y,window.EcomChatbot.close=D,window.EcomChatbot.toggle=J,window.EcomChatbot.sendMessage=f=>{Y(),m(f)},window.EcomChatbot.resetAnimation=()=>{}),h.appendChild(i),h.appendChild(E),h.appendChild(U),a.appendChild(h),L&&Y(),function(){const f=["Hi! I'm Aura, your shopping assistant.","I can help you discover products.","I can track your orders for you.","Looking for the best deals? 🔥","What brings you here today?"],y=a.getElementById("typewriter-bubble");if(!y)return;let x=0,k=0,I=!1,O=!1;const S=68,A=38,N=1800,M=320;y.style.display="inline-block",y.style.minWidth="10px";const W=document.createElement("span");W.textContent="|",W.style.cssText="display:inline-block;margin-left:2px;animation:twCursor 0.8s steps(1) infinite;color:inherit;font-weight:300;opacity:0.7";const G=document.createElement("style");G.textContent="@keyframes twCursor{0%,100%{opacity:1}50%{opacity:0}}",a.appendChild(G),y.appendChild(W);function Z(){if(O)return;const _=f[x];if(I){if(k--,y.firstChild&&y.firstChild!==W&&(y.firstChild.textContent=_.slice(0,k)),k===0){I=!1,x=(x+1)%f.length,O=!0,setTimeout(()=>{O=!1,Z()},M);return}}else if(k++,y.firstChild&&y.firstChild!==W?y.firstChild.textContent=_.slice(0,k):y.insertBefore(document.createTextNode(_.slice(0,k)),W),k===_.length){O=!0,setTimeout(()=>{O=!1,I=!0,Z()},N);return}setTimeout(Z,I?A:S)}y.innerHTML="",y.appendChild(document.createTextNode("")),y.appendChild(W),Z()}()}window.EcomChatbot={init:t=>{Je(t)}};

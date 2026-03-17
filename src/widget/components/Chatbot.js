@@ -225,7 +225,7 @@ export function initChatbot(userConfig) {
                     toastApi.showToast({ title: 'Order failed', message: result.message || 'Could not place order' });
                     return;
                 }
-                checkoutState.orderItems = (result.items || []).map((i) => ({ name: i.title, price: typeof i.price === 'string' ? i.price : `$${Number(i.price).toFixed(2)}`, quantity: 1, image: null }));
+                checkoutState.orderItems = (result.items || []).map((i) => ({ name: i.title, price: typeof i.price === 'string' ? i.price : `$${Number(i.price).toFixed(2)}`, quantity: 1, image: i.image || null }));
                 checkoutState.orderId = result.orderId;
                 if (setCartCount) setCartCount(0);
             } catch (e) {
